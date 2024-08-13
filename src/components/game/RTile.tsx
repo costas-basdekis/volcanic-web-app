@@ -1,6 +1,6 @@
 import React, {Component} from "react";
-import {Hexagon} from "./Hexagon";
-import {getTilePosition, Position} from "./hexGridUtils";
+import {Hexagon} from "../../Hexagon";
+import {getTilePosition, Position} from "../../hexGridUtils";
 
 export interface RTileProps {
   stroke?: string,

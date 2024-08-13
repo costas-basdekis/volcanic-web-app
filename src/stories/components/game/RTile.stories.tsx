@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {ComponentProps, Fragment} from "react";
 import _ from "underscore";
-import {RTile} from "../RTile";
+import {RTile} from "../../../components";
 
 type TileExtendedProps = ComponentProps<typeof RTile> & {x?: number, y?: number};
 

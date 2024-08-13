@@ -1,6 +1,6 @@
 import {Component, Fragment} from "react";
 import {Board, Tile} from "../../game";
-import {RTile} from "../../RTile";
+import {RTile} from "./RTile";
 
 export interface RBoardProps {
   board: Board,

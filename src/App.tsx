@@ -2,7 +2,7 @@ import React, {Component, createRef} from 'react';
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from 'react-svg-pan-zoom';
 import ResizeObserver, {SizeInfo} from 'rc-resize-observer';
 import './App.css';
-import {Tile} from "./Tile";
+import {RTile} from "./RTile";
 
 interface AppState {
   tool: Tool,
@@ -38,9 +38,9 @@ export default class App extends Component<{}, AppState> {
               onClick={this.onClick}
             >
               <svg width={width} height={height}>
-                <Tile position={{x: 0, y: 0}} />
-                <Tile position={{x: -1, y: 1}} />
-                <Tile position={{x: 0, y: 1}} />
+                <RTile position={{x: 0, y: 0}} fill={"red"} />
+                <RTile position={{x: -1, y: 1}} fill={"white"} />
+                <RTile position={{x: 0, y: 1}} fill={"black"} />
               </svg>
             </ReactSVGPanZoom>
           </header>

@@ -2,7 +2,7 @@ import React, {Component} from "react";
 import {Hexagon} from "./Hexagon";
 import {getTilePosition, Position} from "./hexGridUtils";
 
-export interface TileProps {
+export interface RTileProps {
   stroke?: string,
   strokeWidth?: number,
   fill?: string,
@@ -10,7 +10,7 @@ export interface TileProps {
   position?: Position,
 }
 
-export class Tile extends Component<TileProps> {
+export class RTile extends Component<RTileProps> {
   render() {
     const {
       stroke = "black", strokeWidth = 1, fill = "white",

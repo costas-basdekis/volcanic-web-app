@@ -1,16 +1,17 @@
 import React, {Component} from "react";
 import _ from "underscore";
+import {Position} from "./hexGridUtils";
 
 export interface HexagonProps {
   stroke?: string,
   strokeWidth?: number,
   fill?: string,
   size?: number,
-  position?: { x: number, y: number },
+  position?: Position,
 }
 
 export class Hexagon extends Component<HexagonProps> {
-  static pathPoints: { x: number, y: number }[] = _.range(6)
+  static pathPoints: Position[] = _.range(6)
     .map(index => ({x: Math.sin(index * Math.PI / 3), y: Math.cos(index * Math.PI / 3)}));
   static pathD = [
     `M${this.pathPoints[0].x} ${this.pathPoints[0].y}`,

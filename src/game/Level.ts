@@ -17,14 +17,14 @@ export class Level implements LevelAttributes {
 
   static fromTiles(index: number, tiles: Tile[]): Level {
     return new Level({
-      index: 0,
+      index,
       tiles,
       tileMap: this.getTileMap(tiles),
     });
   }
 
   static getTileMap(tiles: Tile[]): Map<string, Tile> {
-    return new Map(tiles.map(tile => [`${tile.position.x},${tile.position.y}`, tile]));
+    return new Map(tiles.map(tile => [tile.key, tile]));
   }
 
   constructor(attributes: LevelAttributes) {

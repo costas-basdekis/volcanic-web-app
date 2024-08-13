@@ -2,7 +2,8 @@ import React, {Component, createRef} from 'react';
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from 'react-svg-pan-zoom';
 import ResizeObserver, {SizeInfo} from 'rc-resize-observer';
 import './App.css';
-import {RTile} from "./RTile";
+import {Board, Tile} from "./game";
+import {RBoard} from "./components";
 
 interface AppState {
   tool: Tool,
@@ -10,6 +11,7 @@ interface AppState {
   width:  number,
   height: number,
   firstResize: boolean,
+  board: Board,
 }
 
 export default class App extends Component<{}, AppState> {
@@ -19,11 +21,16 @@ export default class App extends Component<{}, AppState> {
     width: 500,
     height: 500,
     firstResize: true,
+    board: Board.makeEmpty().putPiece([
+      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+      new Tile({position: {x: -1, y: 1}, type: "white"}),
+      new Tile({position: {x: 0, y: 1}, type: "black"}),
+    ]),
   };
   svgPanZoomRef = createRef<ReactSVGPanZoom>();
 
   render() {
-    const {tool, value, width, height} = this.state;
+    const {tool, value, width, height, board} = this.state;
     return (
       <div className="App">
         <ResizeObserver onResize={this.onResize}>
@@ -38,9 +45,7 @@ export default class App extends Component<{}, AppState> {
               onClick={this.onClick}
             >
               <svg width={width} height={height}>
-                <RTile position={{x: 0, y: 0}} fill={"red"} />
-                <RTile position={{x: -1, y: 1}} fill={"white"} />
-                <RTile position={{x: 0, y: 1}} fill={"black"} />
+                <RBoard board={board} />
               </svg>
             </ReactSVGPanZoom>
           </header>

@@ -1,27 +1,22 @@
-import React, {Component} from "react";
-import {Hexagon} from "../../Hexagon";
-import {getTilePosition, Position} from "../../hexGridUtils";
+import {Component} from "react";
+import {RBaseTile} from "./RBaseTile";
+import {Tile} from "../../game";
 
-export interface RTileProps {
-  stroke?: string,
-  strokeWidth?: number,
-  fill?: string,
-  size?: number,
-  position?: Position,
+interface RTileProps {
+  tile: Tile,
 }
 
 export class RTile extends Component<RTileProps> {
+  static fillMap: {[key in Tile["type"]]: string} = {
+    volcano: "red",
+    white: "white",
+    black: "black",
+  };
+
   render() {
-    const {
-      stroke = "black", strokeWidth = 1, fill = "white",
-      size = 50, position = {x: 0, y: 0},
-    } = this.props;
+    const {tile} = this.props;
     return (
-      <Hexagon
-        stroke={stroke} strokeWidth={strokeWidth} fill={fill}
-        size={size}
-        position={getTilePosition(position, size)}
-      />
-    )
+      <RBaseTile fill={RTile.fillMap[tile.type]} position={tile.position} />
+    );
   }
 }

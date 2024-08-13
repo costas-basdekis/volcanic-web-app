@@ -2,13 +2,13 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {ComponentProps, Fragment} from "react";
 import _ from "underscore";
-import {RTile} from "../../../components";
+import {RBaseTile} from "../../../components";
 
-type TileExtendedProps = ComponentProps<typeof RTile> & {x?: number, y?: number};
+type TileExtendedProps = ComponentProps<typeof RBaseTile> & {x?: number, y?: number};
 
 const meta: Meta<TileExtendedProps> = {
-  title: 'RTile',
-  component: RTile,
+  title: 'RBaseTile',
+  component: RBaseTile,
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
   parameters: {
@@ -45,10 +45,10 @@ export const Row: Story = {
     y: 2,
   },
   render: ({y = 2, ...rest}) => <>
-    <RTile {...rest} position={{x: 0, y}} />
-    <RTile {...rest} position={{x: 1, y}} />
-    <RTile {...rest} position={{x: 2, y}} />
-    <RTile {...rest} position={{x: 3, y}} />
+    <RBaseTile {...rest} position={{x: 0, y}} />
+    <RBaseTile {...rest} position={{x: 1, y}} />
+    <RBaseTile {...rest} position={{x: 2, y}} />
+    <RBaseTile {...rest} position={{x: 3, y}} />
   </>,
 };
 
@@ -62,10 +62,10 @@ export const Column: Story = {
     x: 2,
   },
   render: ({x = 2, ...rest}) => <>
-    <RTile {...rest} position={{x, y: 0}} />
-    <RTile {...rest} position={{x, y: 1}} />
-    <RTile {...rest} position={{x, y: 2}} />
-    <RTile {...rest} position={{x, y: 3}} />
+    <RBaseTile {...rest} position={{x, y: 0}} />
+    <RBaseTile {...rest} position={{x, y: 1}} />
+    <RBaseTile {...rest} position={{x, y: 2}} />
+    <RBaseTile {...rest} position={{x, y: 3}} />
   </>,
 };
 
@@ -77,7 +77,7 @@ export const Grid4x4: Story = {
     {_.range(4).map(x => (
       <Fragment key={x}>
         {_.range(4).map(y => (
-          <RTile {...args} key={y} position={{x, y}} />
+          <RBaseTile {...args} key={y} position={{x, y}} />
         ))}
       </Fragment>
     ))}

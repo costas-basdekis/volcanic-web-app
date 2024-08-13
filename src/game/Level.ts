@@ -1,4 +1,5 @@
 import {Tile} from "./Tile";
+import {Position} from "../hexGridUtils";
 
 interface LevelAttributes {
   index: number;
@@ -48,5 +49,21 @@ export class Level implements LevelAttributes {
     return this._change({
       tiles: [...this.tiles, ...tiles],
     });
+  }
+
+  getSurroundingPositions(): Position[] {
+    const surroundingPositions: Position[] = [];
+    const prohibitedKeys: Set<string> = new Set(this.tileMap.keys());
+    for (const tile of this.tiles) {
+      for (const neighbourPosition of tile.getSurroundingPositions()) {
+        const key: string = Tile.makeKey(neighbourPosition);
+        if (prohibitedKeys.has(key)) {
+          continue;
+        }
+        prohibitedKeys.add(key);
+        surroundingPositions.push(neighbourPosition);
+      }
+    }
+    return surroundingPositions;
   }
 }

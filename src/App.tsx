@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, createRef} from 'react';
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from 'react-svg-pan-zoom';
 import ResizeObserver, {SizeInfo} from 'rc-resize-observer';
 import './App.css';
@@ -6,9 +6,10 @@ import {Tile} from "./Tile";
 
 interface AppState {
   tool: Tool,
-  value: Value | {},
+  value: Partial<Value>,
   width:  number,
   height: number,
+  firstResize: boolean,
 }
 
 export default class App extends Component<{}, AppState> {
@@ -17,7 +18,9 @@ export default class App extends Component<{}, AppState> {
     value: {},
     width: 500,
     height: 500,
+    firstResize: true,
   };
+  svgPanZoomRef = createRef<ReactSVGPanZoom>();
 
   render() {
     const {tool, value, width, height} = this.state;
@@ -26,16 +29,18 @@ export default class App extends Component<{}, AppState> {
         <ResizeObserver onResize={this.onResize}>
           <header className="App-header">
             <ReactSVGPanZoom
+              ref={this.svgPanZoomRef}
               width={width} height={height}
               tool={tool} onChangeTool={this.onChangeTool}
               value={value as Value} onChangeValue={this.onChangeValue}
               detectAutoPan={false}
+              SVGBackground={"transparent"}
               onClick={this.onClick}
             >
-              <svg width={617} height={316}>
-                <Tile position={{x: 2, y: 2}} />
-                <Tile position={{x: 3, y: 2}} />
-                <Tile position={{x: 2, y: 1}} />
+              <svg width={width} height={height}>
+                <Tile position={{x: 0, y: 0}} />
+                <Tile position={{x: -1, y: 1}} />
+                <Tile position={{x: 0, y: 1}} />
               </svg>
             </ReactSVGPanZoom>
           </header>
@@ -47,6 +52,10 @@ export default class App extends Component<{}, AppState> {
 
   onResize = ({width, height}: SizeInfo) => {
     this.setState(({width, height}));
+    if (this.state.firstResize && this.svgPanZoomRef.current) {
+      this.setState({firstResize: false});
+      this.svgPanZoomRef.current.pan(width / 2, height / 2);
+    }
   };
 
   onChangeTool = () => {

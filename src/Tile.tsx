@@ -14,7 +14,7 @@ export class Tile extends Component<TileProps> {
   render() {
     const {
       stroke = "black", strokeWidth = 1, fill = "white",
-      size = 100, position = {x: 0, y: 0},
+      size = 50, position = {x: 0, y: 0},
     } = this.props;
     return (
       <Hexagon

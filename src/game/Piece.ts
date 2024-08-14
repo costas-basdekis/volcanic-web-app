@@ -8,6 +8,8 @@ interface PieceAttributes {
 export class Piece implements PieceAttributes {
   tiles: Tile[];
 
+  static presets: {[key in "BlackWhite" | "WhiteBlack"]: Piece};
+
   constructor(attributes: PieceAttributes) {
     this.tiles = attributes.tiles;
   }
@@ -30,3 +32,20 @@ export class Piece implements PieceAttributes {
     });
   }
 }
+
+Piece.presets = {
+  BlackWhite: new Piece({
+    tiles: [
+      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+      new Tile({position: {x: -1, y: 1}, type: "white"}),
+      new Tile({position: {x: 0, y: 1}, type: "black"}),
+    ],
+  }),
+  WhiteBlack: new Piece({
+    tiles: [
+      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+      new Tile({position: {x: -1, y: 1}, type: "black"}),
+      new Tile({position: {x: 0, y: 1}, type: "white"}),
+    ],
+  }),
+};

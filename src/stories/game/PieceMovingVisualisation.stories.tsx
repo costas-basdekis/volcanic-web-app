@@ -1,6 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Tile} from "../../game";
 import {Position} from "../../hexGridUtils";
 import {Piece} from "../../game/Piece";
 import {RPiece} from "../../components/game/RPiece";
@@ -34,11 +33,7 @@ type Story = StoryObj<typeof meta>;
 
 export const OffsetMove: Story = {
   args: {
-    piece: new Piece({tiles: [
-      new Tile({position: {x: 3, y: 3}, type: "volcano"}),
-      new Tile({position: {x: 3, y: 4}, type: "volcano"}),
-      new Tile({position: {x: 4, y: 4}, type: "volcano"}),
-    ]}),
+    piece: Piece.presets.BlackWhite.moveFirstTileTo({x: 3, y: 3}),
     offset: {x: 0, y: 0},
   },
 };

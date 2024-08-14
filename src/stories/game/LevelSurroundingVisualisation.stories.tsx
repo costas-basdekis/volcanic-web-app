@@ -55,13 +55,7 @@ export const SingleTile: Story = {
 
 export const ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(1).putPiece(new Piece({
-      tiles: [
-        new Tile({position: {x: 3, y: 3}, type: "volcano"}),
-        new Tile({position: {x: 3, y: 4}, type: "volcano"}),
-        new Tile({position: {x: 4, y: 4}, type: "volcano"}),
-      ],
-    })),
+    level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 4, y: 3})),
     depth: 1,
   },
 };

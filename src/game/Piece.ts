@@ -30,6 +30,11 @@ export class Piece implements PieceAttributes {
       x: position.x - firstTile.position.x,
       y: position.y - firstTile.position.y,
     };
+    const evenRowStart = firstTile.position.y % 2 === 0;
+    const evenRowEnd = (firstTile.position.y + offset.y) % 2 === 0;
+    if (evenRowStart && !evenRowEnd) {
+      offset.x += 1;
+    }
     return this._change({
       tiles: this.tiles.map(tile => tile.offset(offset))
     });

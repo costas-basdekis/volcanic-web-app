@@ -1,5 +1,5 @@
 import {Tile} from "./Tile";
-import {Position} from "../hexGridUtils";
+import {makePositionKey, Position} from "../hexGridUtils";
 
 interface PieceAttributes {
   tiles: Tile[],
@@ -23,6 +23,9 @@ export class Piece implements PieceAttributes {
 
   moveFirstTileTo(position: Position): Piece {
     const firstTile = this.tiles[0];
+    if (makePositionKey(position) === firstTile.key) {
+      return this;
+    }
     const offset: Position = {
       x: position.x - firstTile.position.x,
       y: position.y - firstTile.position.y,

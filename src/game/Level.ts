@@ -1,5 +1,6 @@
 import {Tile} from "./Tile";
 import {getSurroundingPositionsMulti, makePositionKey, Position} from "../hexGridUtils";
+import {Piece} from "./Piece";
 
 interface LevelAttributes {
   index: number;
@@ -45,9 +46,12 @@ export class Level implements LevelAttributes {
     return new Level(newAttributes);
   }
 
-  putPiece(tiles: Tile[]): Level {
+  putPiece(piece: Piece): Level {
+    if (!this.canPlacePiece(piece)) {
+      throw new Error("Cannot place this piece");
+    }
     return this._change({
-      tiles: [...this.tiles, ...tiles],
+      tiles: [...this.tiles, ...piece.tiles],
     });
   }
 

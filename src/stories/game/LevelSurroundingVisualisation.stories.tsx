@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Level, Tile} from "../../game";
+import {Level, Piece, Tile} from "../../game";
 import {RBaseTile, RLevel} from "../../components";
 import {makePositionKey} from "../../hexGridUtils";
 
@@ -44,20 +44,24 @@ export const Empty: Story = {
 
 export const SingleTile: Story = {
   args: {
-    level: Level.makeEmpty(1).putPiece([
-      new Tile({position: {x: 3, y: 3}, type: "volcano"}),
-    ]),
+    level: Level.makeEmpty(1).putPiece(new Piece({
+      tiles: [
+        new Tile({position: {x: 3, y: 3}, type: "volcano"})
+      ],
+    })),
     depth: 1,
   },
 };
 
 export const ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(1).putPiece([
-      new Tile({position: {x: 3, y: 3}, type: "volcano"}),
-      new Tile({position: {x: 3, y: 4}, type: "volcano"}),
-      new Tile({position: {x: 4, y: 4}, type: "volcano"}),
-    ]),
+    level: Level.makeEmpty(1).putPiece(new Piece({
+      tiles: [
+        new Tile({position: {x: 3, y: 3}, type: "volcano"}),
+        new Tile({position: {x: 3, y: 4}, type: "volcano"}),
+        new Tile({position: {x: 4, y: 4}, type: "volcano"}),
+      ],
+    })),
     depth: 1,
   },
 };

@@ -2,7 +2,7 @@ import React, {Component, createRef} from 'react';
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from 'react-svg-pan-zoom';
 import ResizeObserver, {SizeInfo} from 'rc-resize-observer';
 import './App.css';
-import {Board, Tile} from "./game";
+import {Board, Piece, Tile} from "./game";
 import {RBoard} from "./components";
 
 interface AppState {
@@ -21,11 +21,13 @@ export default class App extends Component<{}, AppState> {
     width: 500,
     height: 500,
     firstResize: true,
-    board: Board.makeEmpty().putPiece([
-      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-      new Tile({position: {x: -1, y: 1}, type: "white"}),
-      new Tile({position: {x: 0, y: 1}, type: "black"}),
-    ]),
+    board: Board.makeEmpty().putPiece(new Piece({
+      tiles: [
+        new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+        new Tile({position: {x: -1, y: 1}, type: "white"}),
+        new Tile({position: {x: 0, y: 1}, type: "black"}),
+      ],
+    })),
   };
   svgPanZoomRef = createRef<ReactSVGPanZoom>();
 

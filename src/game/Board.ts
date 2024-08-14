@@ -1,5 +1,5 @@
 import {Level} from "./Level";
-import {Tile} from "./Tile";
+import {Piece} from "./Piece";
 
 interface BoardAttributes {
   levels: Map<number, Level>;
@@ -29,9 +29,9 @@ export class Board implements BoardAttributes {
     });
   }
 
-  putPiece(tiles: Tile[]): Board {
+  putPiece(piece: Piece): Board {
     const entries = Array.from(this.levels.entries()).map(([index, level]) =>
-      [index, index === 1 ? level.putPiece(tiles) : level] as [number, Level]);
+      [index, index === 1 ? level.putPiece(piece) : level] as [number, Level]);
     return this._change({
       levels: new Map(entries),
     });

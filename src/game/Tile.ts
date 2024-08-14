@@ -1,8 +1,12 @@
 import {
   getBottomLeftPosition,
-  getBottomRightPosition, getLeftPosition,
+  getBottomRightPosition,
+  getLeftPosition,
   getRightPosition,
-  getSurroundingPositions, getTopLeftPosition, getTopRightPosition, makePositionKey,
+  getSurroundingPositions,
+  getTopLeftPosition,
+  getTopRightPosition,
+  makePositionKey,
   Position
 } from "../hexGridUtils";
 
@@ -20,6 +24,13 @@ export class Tile implements TileAttributes {
     this.position = attributes.position;
     this.type = attributes.type;
     this.key = makePositionKey(this.position);
+  }
+
+  _change(someAttributes: Partial<TileAttributes>): Tile {
+    return new Tile({
+      ...this,
+      ...someAttributes,
+    });
   }
 
   getSurroundingPositions(): Position[] {
@@ -48,5 +59,22 @@ export class Tile implements TileAttributes {
 
   getTopRightPosition(): Position {
     return getTopRightPosition(this.position);
+  }
+
+  offset(offset: Position): Tile {
+    const evenRowStart = this.position.y % 2 === 0;
+    const evenRowEnd = (this.position.y + offset.y) % 2 === 0;
+    let xOffset;
+    if (evenRowStart && !evenRowEnd) {
+      xOffset = -1;
+    } else {
+      xOffset = 0;
+    }
+    return this._change({
+      position: {
+        x: this.position.x + offset.x + xOffset,
+        y: this.position.y + offset.y,
+      },
+    });
   }
 }

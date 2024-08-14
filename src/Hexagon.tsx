@@ -8,6 +8,8 @@ export interface HexagonProps {
   fill?: string,
   size?: number,
   position?: Position,
+  onMouseEnter?: (React.MouseEventHandler) | undefined | null,
+  onMouseLeave?: (React.MouseEventHandler) | undefined | null,
 }
 
 export class Hexagon extends Component<HexagonProps> {
@@ -35,6 +37,8 @@ export class Hexagon extends Component<HexagonProps> {
         fill={fill}
         vectorEffect={"non-scaling-stroke"}
         style={{transform: `translate(${position.x}px, ${position.y}px) scale(${size})`}}
+        onMouseEnter={this.props.onMouseEnter ?? undefined}
+        onMouseLeave={this.props.onMouseLeave ?? undefined}
       />
     </>;
   }

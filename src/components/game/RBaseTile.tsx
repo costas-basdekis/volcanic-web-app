@@ -8,6 +8,7 @@ export interface RBaseTileProps {
   fill?: string,
   size?: number,
   position?: Position,
+  onHover?: ((position: Position, hovering: boolean) => void) | null,
 }
 
 export class RBaseTile extends Component<RBaseTileProps> {
@@ -21,7 +22,17 @@ export class RBaseTile extends Component<RBaseTileProps> {
         stroke={stroke} strokeWidth={strokeWidth} fill={fill}
         size={size}
         position={getTilePosition(position, size)}
+        onMouseEnter={this.props.onHover ? this.onMouseEnter : null}
+        onMouseLeave={this.props.onHover ? this.onMouseLeave : null}
       />
     )
   }
+
+  onMouseEnter = () => {
+    this.props.onHover?.(this.props.position ?? {x: 0, y: 0}, true);
+  };
+
+  onMouseLeave = () => {
+    this.props.onHover?.(this.props.position ?? {x: 0, y: 0}, false);
+  };
 }

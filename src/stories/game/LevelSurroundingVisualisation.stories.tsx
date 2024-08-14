@@ -2,26 +2,69 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Piece, Tile} from "../../game";
 import {RBaseTile, RLevel} from "../../components";
-import {makePositionKey} from "../../hexGridUtils";
+import {makePositionKey, Position} from "../../hexGridUtils";
+import {Component} from "react";
+import {RPiece} from "../../components/game/RPiece";
 
-const meta: Meta<{ level: Level, depth: number }> = {
+interface LevelSurroundingVisualisationProps {
+  level: Level,
+  depth: number,
+}
+
+interface LevelSurroundingVisualisationState {
+  hoveredPosition: Position | null,
+}
+
+class LevelSurroundingVisualisation extends Component<LevelSurroundingVisualisationProps, LevelSurroundingVisualisationState> {
+  state: LevelSurroundingVisualisationState = {
+    hoveredPosition: null,
+  };
+
+  render() {
+    const {level, depth} = this.props;
+    const {hoveredPosition} = this.state;
+    const surroundingPositions = level.getSurroundingPositions(depth);
+    return <>
+      <RLevel level={level}/>
+      {surroundingPositions.map(position => (
+        <RBaseTile
+          key={makePositionKey(position)}
+          fill={level.canPlacePieceAt(Piece.presets.BlackWhite, position) ? "green" : "grey"}
+          position={position}
+          onHover={this.onHover}
+        />
+      ))}
+      {hoveredPosition ? (
+        <RPiece piece={Piece.presets.BlackWhite.moveFirstTileTo(hoveredPosition)} />
+      ) : null}
+    </>;
+  }
+
+  onHover = (position: Position, hovering: boolean) => {
+    this.setState(({hoveredPosition}) => {
+      if (hovering && hoveredPosition === position) {
+        return null;
+      }
+      return {
+        hoveredPosition: hovering ? (
+          position
+        ) : (
+          hoveredPosition === position
+            ? null : hoveredPosition
+        ),
+      };
+    });
+  };
+}
+
+const meta: Meta<LevelSurroundingVisualisationProps> = {
   title: 'Level Surrounding Visualisation',
+  component: LevelSurroundingVisualisation,
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
   parameters: {
     // More on how to position stories at: https://storybook.js.org/docs/configure/story-layout
     layout: 'fullscreen',
-  },
-  render: ({level, depth}) => {
-    const surroundingPositions = level.getSurroundingPositions(depth);
-    return (
-      <>
-        <RLevel level={level}/>
-        {surroundingPositions.map(position => (
-          <RBaseTile key={makePositionKey(position)} fill={"grey"} position={position} />
-        ))}
-      </>
-    );
   },
   decorators: [
     Story => (

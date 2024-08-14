@@ -1,5 +1,6 @@
 import {Tile} from "./Tile";
-import {Position} from "../hexGridUtils";
+import {getSurroundingPositions, Position} from "../hexGridUtils";
+import _ from "underscore";
 
 interface LevelAttributes {
   index: number;
@@ -51,18 +52,24 @@ export class Level implements LevelAttributes {
     });
   }
 
-  getSurroundingPositions(): Position[] {
+  getSurroundingPositions(depth: number): Position[] {
     const surroundingPositions: Position[] = [];
     const prohibitedKeys: Set<string> = new Set(this.tileMap.keys());
-    for (const tile of this.tiles) {
-      for (const neighbourPosition of tile.getSurroundingPositions()) {
-        const key: string = Tile.makeKey(neighbourPosition);
-        if (prohibitedKeys.has(key)) {
-          continue;
+    let startingPositions: Position[] = this.tiles.map(tile => tile.position);
+    for (const _iteration of _.range(depth)) {
+      const newSurroundingPositions: Position[] = [];
+      for (const position of startingPositions) {
+        for (const neighbourPosition of getSurroundingPositions(position)) {
+          const key: string = Tile.makeKey(neighbourPosition);
+          if (prohibitedKeys.has(key)) {
+            continue;
+          }
+          prohibitedKeys.add(key);
+          newSurroundingPositions.push(neighbourPosition);
         }
-        prohibitedKeys.add(key);
-        surroundingPositions.push(neighbourPosition);
       }
+      startingPositions = newSurroundingPositions;
+      surroundingPositions.push(...newSurroundingPositions);
     }
     return surroundingPositions;
   }

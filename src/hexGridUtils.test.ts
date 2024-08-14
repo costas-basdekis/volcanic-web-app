@@ -4,10 +4,9 @@ import {
   getLeftPosition,
   getRightPosition,
   getSurroundingPositions, getSurroundingPositionsMulti,
-  getTilePosition, getTopLeftPosition, getTopRightPosition, makePositionKey, Position
+  getTilePosition, getTopLeftPosition, getTopRightPosition, Position
 } from "./hexGridUtils";
-import _ from "underscore";
-import {Level, Tile} from "./game";
+import {sortPositions} from "./testing/utils";
 
 describe("getTilePosition", () => {
   it("gets tile position for {0, 0}", () => {
@@ -87,9 +86,6 @@ describe("getSurroundingPositions", () => {
 });
 
 describe("getSurroundingPositionsMulti", () => {
-  const sortPositions = (positions: Position[]): Position[] => {
-    return _.sortBy(positions, position => makePositionKey(position));
-  };
   const makeCheckPositions = (depth: number) => {
     return (positions: Position[], expectedPositions: Position[]) => {
       expect(sortPositions(getSurroundingPositionsMulti(positions, depth)))

@@ -3,7 +3,8 @@ import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from 'react-s
 import ResizeObserver, {SizeInfo} from 'rc-resize-observer';
 import './App.css';
 import {Board, Piece} from "./game";
-import {RBoard} from "./components";
+import {RBaseTile, RBoard} from "./components";
+import {makePositionKey} from "./hexGridUtils";
 
 interface AppState {
   tool: Tool,
@@ -12,6 +13,7 @@ interface AppState {
   height: number,
   firstResize: boolean,
   board: Board,
+  nextPiece: Piece,
 }
 
 export default class App extends Component<{}, AppState> {
@@ -22,11 +24,12 @@ export default class App extends Component<{}, AppState> {
     height: 500,
     firstResize: true,
     board: Board.makeEmpty().putPiece(Piece.presets.WhiteBlack),
+    nextPiece: Piece.presets.BlackWhite,
   };
   svgPanZoomRef = createRef<ReactSVGPanZoom>();
 
   render() {
-    const {tool, value, width, height, board} = this.state;
+    const {tool, value, width, height, board, nextPiece} = this.state;
     return (
       <div className="App">
         <ResizeObserver onResize={this.onResize}>
@@ -42,6 +45,9 @@ export default class App extends Component<{}, AppState> {
             >
               <svg width={width} height={height}>
                 <RBoard board={board} />
+                {board.levels.get(1)!.getPlaceablePositionsForPiece(nextPiece).map(position => (
+                  <RBaseTile key={makePositionKey(position)} fill={"green"} position={position} />
+                ))}
               </svg>
             </ReactSVGPanZoom>
           </header>

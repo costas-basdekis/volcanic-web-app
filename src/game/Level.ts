@@ -58,4 +58,31 @@ export class Level implements LevelAttributes {
   getSurroundingPositions(depth: number): Position[] {
     return getSurroundingPositionsMulti(this.tiles.map(tile => tile.position), depth);
   }
+
+  getPlaceablePositionsForPiece(piece: Piece): Position[] {
+    return this.getSurroundingPositions(2)
+      .filter(position => this.canPlacePieceAt(piece, position));
+  }
+
+  canPlacePieceAt(piece: Piece, position: Position): boolean {
+    return this.canPlacePiece(piece.moveFirstTileTo(position));
+  }
+
+  canPlacePiece(piece: Piece): boolean {
+    if (!this.tiles.length) {
+      return true;
+    }
+    return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
+  }
+
+  doesPieceOverlap(piece: Piece) {
+    return piece.tiles.some(tile => this.tileMap.has(tile.key));
+  }
+
+  isPieceInTheBorder(piece: Piece) {
+    const surroundingPositions = this.getSurroundingPositions(1);
+    const surroundingPositionKeySet =
+      new Set(surroundingPositions.map(position => makePositionKey(position)));
+    return piece.tiles.some(tile => surroundingPositionKeySet.has(tile.key));
+  }
 }

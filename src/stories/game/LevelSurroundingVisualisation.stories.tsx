@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Tile} from "../../game";
 import {RBaseTile, RLevel} from "../../components";
+import {makePositionKey} from "../../hexGridUtils";
 
 const meta: Meta<{ level: Level, depth: number }> = {
   title: 'Level Surrounding Visualisation',
@@ -17,7 +18,7 @@ const meta: Meta<{ level: Level, depth: number }> = {
       <>
         <RLevel level={level}/>
         {surroundingPositions.map(position => (
-          <RBaseTile key={Tile.makeKey(position)} fill={"grey"} position={position} />
+          <RBaseTile key={makePositionKey(position)} fill={"grey"} position={position} />
         ))}
       </>
     );

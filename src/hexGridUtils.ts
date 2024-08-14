@@ -1,7 +1,13 @@
+import _ from "underscore";
+
 export interface Position {
   x: number;
   y: number;
 }
+
+export const makePositionKey = ({x, y}: Position): string => {
+  return `${x},${y}`;
+};
 
 export const getTilePosition = (position: Position, size: number): Position => {
   const evenRow = position.y % 2 === 0;
@@ -50,4 +56,25 @@ export const getSurroundingPositions = (position: Position): Position[] => {
     getTopLeftPosition(position),
     getTopRightPosition(position),
   ];
+};
+
+export const getSurroundingPositionsMulti = (startingPositions: Position[], depth: number): Position[] => {
+  const surroundingPositions: Position[] = [];
+  const prohibitedKeys: Set<string> = new Set(startingPositions.map(position => makePositionKey(position)));
+  for (const _iteration of _.range(depth)) {
+    const newSurroundingPositions: Position[] = [];
+    for (const position of startingPositions) {
+      for (const neighbourPosition of getSurroundingPositions(position)) {
+        const key: string = makePositionKey(neighbourPosition);
+        if (prohibitedKeys.has(key)) {
+          continue;
+        }
+        prohibitedKeys.add(key);
+        newSurroundingPositions.push(neighbourPosition);
+      }
+    }
+    startingPositions = newSurroundingPositions;
+    surroundingPositions.push(...newSurroundingPositions);
+  }
+  return surroundingPositions;
 };

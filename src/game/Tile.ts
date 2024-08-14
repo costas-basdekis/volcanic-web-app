@@ -2,7 +2,7 @@ import {
   getBottomLeftPosition,
   getBottomRightPosition, getLeftPosition,
   getRightPosition,
-  getSurroundingPositions, getTopLeftPosition, getTopRightPosition,
+  getSurroundingPositions, getTopLeftPosition, getTopRightPosition, makePositionKey,
   Position
 } from "../hexGridUtils";
 
@@ -16,14 +16,10 @@ export class Tile implements TileAttributes {
   type: "volcano" | "white" | "black";
   key: string;
 
-  static makeKey({x, y}: Position): string {
-    return `${x},${y}`;
-  }
-
   constructor(attributes: TileAttributes) {
     this.position = attributes.position;
     this.type = attributes.type;
-    this.key = Tile.makeKey(this.position);
+    this.key = makePositionKey(this.position);
   }
 
   getSurroundingPositions(): Position[] {

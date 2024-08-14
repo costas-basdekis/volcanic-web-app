@@ -3,9 +3,11 @@ import {
   getBottomRightPosition,
   getLeftPosition,
   getRightPosition,
-  getSurroundingPositions,
-  getTilePosition, getTopLeftPosition, getTopRightPosition, Position
+  getSurroundingPositions, getSurroundingPositionsMulti,
+  getTilePosition, getTopLeftPosition, getTopRightPosition, makePositionKey, Position
 } from "./hexGridUtils";
+import _ from "underscore";
+import {Level, Tile} from "./game";
 
 describe("getTilePosition", () => {
   it("gets tile position for {0, 0}", () => {
@@ -82,4 +84,97 @@ describe("getSurroundingPositions", () => {
       });
     })(item);
   }
+});
+
+describe("getSurroundingPositionsMulti", () => {
+  const sortPositions = (positions: Position[]): Position[] => {
+    return _.sortBy(positions, position => makePositionKey(position));
+  };
+  const makeCheckPositions = (depth: number) => {
+    return (positions: Position[], expectedPositions: Position[]) => {
+      expect(sortPositions(getSurroundingPositionsMulti(positions, depth)))
+        .toEqual(sortPositions(expectedPositions));
+    };
+  }
+  describe("depth = 1", () => {
+    const checkPositions = makeCheckPositions(1);
+    it("Returns nothing for empty", () => {
+      checkPositions([], []);
+    });
+    it("Returns 6 surrounding tiles for 1 tile", () => {
+      const centerTile = {x: 0, y: 0};
+      checkPositions([centerTile], getSurroundingPositions(centerTile));
+    });
+    it("Returns 9 surrounding tiles for 3 tiles", () => {
+      const centerTile = {x: 0, y: 0};
+      const bottomLeftTile = {x: -1, y: 1};
+      const bottomRightTile = {x: 0, y: 1};
+      checkPositions([centerTile, bottomLeftTile, bottomRightTile], [
+        getLeftPosition(centerTile),
+        getTopLeftPosition(centerTile),
+        getTopRightPosition(centerTile),
+        getRightPosition(centerTile),
+        getRightPosition(bottomRightTile),
+        getBottomRightPosition(bottomRightTile),
+        getBottomLeftPosition(bottomRightTile),
+        getBottomLeftPosition(bottomLeftTile),
+        getLeftPosition(bottomLeftTile),
+      ]);
+    });
+  });
+  describe("depth = 2", () => {
+    const checkPositions = makeCheckPositions(2);
+    it("Returns nothing for empty", () => {
+      checkPositions([], []);
+    });
+    it("Returns 18 surrounding tiles for 1 tile", () => {
+      const centerTile = {x: 0, y: 0};
+      checkPositions([centerTile], [
+        ...getSurroundingPositions(centerTile),
+        getTopRightPosition(getRightPosition(centerTile)),
+        getRightPosition(getRightPosition(centerTile)),
+        getRightPosition(getBottomRightPosition(centerTile)),
+        getBottomRightPosition(getBottomRightPosition(centerTile)),
+        getBottomRightPosition(getBottomLeftPosition(centerTile)),
+        getBottomLeftPosition(getBottomLeftPosition(centerTile)),
+        getBottomLeftPosition(getLeftPosition(centerTile)),
+        getLeftPosition(getLeftPosition(centerTile)),
+        getLeftPosition(getTopLeftPosition(centerTile)),
+        getTopLeftPosition(getTopLeftPosition(centerTile)),
+        getTopLeftPosition(getTopRightPosition(centerTile)),
+        getTopRightPosition(getTopRightPosition(centerTile)),
+      ]);
+    });
+    it("Returns 24 surrounding tiles for 3 tiles", () => {
+      const centerTile = {x: 0, y: 0};
+      const bottomLeftTile = {x: -1, y: 1};
+      const bottomRightTile = {x: 0, y: 1};
+      checkPositions([centerTile, bottomLeftTile, bottomRightTile], [
+        getLeftPosition(centerTile),
+        getTopLeftPosition(centerTile),
+        getTopRightPosition(centerTile),
+        getRightPosition(centerTile),
+        getRightPosition(bottomRightTile),
+        getBottomRightPosition(bottomRightTile),
+        getBottomLeftPosition(bottomRightTile),
+        getBottomLeftPosition(bottomLeftTile),
+        getLeftPosition(bottomLeftTile),
+        getRightPosition(getRightPosition(bottomRightTile)),
+        getBottomRightPosition(getRightPosition(bottomRightTile)),
+        getBottomRightPosition(getBottomRightPosition(bottomRightTile)),
+        getBottomLeftPosition(getBottomRightPosition(bottomRightTile)),
+        getBottomLeftPosition(getBottomLeftPosition(bottomRightTile)),
+        getBottomLeftPosition(getBottomLeftPosition(bottomLeftTile)),
+        getLeftPosition(getBottomLeftPosition(bottomLeftTile)),
+        getLeftPosition(getLeftPosition(bottomLeftTile)),
+        getTopLeftPosition(getLeftPosition(bottomLeftTile)),
+        getTopLeftPosition(getTopLeftPosition(bottomLeftTile)),
+        getTopLeftPosition(getTopLeftPosition(centerTile)),
+        getTopRightPosition(getTopLeftPosition(centerTile)),
+        getTopRightPosition(getTopRightPosition(centerTile)),
+        getRightPosition(getTopRightPosition(centerTile)),
+        getRightPosition(getRightPosition(centerTile)),
+      ]);
+    });
+  });
 });

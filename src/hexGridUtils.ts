@@ -27,54 +27,61 @@ export const getTilePosition = (position: Position, size: number): Position => {
   };
 };
 
-export const getRightPosition = ({x, y}: Position, count: number = 1): Position => {
-  return {x: x + count, y};
-};
-
-export const getLeftPosition = ({x, y}: Position, count: number = 1): Position => {
-  return {x: x - count, y};
-};
-
-export const getTopRightPosition = ({x, y}: Position, count: number = 1): Position => {
-  const oddCount = count % 2 === 1;
-  const oddFirstRow = isRowOdd(y);
-  return {
-    x: x + Math.floor(count / 2) + (oddCount && oddFirstRow ? 1 : 0),
-    y: y - count,
-  };
-};
-
-export const getTopLeftPosition = ({x, y}: Position, count = 1): Position => {
-  const oddCount = count % 2 === 1;
-  const evenFirstRow = isRowEven(y);
-  return {
-    x: x - Math.floor(count / 2) - (oddCount && evenFirstRow ? 1 : 0),
-    y: y - count,
-  };
-};
-
-export const getBottomRightPosition = (position: Position, count: number = 1): Position => {
-  return {
-    x: getTopRightPosition(position, count).x,
-    y: position.y + count,
-  };
-};
-
-export const getBottomLeftPosition = (position: Position, count: number = 1): Position => {
-  return {
-    x: getTopLeftPosition(position, count).x,
-    y: position.y + count,
-  };
+export const offsetPosition = (position: Position, right: number = 0, bottomRight: number = 0, bottomLeft: number = 0): Position => {
+  let result = position;
+  if (right !== 0) {
+    const {x, y}: Position = result;
+    result = {x: x + right, y};
+  }
+  if (bottomRight > 0) {
+    const {x, y}: Position = result;
+    const count = bottomRight;
+    const oddCount = count % 2 === 1;
+    const oddFirstRow = isRowOdd(y);
+    result = {
+      x: x + Math.floor(count / 2) + (oddCount && oddFirstRow ? 1 : 0),
+      y: y + count,
+    };
+  } else if (bottomRight < 0) {
+    const {x, y}: Position = result;
+    const count = -bottomRight;
+    const oddCount = count % 2 === 1;
+    const evenFirstRow = isRowEven(y);
+    result = {
+      x: x - Math.floor(count / 2) - (oddCount && evenFirstRow ? 1 : 0),
+      y: y - count,
+    };
+  }
+  if (bottomLeft > 0) {
+    const {x, y}: Position = result;
+    const count = bottomLeft;
+    const oddCount = count % 2 === 1;
+    const evenFirstRow = isRowEven(y);
+    result = {
+      x: x - Math.floor(count / 2) - (oddCount && evenFirstRow ? 1 : 0),
+      y: y + count,
+    };
+  } else if (bottomLeft < 0) {
+    const {x, y}: Position = result;
+    const count = -bottomLeft;
+    const oddCount = count % 2 === 1;
+    const oddFirstRow = isRowOdd(y);
+    result = {
+      x: x + Math.floor(count / 2) + (oddCount && oddFirstRow ? 1 : 0),
+      y: y - count,
+    };
+  }
+  return result
 };
 
 export const getSurroundingPositions = (position: Position): Position[] => {
   return [
-    getRightPosition(position),
-    getBottomRightPosition(position),
-    getBottomLeftPosition(position),
-    getLeftPosition(position),
-    getTopLeftPosition(position),
-    getTopRightPosition(position),
+    offsetPosition(position, 1),
+    offsetPosition(position, 0, 1),
+    offsetPosition(position, 0, 0, 1),
+    offsetPosition(position, -1),
+    offsetPosition(position, 0, -1),
+    offsetPosition(position, 0, 0, -1),
   ];
 };
 

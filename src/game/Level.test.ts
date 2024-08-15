@@ -1,7 +1,7 @@
 import {Level} from "./Level";
 import {Piece} from "./Piece";
 import {sortPositions} from "../testing/utils";
-import {Center, getRightPosition, getTopLeftPosition, getTopRightPosition} from "../hexGridUtils";
+import {Center, offsetPosition} from "../hexGridUtils";
 
 describe("Level", () => {
   const level = Level.makeEmpty(1)
@@ -13,18 +13,18 @@ describe("Level", () => {
     });
     it("returns 12 positions around first piece", () => {
       expect(sortPositions(level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite))).toEqual(sortPositions([
-        tile3.getRightPosition(),
-        tile3.getBottomRightPosition(),
-        tile3.getBottomLeftPosition(),
-        tile2.getBottomLeftPosition(),
-        tile2.getLeftPosition(),
-        getTopLeftPosition(tile2.getLeftPosition()),
-        getTopLeftPosition(tile1.getLeftPosition()),
-        getTopLeftPosition(tile1.getTopLeftPosition()),
-        getTopRightPosition(tile1.getTopLeftPosition()),
-        getTopRightPosition(tile1.getTopRightPosition()),
-        getRightPosition(tile1.getTopRightPosition()),
-        getRightPosition(tile1.getRightPosition()),
+        tile3.offsetPosition(1),
+        tile3.offsetPosition(0, 1),
+        tile3.offsetPosition(0, 0, 1),
+        tile2.offsetPosition(0, 0, 1),
+        tile2.offsetPosition(-1),
+        offsetPosition(tile2.offsetPosition(-1), 0, -1),
+        offsetPosition(tile1.offsetPosition(-1), 0, -1),
+        offsetPosition(tile1.offsetPosition(0, -1), 0, -1),
+        offsetPosition(tile1.offsetPosition(0, -1), 0, 0, -1),
+        offsetPosition(tile1.offsetPosition(0, 0, -1), 0, 0, -1),
+        offsetPosition(tile1.offsetPosition(0, 0, -1), 1),
+        offsetPosition(tile1.offsetPosition(1), 1),
       ]));
     });
   });

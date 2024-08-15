@@ -1,15 +1,10 @@
 import _ from "underscore";
 import {
   Center,
-  getBottomLeftPosition,
-  getBottomRightPosition,
-  getLeftPosition,
-  getRightPosition,
   getSurroundingPositions,
   getSurroundingPositionsMulti,
   getTilePosition,
-  getTopLeftPosition,
-  getTopRightPosition,
+  offsetPosition,
   Position
 } from "./hexGridUtils";
 import {sortPositions} from "./testing/utils";
@@ -45,7 +40,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, y, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getRightPosition({x: 0, y}, count)).toEqual({x: count, y});
+            expect(offsetPosition({x: 0, y}, count)).toEqual({x: count, y});
           });
         })(name, y, count);
       }
@@ -57,7 +52,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, y, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getLeftPosition({x: 0, y}, count)).toEqual({x: -count, y});
+            expect(offsetPosition({x: 0, y}, -count)).toEqual({x: -count, y});
           });
         })(name, y, count);
       }
@@ -76,7 +71,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, yOffset, xValues, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getTopRightPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset - count});
+            expect(offsetPosition({x: 0, y: yOffset}, 0, 0, -count)).toEqual({x: xValues[count - 1], y: yOffset - count});
           });
         })(name, yOffset, xValues, count);
       }
@@ -88,7 +83,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, yOffset, xValues, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getBottomRightPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
+            expect(offsetPosition({x: 0, y: yOffset}, 0, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
           });
         })(name, yOffset, xValues, count);
       }
@@ -107,7 +102,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, yOffset, xValues, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getTopLeftPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset - count});
+            expect(offsetPosition({x: 0, y: yOffset}, 0, -count)).toEqual({x: xValues[count - 1], y: yOffset - count});
           });
         })(name, yOffset, xValues, count);
       }
@@ -119,7 +114,7 @@ describe("get neighbour positions", () => {
       for (const count of _.range(1, 6)) {
         ((name, yOffset, xValues, count) => {
           it(`gets the correct one for ${name} row with count: ${count}`, () => {
-            expect(getBottomLeftPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
+            expect(offsetPosition({x: 0, y: yOffset}, 0, 0, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
           });
         })(name, yOffset, xValues, count);
       }
@@ -170,16 +165,16 @@ describe("getSurroundingPositions", () => {
           ]);
         });
         it("goes left <-> right", () => {
-          expect(getRightPosition(center)).toEqual(right);
-          expect(getLeftPosition(right)).toEqual(center);
+          expect(offsetPosition(center, 1)).toEqual(right);
+          expect(offsetPosition(right, -1)).toEqual(center);
         });
         it("goes top-left <-> bottom-right", () => {
-          expect(getBottomRightPosition(center)).toEqual(bottomRight);
-          expect(getTopLeftPosition(bottomRight)).toEqual(center);
+          expect(offsetPosition(center, 0, 1)).toEqual(bottomRight);
+          expect(offsetPosition(bottomRight, 0, -1)).toEqual(center);
         });
         it("goes top-right <-> bottom-left", () => {
-          expect(getBottomLeftPosition(center)).toEqual(bottomLeft);
-          expect(getTopRightPosition(bottomLeft)).toEqual(center);
+          expect(offsetPosition(center, 0, 0, 1)).toEqual(bottomLeft);
+          expect(offsetPosition(bottomLeft, 0, 0, -1)).toEqual(center);
         });
       });
     })(item);
@@ -206,15 +201,15 @@ describe("getSurroundingPositionsMulti", () => {
       const bottomLeftTile = {x: -1, y: 1};
       const bottomRightTile = {x: 0, y: 1};
       checkPositions([centerTile, bottomLeftTile, bottomRightTile], [
-        getLeftPosition(centerTile),
-        getTopLeftPosition(centerTile),
-        getTopRightPosition(centerTile),
-        getRightPosition(centerTile),
-        getRightPosition(bottomRightTile),
-        getBottomRightPosition(bottomRightTile),
-        getBottomLeftPosition(bottomRightTile),
-        getBottomLeftPosition(bottomLeftTile),
-        getLeftPosition(bottomLeftTile),
+        offsetPosition(centerTile, -1),
+        offsetPosition(centerTile, 0, -1),
+        offsetPosition(centerTile, 0, 0, -1),
+        offsetPosition(centerTile, 1),
+        offsetPosition(bottomRightTile, 1),
+        offsetPosition(bottomRightTile, 0, 1),
+        offsetPosition(bottomRightTile, 0, 0, 1),
+        offsetPosition(bottomLeftTile, 0, 0, 1),
+        offsetPosition(bottomLeftTile, -1),
       ]);
     });
   });
@@ -227,18 +222,18 @@ describe("getSurroundingPositionsMulti", () => {
       const centerTile = Center;
       checkPositions([centerTile], [
         ...getSurroundingPositions(centerTile),
-        getTopRightPosition(getRightPosition(centerTile)),
-        getRightPosition(getRightPosition(centerTile)),
-        getRightPosition(getBottomRightPosition(centerTile)),
-        getBottomRightPosition(getBottomRightPosition(centerTile)),
-        getBottomRightPosition(getBottomLeftPosition(centerTile)),
-        getBottomLeftPosition(getBottomLeftPosition(centerTile)),
-        getBottomLeftPosition(getLeftPosition(centerTile)),
-        getLeftPosition(getLeftPosition(centerTile)),
-        getLeftPosition(getTopLeftPosition(centerTile)),
-        getTopLeftPosition(getTopLeftPosition(centerTile)),
-        getTopLeftPosition(getTopRightPosition(centerTile)),
-        getTopRightPosition(getTopRightPosition(centerTile)),
+        offsetPosition(centerTile, 1, 0, -1),
+        offsetPosition(centerTile, 2),
+        offsetPosition(centerTile, 1, 1),
+        offsetPosition(centerTile, 0, 2),
+        offsetPosition(centerTile, 0, 1, 1),
+        offsetPosition(centerTile, 0, 0, 2),
+        offsetPosition(centerTile, -1, 0, 1),
+        offsetPosition(centerTile, -2),
+        offsetPosition(centerTile, -1, -1),
+        offsetPosition(centerTile, 0, -2),
+        offsetPosition(centerTile, 0, -1, -1),
+        offsetPosition(centerTile, 0, 0, -2),
       ]);
     });
     it("Returns 24 surrounding tiles for 3 tiles", () => {
@@ -246,30 +241,30 @@ describe("getSurroundingPositionsMulti", () => {
       const bottomLeftTile = {x: -1, y: 1};
       const bottomRightTile = {x: 0, y: 1};
       checkPositions([centerTile, bottomLeftTile, bottomRightTile], [
-        getLeftPosition(centerTile),
-        getTopLeftPosition(centerTile),
-        getTopRightPosition(centerTile),
-        getRightPosition(centerTile),
-        getRightPosition(bottomRightTile),
-        getBottomRightPosition(bottomRightTile),
-        getBottomLeftPosition(bottomRightTile),
-        getBottomLeftPosition(bottomLeftTile),
-        getLeftPosition(bottomLeftTile),
-        getRightPosition(getRightPosition(bottomRightTile)),
-        getBottomRightPosition(getRightPosition(bottomRightTile)),
-        getBottomRightPosition(getBottomRightPosition(bottomRightTile)),
-        getBottomLeftPosition(getBottomRightPosition(bottomRightTile)),
-        getBottomLeftPosition(getBottomLeftPosition(bottomRightTile)),
-        getBottomLeftPosition(getBottomLeftPosition(bottomLeftTile)),
-        getLeftPosition(getBottomLeftPosition(bottomLeftTile)),
-        getLeftPosition(getLeftPosition(bottomLeftTile)),
-        getTopLeftPosition(getLeftPosition(bottomLeftTile)),
-        getTopLeftPosition(getTopLeftPosition(bottomLeftTile)),
-        getTopLeftPosition(getTopLeftPosition(centerTile)),
-        getTopRightPosition(getTopLeftPosition(centerTile)),
-        getTopRightPosition(getTopRightPosition(centerTile)),
-        getRightPosition(getTopRightPosition(centerTile)),
-        getRightPosition(getRightPosition(centerTile)),
+        offsetPosition(centerTile, -1),
+        offsetPosition(centerTile, 0, -1),
+        offsetPosition(centerTile, 0, 0, -1),
+        offsetPosition(centerTile, 1),
+        offsetPosition(bottomRightTile, 1),
+        offsetPosition(bottomRightTile, 0, 1),
+        offsetPosition(bottomRightTile, 0, 0, 1),
+        offsetPosition(bottomLeftTile, 0, 0, 1),
+        offsetPosition(bottomLeftTile, -1),
+        offsetPosition(bottomRightTile, 2),
+        offsetPosition(bottomRightTile, 1, 1),
+        offsetPosition(bottomRightTile, 0, 2),
+        offsetPosition(bottomRightTile, 0, 1, 1),
+        offsetPosition(bottomRightTile, 0, 0, 2),
+        offsetPosition(bottomLeftTile, 0, 0, 2),
+        offsetPosition(bottomLeftTile, -1, 0, 1),
+        offsetPosition(bottomLeftTile, -2),
+        offsetPosition(bottomLeftTile, -1, -1),
+        offsetPosition(bottomLeftTile, 0, -2),
+        offsetPosition(centerTile, 0, -2),
+        offsetPosition(centerTile, 0, -1, -1),
+        offsetPosition(centerTile, 0, 0, -2),
+        offsetPosition(centerTile, 1, 0, -1),
+        offsetPosition(centerTile, 2),
       ]);
     });
   });

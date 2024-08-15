@@ -9,12 +9,12 @@ describe("Piece", () => {
       expect(piece.moveFirstTileTo(piece.tiles[0].position)).toEqual(piece);
     });
     const cases: [string, (tile: Tile) => Position][] = [
-      ["right", tile => tile.getRightPosition()],
-      ["bottom right", tile => tile.getBottomRightPosition()],
-      ["bottom left", tile => tile.getBottomLeftPosition()],
-      ["left", tile => tile.getLeftPosition()],
-      ["top left", tile => tile.getTopLeftPosition()],
-      ["top right", tile => tile.getTopRightPosition()],
+      ["right", tile => tile.offsetPosition(1)],
+      ["bottom right", tile => tile.offsetPosition(0, 1)],
+      ["bottom left", tile => tile.offsetPosition(0, 0, 1)],
+      ["left", tile => tile.offsetPosition(-1)],
+      ["top left", tile => tile.offsetPosition(0, -1)],
+      ["top right", tile => tile.offsetPosition(0, 0, -1)],
     ];
     const startingRows: [string, Piece][] = [
       ["even", new Piece({

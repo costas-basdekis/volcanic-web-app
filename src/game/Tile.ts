@@ -1,14 +1,4 @@
-import {
-  getBottomLeftPosition,
-  getBottomRightPosition,
-  getLeftPosition,
-  getRightPosition,
-  getSurroundingPositions,
-  getTopLeftPosition,
-  getTopRightPosition,
-  makePositionKey,
-  Position
-} from "../hexGridUtils";
+import {getSurroundingPositions, makePositionKey, offsetPosition, Position} from "../hexGridUtils";
 
 interface TileAttributes {
   position: Position;
@@ -37,28 +27,8 @@ export class Tile implements TileAttributes {
     return getSurroundingPositions(this.position);
   }
 
-  getRightPosition(count: number = 1): Position {
-    return getRightPosition(this.position, count);
-  }
-
-  getBottomRightPosition(count: number = 1): Position {
-    return getBottomRightPosition(this.position, count);
-  }
-
-  getBottomLeftPosition(count: number = 1): Position {
-    return getBottomLeftPosition(this.position, count);
-  }
-
-  getLeftPosition(count: number = 1): Position {
-    return getLeftPosition(this.position, count);
-  }
-
-  getTopLeftPosition(count: number = 1): Position {
-    return getTopLeftPosition(this.position, count);
-  }
-
-  getTopRightPosition(count: number = 1): Position {
-    return getTopRightPosition(this.position, count);
+  offsetPosition(right: number = 0, bottomRight: number = 0, bottomLeft: number = 0) {
+    return offsetPosition(this.position, right, bottomRight, bottomLeft);
   }
 
   offset(offset: Position): Tile {

@@ -115,25 +115,34 @@ export const isCenter = (position: Position): boolean => {
 export const rotatePosition = (position: Position, count: number, around: Position = Center): Position => {
   // If we're not rotating around the center, then we should offset, rotate, and de-offset
   if (!isCenter(around)) {
-    if (isRowEven(around.y)) {
-      // When around is on an even row, it's straightforward
-      const offsetedPosition = {
-        x: position.x - around.x,
-        y: position.y - around.y,
-      };
-      const offsetedAndRotated = rotatePosition(offsetedPosition, count);
-      return {
-        x: offsetedAndRotated.x + around.x,
-        y: offsetedAndRotated.y + around.y,
-      };
-    } else {
-      // When around is on an odd row, we first offset both so that around is on an even row
-      const offsetedPosition = offsetPosition(position, 0, 0, 1);
-      const offsetedAround = offsetPosition(around, 0, 0, 1);
-      const offsetedAndRotated = rotatePosition(offsetedPosition, count, offsetedAround);
-      // And then move back the result
-      return offsetPosition(offsetedAndRotated, 0, 0, -1);
+    let offsetedPosition = position, offsetedAround = around;
+
+    // When around is on an odd row, we first offset both so that around is on an even row
+    if (isRowOdd(around.y)) {
+      offsetedPosition = offsetPosition(offsetedPosition, 0, 0, 1);
+      offsetedAround = offsetPosition(offsetedAround, 0, 0, 1);
     }
+
+    // When around is on an even row, we simply subtract around
+    offsetedPosition = {
+      x: offsetedPosition.x - offsetedAround.x,
+      y: offsetedPosition.y - offsetedAround.y,
+    };
+
+    const offsetedAndRotated = rotatePosition(offsetedPosition, count);
+
+    // Then add back around
+    let rotated = {
+      x: offsetedAndRotated.x + offsetedAround.x,
+      y: offsetedAndRotated.y + offsetedAround.y,
+    };
+
+    // And then move back the result if around was on an odd row
+    if (isRowOdd(around.y)) {
+      rotated = offsetPosition(rotated, 0, 0, -1);
+    }
+
+    return rotated;
   }
 
   // At this point `around` === `Center`
@@ -143,13 +152,45 @@ export const rotatePosition = (position: Position, count: number, around: Positi
   }
 
   // Normalise count
-  count = ((count - 1) % 6 + 6) % 6 + 1;
-  // Apply `count` rotations
-  let result = position;
-  for (const _count of _.range(count)) {
-    // If we're on different rows, find how far off from the bottom right we are
-    const xOffset = offsetPosition(Center, 0, result.y).x;
-    result = offsetPosition(Center, 0, result.x - xOffset, result.y);
+  count = (count % 6 + 6) % 6;
+  // If we're on different rows, find how far off from the bottom right we are
+  const xOffset = position.y === 0 ? 0 : offsetPosition(Center, 0, position.y).x;
+  // We can express any position as going right (or left) and then bottom right (or top left)
+  // To rotate we go in a different set of directions for each rotation count
+  /*
+       4
+      /
+    3 \ /-5
+     \-C-\
+    2-/ \ 0
+        /
+       1
+   */
+  const originalRight = position.x - xOffset;
+  const originalBottomRight = position.y;
+  // And then we can use the same values to go in the new directions
+  switch (count) {
+    case 0:
+      // Same as original
+      // return offsetPosition(Center, originalRight, originalBottomRight);
+      return position;
+    case 1:
+      // Bottom right and then bottom left
+      return offsetPosition(Center, 0, originalRight, originalBottomRight);
+    case 2:
+      // Bottom left and then left
+      return offsetPosition(Center, -originalBottomRight, 0, originalRight);
+    case 3:
+      // Left and then top left
+      return offsetPosition(Center, -originalRight, -originalBottomRight);
+    case 4:
+      // Top left and then top right
+      return offsetPosition(Center, 0, -originalRight, -originalBottomRight);
+    case 5:
+      // Top right and then right
+      return offsetPosition(Center, originalBottomRight, 0, -originalRight);
+    default:
+      // This should never really happen
+      throw new Error(`Unexpected count '${count}'`);
   }
-  return result;
 }

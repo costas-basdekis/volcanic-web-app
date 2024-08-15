@@ -113,67 +113,43 @@ export const isCenter = (position: Position): boolean => {
 }
 
 export const rotatePositionCW = (position: Position, count: number, around: Position = Center): Position => {
+  // If we're not rotating around the center, then we should offset, rotate, and de-offset
   if (!isCenter(around)) {
     if (isRowEven(around.y)) {
+      // When around is on an even row, it's straightforward
       const offsetedPosition = {
         x: position.x - around.x,
         y: position.y - around.y,
       };
-      const offsetAndRotated = rotatePositionCW(offsetedPosition, count);
+      const offsetedAndRotated = rotatePositionCW(offsetedPosition, count);
       return {
-        x: offsetAndRotated.x + around.x,
-        y: offsetAndRotated.y + around.y,
+        x: offsetedAndRotated.x + around.x,
+        y: offsetedAndRotated.y + around.y,
       };
     } else {
-      const offsetedPosition = offsetPosition(position, 0, 0, -1);
-      const offsetAround = offsetPosition(around, 0, 0, -1);
-      const offsetAndRotated = rotatePositionCW(offsetedPosition, count, offsetAround);
-      return offsetPosition(offsetAndRotated, 0, 0, 1);
+      // When around is on an odd row, we first offset both so that around is on an even row
+      const offsetedPosition = offsetPosition(position, 0, 0, 1);
+      const offsetedAround = offsetPosition(around, 0, 0, 1);
+      const offsetedAndRotated = rotatePositionCW(offsetedPosition, count, offsetedAround);
+      // And then move back the result
+      return offsetPosition(offsetedAndRotated, 0, 0, -1);
     }
   }
-  count = (count - 1) % 6 + 1;
-  if (count === 0) {
-    return position;
-  }
-  if (count > 1) {
-    let result = position;
-    for (const _count of _.range(count)) {
-      result = rotatePositionCW(result, 1, around);
-    }
-    return result;
-  }
+
+  // At this point `around` === `Center`
+  // Nothing to do if the position is the center
   if (isCenter(position)) {
     return position;
   }
-  if (position.y === 0) {
-    const xOffset = position.x;
-    if (xOffset > 0) {
-      return offsetPosition(position, 0, 0, xOffset);
-    } else if (xOffset < 0) {
-      return offsetPosition(position, 0, 0, xOffset);
-    }
-    return position;
+
+  // Normalise count
+  count = (count - 1) % 6 + 1;
+  // Apply `count` rotations
+  let result = position;
+  for (const _count of _.range(count)) {
+    // If we're on different rows, find how far off from the bottom right we are
+    const xOffset = offsetPosition(Center, 0, result.y).x;
+    result = offsetPosition(Center, 0, result.x - xOffset, result.y);
   }
-  const yOffset = position.y;
-  if (yOffset > 0) {
-    const bottomRightPosition = offsetPosition(Center, 0, yOffset);
-    const xOffset = position.x - bottomRightPosition.x;
-    const baseResult = offsetPosition(Center, 0, 0, yOffset);
-    if (xOffset > 0) {
-      return offsetPosition(baseResult, 0, xOffset);
-    } else if (xOffset < 0) {
-      return offsetPosition(baseResult, 0, xOffset);
-    }
-    return baseResult;
-  } else {
-    const topLeftPosition = offsetPosition(Center, 0, yOffset);
-    const xOffset = position.x - topLeftPosition.x;
-    const baseResult = offsetPosition(Center, 0, 0, yOffset);
-    if (xOffset > 0) {
-      return offsetPosition(baseResult, 0, xOffset);
-    } else if (xOffset < 0) {
-      return offsetPosition(baseResult, 0, xOffset);
-    }
-    return baseResult;
-  }
+  return result;
 }

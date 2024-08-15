@@ -8,6 +8,7 @@ export interface HexagonProps {
   fill?: string,
   size?: number,
   position?: Position,
+  label?: string | undefined | null,
   onMouseEnter?: (React.MouseEventHandler) | undefined | null,
   onMouseLeave?: (React.MouseEventHandler) | undefined | null,
 }
@@ -28,7 +29,7 @@ export class Hexagon extends Component<HexagonProps> {
   render() {
     const {
       stroke = "black", strokeWidth = 1, fill = "white",
-      size = 100, position = {x: 200, y: 200},
+      size = 100, position = {x: 200, y: 200}, label,
     } = this.props;
     return <>
       <path
@@ -40,6 +41,16 @@ export class Hexagon extends Component<HexagonProps> {
         onMouseEnter={this.props.onMouseEnter ?? undefined}
         onMouseLeave={this.props.onMouseLeave ?? undefined}
       />
+      {label ? (
+        <text
+          x={position.x}
+          y={position.y}
+          dominantBaseline={"middle"}
+          textAnchor={"middle"}
+        >
+          {label}
+        </text>
+      ) : null}
     </>;
   }
 }

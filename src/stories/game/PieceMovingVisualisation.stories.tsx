@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import {Center, Position} from "../../hexGridUtils";
 import {Piece} from "../../game/Piece";
 import {RPiece} from "../../components/game/RPiece";
-import {AutoResizeSvg} from "../../components";
+import {svgWrapper} from "../decorators";
 
 const meta: Meta<{ piece: Piece, offset: Position }> = {
   title: 'Piece Moving Visualisation',
@@ -21,11 +21,7 @@ const meta: Meta<{ piece: Piece, offset: Position }> = {
     );
   },
   decorators: [
-    Story => (
-      <AutoResizeSvg>
-        <Story />
-      </AutoResizeSvg>
-    ),
+    svgWrapper,
   ],
 };
 export default meta;

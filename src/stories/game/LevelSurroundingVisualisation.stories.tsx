@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Piece, Tile} from "../../game";
-import {AutoResizeSvg, RBaseTile, RLevel} from "../../components";
+import {RBaseTile, RLevel} from "../../components";
 import {Center, makePositionKey, Position} from "../../hexGridUtils";
 import {Component} from "react";
 import {RPiece} from "../../components/game/RPiece";
+import {svgWrapper} from "../decorators";
 
 interface LevelSurroundingVisualisationProps {
   level: Level,
@@ -70,11 +71,7 @@ const meta: Meta<LevelSurroundingVisualisationProps> = {
     layout: 'fullscreen',
   },
   decorators: [
-    Story => (
-      <AutoResizeSvg>
-        <Story />
-      </AutoResizeSvg>
-    ),
+    svgWrapper,
   ],
 };
 export default meta;

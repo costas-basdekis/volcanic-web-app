@@ -100,3 +100,7 @@ export const getSurroundingPositionsMulti = (startingPositions: Position[], dept
 };
 
 export const Center: Position = {x: 0, y: 0};
+export const CenterKey: string = makePositionKey(Center);
+export const isCenter = (position: Position): boolean => {
+  return position === Center || makePositionKey(position) === CenterKey;
+}

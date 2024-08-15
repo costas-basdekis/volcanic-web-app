@@ -6,7 +6,7 @@ import {
   getTilePosition,
   offsetPosition,
   Position,
-  rotatePositionCW
+  rotatePosition
 } from "./hexGridUtils";
 import {sortPositions} from "./testing/utils";
 
@@ -271,16 +271,23 @@ describe("getSurroundingPositionsMulti", () => {
   });
 });
 
-describe("rotatePositionCW", () => {
-  const getAllRotations = (start: Position, center: Position): Position[] => {
-    return [
-      rotatePositionCW(start, 1, center),
-      rotatePositionCW(start, 2, center),
-      rotatePositionCW(start, 3, center),
-      rotatePositionCW(start, 4, center),
-      rotatePositionCW(start, 5, center),
-      rotatePositionCW(start, 6, center),
+describe("rotatePosition", () => {
+  const getAllRotations = (start: Position, center: Position, clockwise: boolean): Position[] => {
+    const multiplier = clockwise ? 1 : -1;
+    const rotations = [
+      rotatePosition(start, 1 * multiplier, center),
+      rotatePosition(start, 2 * multiplier, center),
+      rotatePosition(start, 3 * multiplier, center),
+      rotatePosition(start, 4 * multiplier, center),
+      rotatePosition(start, 5 * multiplier, center),
     ];
+    if (!clockwise) {
+      rotations.reverse();
+    }
+    rotations.push(...[
+      rotatePosition(rotatePosition(start, 5 * multiplier, center), 1 * multiplier, center),
+    ]);
+    return rotations;
   };
   const cases: [string, Position][] = [
     ["0 even row", {x: 0, y: 0}],
@@ -289,76 +296,78 @@ describe("rotatePositionCW", () => {
     ["negative odd row", {x: 0, y: -1}],
     ["positive odd row", {x: 0, y: 1}],
   ];
-  for (const [name, center] of cases) {
-    ((name, center) => {
-      describe(`around ${name}`, () => {
-        it("rotates right 1", () => {
-          const start = offsetPosition(center, 1);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 1),
-            offsetPosition(center, 0, 0, 1),
-            offsetPosition(center, -1),
-            offsetPosition(center, 0, -1),
-            offsetPosition(center, 0, 0, -1),
-            offsetPosition(center, 1),
-          ]);
+  for (const clockwise of [true, false]) {
+    for (const [name, center] of cases) {
+      ((name, center, clockwise) => {
+        describe(`${clockwise ? "clockwise" : "counterclockwise"} around ${name}`, () => {
+          it("rotates right 1", () => {
+            const start = offsetPosition(center, 1);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 1),
+              offsetPosition(center, 0, 0, 1),
+              offsetPosition(center, -1),
+              offsetPosition(center, 0, -1),
+              offsetPosition(center, 0, 0, -1),
+              offsetPosition(center, 1),
+            ]);
+          });
+          it("rotates right 2", () => {
+            const start = offsetPosition(center, 2);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 2),
+              offsetPosition(center, 0, 0, 2),
+              offsetPosition(center, -2),
+              offsetPosition(center, 0, -2),
+              offsetPosition(center, 0, 0, -2),
+              offsetPosition(center, 2),
+            ]);
+          });
+          it("rotates right 3", () => {
+            const start = offsetPosition(center, 3);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 3),
+              offsetPosition(center, 0, 0, 3),
+              offsetPosition(center, -3),
+              offsetPosition(center, 0, -3),
+              offsetPosition(center, 0, 0, -3),
+              offsetPosition(center, 3),
+            ]);
+          });
+          it("rotates right 1 bottom-right 1", () => {
+            const start = offsetPosition(center, 1, 1);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 1, 1),
+              offsetPosition(center, -1, 0, 1),
+              offsetPosition(center, -1, -1),
+              offsetPosition(center, 0, -1, -1),
+              offsetPosition(center, 1, 0, -1),
+              offsetPosition(center, 1, 1),
+            ]);
+          });
+          it("rotates right 2 bottom-right 1", () => {
+            const start = offsetPosition(center, 2, 1);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 2, 1),
+              offsetPosition(center, -1, 0, 2),
+              offsetPosition(center, -2, -1),
+              offsetPosition(center, 0, -2, -1),
+              offsetPosition(center, 1, 0, -2),
+              offsetPosition(center, 2, 1),
+            ]);
+          });
+          it("rotates right 1 bottom-right 2", () => {
+            const start = offsetPosition(center, 1, 2);
+            expect(getAllRotations(start, center, clockwise)).toEqual([
+              offsetPosition(center, 0, 1, 2),
+              offsetPosition(center, -2, 0, 1),
+              offsetPosition(center, -1, -2),
+              offsetPosition(center, 0, -1, -2),
+              offsetPosition(center, 2, 0, -1),
+              offsetPosition(center, 1, 2),
+            ]);
+          });
         });
-        it("rotates right 2", () => {
-          const start = offsetPosition(center, 2);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 2),
-            offsetPosition(center, 0, 0, 2),
-            offsetPosition(center, -2),
-            offsetPosition(center, 0, -2),
-            offsetPosition(center, 0, 0, -2),
-            offsetPosition(center, 2),
-          ]);
-        });
-        it("rotates right 3", () => {
-          const start = offsetPosition(center, 3);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 3),
-            offsetPosition(center, 0, 0, 3),
-            offsetPosition(center, -3),
-            offsetPosition(center, 0, -3),
-            offsetPosition(center, 0, 0, -3),
-            offsetPosition(center, 3),
-          ]);
-        });
-        it("rotates right 1 bottom-right 1", () => {
-          const start = offsetPosition(center, 1, 1);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 1, 1),
-            offsetPosition(center, -1, 0, 1),
-            offsetPosition(center, -1, -1),
-            offsetPosition(center, 0, -1, -1),
-            offsetPosition(center, 1, 0, -1),
-            offsetPosition(center, 1, 1),
-          ]);
-        });
-        it("rotates right 2 bottom-right 1", () => {
-          const start = offsetPosition(center, 2, 1);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 2, 1),
-            offsetPosition(center, -1, 0, 2),
-            offsetPosition(center, -2, -1),
-            offsetPosition(center, 0, -2, -1),
-            offsetPosition(center, 1, 0, -2),
-            offsetPosition(center, 2, 1),
-          ]);
-        });
-        it("rotates right 1 bottom-right 2", () => {
-          const start = offsetPosition(center, 1, 2);
-          expect(getAllRotations(start, center)).toEqual([
-            offsetPosition(center, 0, 1, 2),
-            offsetPosition(center, -2, 0, 1),
-            offsetPosition(center, -1, -2),
-            offsetPosition(center, 0, -1, -2),
-            offsetPosition(center, 2, 0, -1),
-            offsetPosition(center, 1, 2),
-          ]);
-        });
-      });
-    })(name, center);
+      })(name, center, clockwise);
+    }
   }
 });

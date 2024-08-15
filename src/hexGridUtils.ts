@@ -112,7 +112,7 @@ export const isCenter = (position: Position): boolean => {
   return position === Center || makePositionKey(position) === CenterKey;
 }
 
-export const rotatePositionCW = (position: Position, count: number, around: Position = Center): Position => {
+export const rotatePosition = (position: Position, count: number, around: Position = Center): Position => {
   // If we're not rotating around the center, then we should offset, rotate, and de-offset
   if (!isCenter(around)) {
     if (isRowEven(around.y)) {
@@ -121,7 +121,7 @@ export const rotatePositionCW = (position: Position, count: number, around: Posi
         x: position.x - around.x,
         y: position.y - around.y,
       };
-      const offsetedAndRotated = rotatePositionCW(offsetedPosition, count);
+      const offsetedAndRotated = rotatePosition(offsetedPosition, count);
       return {
         x: offsetedAndRotated.x + around.x,
         y: offsetedAndRotated.y + around.y,
@@ -130,7 +130,7 @@ export const rotatePositionCW = (position: Position, count: number, around: Posi
       // When around is on an odd row, we first offset both so that around is on an even row
       const offsetedPosition = offsetPosition(position, 0, 0, 1);
       const offsetedAround = offsetPosition(around, 0, 0, 1);
-      const offsetedAndRotated = rotatePositionCW(offsetedPosition, count, offsetedAround);
+      const offsetedAndRotated = rotatePosition(offsetedPosition, count, offsetedAround);
       // And then move back the result
       return offsetPosition(offsetedAndRotated, 0, 0, -1);
     }
@@ -143,7 +143,7 @@ export const rotatePositionCW = (position: Position, count: number, around: Posi
   }
 
   // Normalise count
-  count = (count - 1) % 6 + 1;
+  count = ((count - 1) % 6 + 6) % 6 + 1;
   // Apply `count` rotations
   let result = position;
   for (const _count of _.range(count)) {

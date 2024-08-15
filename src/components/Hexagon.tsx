@@ -11,6 +11,7 @@ export interface HexagonProps {
   label?: string | undefined | null,
   onMouseEnter?: (React.MouseEventHandler) | undefined | null,
   onMouseLeave?: (React.MouseEventHandler) | undefined | null,
+  onClick?: (React.MouseEventHandler) | undefined | null,
 }
 
 export class Hexagon extends Component<HexagonProps> {
@@ -40,6 +41,7 @@ export class Hexagon extends Component<HexagonProps> {
         style={{transform: `translate(${position.x}px, ${position.y}px) scale(${size})`}}
         onMouseEnter={this.props.onMouseEnter ?? undefined}
         onMouseLeave={this.props.onMouseLeave ?? undefined}
+        onClick={this.props.onClick ?? undefined}
       />
       {label ? (
         <text

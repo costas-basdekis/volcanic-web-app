@@ -46,7 +46,11 @@ export class Level implements LevelAttributes {
     return new Level(newAttributes);
   }
 
-  putPiece(piece: Piece): Level {
+  placePieceAt(piece: Piece, position: Position): Level {
+    return this.placePiece(piece.moveFirstTileTo(position));
+  }
+
+  placePiece(piece: Piece): Level {
     if (!this.canPlacePiece(piece)) {
       throw new Error("Cannot place this piece");
     }

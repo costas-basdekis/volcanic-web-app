@@ -10,6 +10,7 @@ export interface RBaseTileProps {
   position?: Position,
   label?: string | undefined | null,
   onHover?: ((position: Position, hovering: boolean) => void) | null,
+  onClick?: ((position: Position) => void) | null,
 }
 
 export class RBaseTile extends Component<RBaseTileProps> {
@@ -26,6 +27,7 @@ export class RBaseTile extends Component<RBaseTileProps> {
         label={label}
         onMouseEnter={this.props.onHover ? this.onMouseEnter : null}
         onMouseLeave={this.props.onHover ? this.onMouseLeave : null}
+        onClick={this.props.onClick ? this.onClick : null}
       />
     )
   }
@@ -36,5 +38,9 @@ export class RBaseTile extends Component<RBaseTileProps> {
 
   onMouseLeave = () => {
     this.props.onHover?.(this.props.position ?? Center, false);
+  };
+
+  onClick = () => {
+    this.props.onClick?.(this.props.position ?? Center);
   };
 }

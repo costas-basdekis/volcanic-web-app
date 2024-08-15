@@ -1,5 +1,6 @@
 import {Level} from "./Level";
 import {Piece} from "./Piece";
+import {Position} from "../hexGridUtils";
 
 interface BoardAttributes {
   levels: Map<number, Level>;
@@ -29,9 +30,13 @@ export class Board implements BoardAttributes {
     });
   }
 
-  putPiece(piece: Piece): Board {
+  placePieceAt(piece: Piece, position: Position): Board {
+    return this.placePiece(piece.moveFirstTileTo(position));
+  }
+
+  placePiece(piece: Piece): Board {
     const entries = Array.from(this.levels.entries()).map(([index, level]) =>
-      [index, index === 1 ? level.putPiece(piece) : level] as [number, Level]);
+      [index, index === 1 ? level.placePiece(piece) : level] as [number, Level]);
     return this._change({
       levels: new Map(entries),
     });

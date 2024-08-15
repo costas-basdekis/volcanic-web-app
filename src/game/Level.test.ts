@@ -5,7 +5,7 @@ import {Center, offsetPosition} from "../hexGridUtils";
 
 describe("Level", () => {
   const level = Level.makeEmpty(1)
-    .putPiece(Piece.presets.BlackWhite.moveFirstTileTo(Center));
+    .placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center));
   const [tile1, tile2, tile3] = level.tiles;
   describe("getPlaceablePositionsForPiece", () => {
     it("returns center for empty level", () => {

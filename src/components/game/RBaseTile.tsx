@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import {Hexagon} from "../Hexagon";
-import {getTilePosition, Position} from "../../hexGridUtils";
+import {Center, getTilePosition, Position} from "../../hexGridUtils";
 
 export interface RBaseTileProps {
   stroke?: string,
@@ -15,7 +15,7 @@ export class RBaseTile extends Component<RBaseTileProps> {
   render() {
     const {
       stroke = "black", strokeWidth = 1, fill = "white",
-      size = 50, position = {x: 0, y: 0},
+      size = 50, position = Center,
     } = this.props;
     return (
       <Hexagon
@@ -29,10 +29,10 @@ export class RBaseTile extends Component<RBaseTileProps> {
   }
 
   onMouseEnter = () => {
-    this.props.onHover?.(this.props.position ?? {x: 0, y: 0}, true);
+    this.props.onHover?.(this.props.position ?? Center, true);
   };
 
   onMouseLeave = () => {
-    this.props.onHover?.(this.props.position ?? {x: 0, y: 0}, false);
+    this.props.onHover?.(this.props.position ?? Center, false);
   };
 }

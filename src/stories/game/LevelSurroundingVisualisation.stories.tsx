@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Piece, Tile} from "../../game";
 import {AutoResizeSvg, RBaseTile, RLevel} from "../../components";
-import {makePositionKey, Position} from "../../hexGridUtils";
+import {Center, makePositionKey, Position} from "../../hexGridUtils";
 import {Component} from "react";
 import {RPiece} from "../../components/game/RPiece";
 
@@ -92,7 +92,7 @@ export const SingleTile: Story = {
   args: {
     level: Level.makeEmpty(1).putPiece(new Piece({
       tiles: [
-        new Tile({position: {x: 0, y: 0}, type: "volcano"})
+        new Tile({position: Center, type: "volcano"})
       ],
     })),
     depth: 2,
@@ -101,7 +101,7 @@ export const SingleTile: Story = {
 
 export const ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0})),
+    level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo(Center)),
     depth: 2,
   },
 };

@@ -1,5 +1,5 @@
 import {Tile} from "./Tile";
-import {getSurroundingPositionsMulti, makePositionKey, Position} from "../hexGridUtils";
+import {Center, getSurroundingPositionsMulti, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
 
 interface LevelAttributes {
@@ -61,7 +61,7 @@ export class Level implements LevelAttributes {
 
   getPlaceablePositionsForPiece(piece: Piece): Position[] {
     if (!this.tiles.length) {
-      return [{x: 0, y: 0}];
+      return [Center];
     }
     return this.getSurroundingPositions(2)
       .filter(position => this.canPlacePieceAt(piece, position));
@@ -73,7 +73,7 @@ export class Level implements LevelAttributes {
 
   canPlacePiece(piece: Piece): boolean {
     if (!this.tiles.length) {
-      return makePositionKey(piece.tiles[0].position) === makePositionKey({x: 0, y: 0});
+      return makePositionKey(piece.tiles[0].position) === makePositionKey(Center);
     }
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
   }

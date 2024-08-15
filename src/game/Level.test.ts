@@ -1,15 +1,15 @@
 import {Level} from "./Level";
 import {Piece} from "./Piece";
 import {sortPositions} from "../testing/utils";
-import {getRightPosition, getTopLeftPosition, getTopRightPosition} from "../hexGridUtils";
+import {Center, getRightPosition, getTopLeftPosition, getTopRightPosition} from "../hexGridUtils";
 
 describe("Level", () => {
   const level = Level.makeEmpty(1)
-    .putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0}));
+    .putPiece(Piece.presets.BlackWhite.moveFirstTileTo(Center));
   const [tile1, tile2, tile3] = level.tiles;
   describe("getPlaceablePositionsForPiece", () => {
     it("returns center for empty level", () => {
-      expect(Level.makeEmpty(1).getPlaceablePositionsForPiece(Piece.presets.BlackWhite)).toEqual([{x: 0, y: 0}]);
+      expect(Level.makeEmpty(1).getPlaceablePositionsForPiece(Piece.presets.BlackWhite)).toEqual([Center]);
     });
     it("returns 12 positions around first piece", () => {
       expect(sortPositions(level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite))).toEqual(sortPositions([
@@ -30,7 +30,7 @@ describe("Level", () => {
   });
   describe("canPlacePieceAt", () => {
     it("cannot place piece at same position", () => {
-      expect(level.canPlacePieceAt(Piece.presets.BlackWhite, {x: 0, y: 0})).toBe(false);
+      expect(level.canPlacePieceAt(Piece.presets.BlackWhite, Center)).toBe(false);
     });
     it("cannot place piece 1 position left", () => {
       expect(level.canPlacePieceAt(Piece.presets.BlackWhite, {x: -1, y: 0})).toBe(false);
@@ -41,7 +41,7 @@ describe("Level", () => {
   });
   describe("doesPieceOverlap", () => {
     it("overlaps with piece at same position", () => {
-      expect(level.doesPieceOverlap(Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0}))).toBe(true);
+      expect(level.doesPieceOverlap(Piece.presets.BlackWhite.moveFirstTileTo(Center))).toBe(true);
     });
     it("overlaps with piece 1 position left", () => {
       expect(level.doesPieceOverlap(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}))).toBe(true);

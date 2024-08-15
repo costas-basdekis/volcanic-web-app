@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Position} from "../../hexGridUtils";
+import {Center, Position} from "../../hexGridUtils";
 import {Piece} from "../../game/Piece";
 import {RPiece} from "../../components/game/RPiece";
 import {AutoResizeSvg} from "../../components";
@@ -34,7 +34,7 @@ type Story = StoryObj<typeof meta>;
 
 export const OffsetMove: Story = {
   args: {
-    piece: Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0}),
-    offset: {x: 0, y: 0},
+    piece: Piece.presets.BlackWhite.moveFirstTileTo(Center),
+    offset: Center,
   },
 };

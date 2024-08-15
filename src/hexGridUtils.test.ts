@@ -1,16 +1,21 @@
 import {
+  Center,
   getBottomLeftPosition,
   getBottomRightPosition,
   getLeftPosition,
   getRightPosition,
-  getSurroundingPositions, getSurroundingPositionsMulti,
-  getTilePosition, getTopLeftPosition, getTopRightPosition, Position
+  getSurroundingPositions,
+  getSurroundingPositionsMulti,
+  getTilePosition,
+  getTopLeftPosition,
+  getTopRightPosition,
+  Position
 } from "./hexGridUtils";
 import {sortPositions} from "./testing/utils";
 
 describe("getTilePosition", () => {
   it("gets tile position for {0, 0}", () => {
-    expect(getTilePosition({x: 0, y: 0}, 100)).toEqualCloseTo({x: 0, y: 0})
+    expect(getTilePosition(Center, 100)).toEqualCloseTo(Center)
   });
   it("gets tile position for {1, 0}", () => {
     expect(getTilePosition({x: 1, y: 0}, 100)).toEqualCloseTo({x: 173.20508075688772, y: 0})
@@ -98,11 +103,10 @@ describe("getSurroundingPositionsMulti", () => {
       checkPositions([], []);
     });
     it("Returns 6 surrounding tiles for 1 tile", () => {
-      const centerTile = {x: 0, y: 0};
-      checkPositions([centerTile], getSurroundingPositions(centerTile));
+      checkPositions([Center], getSurroundingPositions(Center));
     });
     it("Returns 9 surrounding tiles for 3 tiles", () => {
-      const centerTile = {x: 0, y: 0};
+      const centerTile = Center;
       const bottomLeftTile = {x: -1, y: 1};
       const bottomRightTile = {x: 0, y: 1};
       checkPositions([centerTile, bottomLeftTile, bottomRightTile], [
@@ -124,7 +128,7 @@ describe("getSurroundingPositionsMulti", () => {
       checkPositions([], []);
     });
     it("Returns 18 surrounding tiles for 1 tile", () => {
-      const centerTile = {x: 0, y: 0};
+      const centerTile = Center;
       checkPositions([centerTile], [
         ...getSurroundingPositions(centerTile),
         getTopRightPosition(getRightPosition(centerTile)),
@@ -142,7 +146,7 @@ describe("getSurroundingPositionsMulti", () => {
       ]);
     });
     it("Returns 24 surrounding tiles for 3 tiles", () => {
-      const centerTile = {x: 0, y: 0};
+      const centerTile = Center;
       const bottomLeftTile = {x: -1, y: 1};
       const bottomRightTile = {x: 0, y: 1};
       checkPositions([centerTile, bottomLeftTile, bottomRightTile], [

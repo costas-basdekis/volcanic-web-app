@@ -78,3 +78,5 @@ export const getSurroundingPositionsMulti = (startingPositions: Position[], dept
   }
   return surroundingPositions;
 };
+
+export const Center: Position = {x: 0, y: 0};

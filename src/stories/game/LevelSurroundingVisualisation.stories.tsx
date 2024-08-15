@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Piece, Tile} from "../../game";
-import {RBaseTile, RLevel} from "../../components";
+import {AutoResizeSvg, RBaseTile, RLevel} from "../../components";
 import {makePositionKey, Position} from "../../hexGridUtils";
 import {Component} from "react";
 import {RPiece} from "../../components/game/RPiece";
@@ -71,9 +71,9 @@ const meta: Meta<LevelSurroundingVisualisationProps> = {
   },
   decorators: [
     Story => (
-      <svg width={"100%"} height={1000}>
+      <AutoResizeSvg>
         <Story />
-      </svg>
+      </AutoResizeSvg>
     ),
   ],
 };

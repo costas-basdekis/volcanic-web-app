@@ -1,5 +1,5 @@
 import React, {Component} from "react";
-import {Hexagon} from "../../Hexagon";
+import {Hexagon} from "../Hexagon";
 import {getTilePosition, Position} from "../../hexGridUtils";
 
 export interface RBaseTileProps {

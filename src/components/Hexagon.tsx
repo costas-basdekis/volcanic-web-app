@@ -1,6 +1,6 @@
 import React, {Component} from "react";
 import _ from "underscore";
-import {Position} from "./hexGridUtils";
+import {Position} from "../hexGridUtils";
 
 export interface HexagonProps {
   stroke?: string,

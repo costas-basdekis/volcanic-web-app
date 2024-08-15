@@ -113,14 +113,56 @@ export const isCenter = (position: Position): boolean => {
 }
 
 export const rotatePosition = (position: Position, count: number, around: Position = Center): Position => {
-  // If we're not rotating around the center, then we should offset, rotate, and de-offset
-  if (!isCenter(around)) {
-    let offsetedPosition = position, offsetedAround = around;
+  /*
+    The approach has 4 steps:
+    * Normalise count and check if we have actually something to do
+    * Offset position so around is Center
+      * We will have to do extra work if around is on an odd row
+    * Rotate position
+      * Decompose position into right and bottom-right coordinates
+      * Apply the coordinates to the new directions, based on rotation count
+    * Un-apply the original offset
 
+    Decomposing the position:
+    We can express any offsetedPosition as going right (or left) and then bottom right (or top left)
+    To rotate we go in a different set of directions for each rotation count.
+    Bellow C is Center, P is the original position, and 1-5 are the resulting rotations
+       4
+      /
+    3 \ /-5
+     \-C-\
+    2-/ \ P
+        /
+       1
+  */
+
+  // Normalise count
+  count = (count % 6 + 6) % 6;
+  // Nothing to do with no count
+  if (count === 0) {
+    return position;
+  }
+  // Nothing to do with position on around
+  if (makePositionKey(position) === makePositionKey(around)) {
+    return position;
+  }
+
+  // Offset the position so `around` === `Center`
+  let offsetedPosition = position, offsetedAround = around;
+  if (!isCenter(around)) {
     // When around is on an odd row, we first offset both so that around is on an even row
     if (isRowOdd(around.y)) {
-      offsetedPosition = offsetPosition(offsetedPosition, 0, 0, 1);
-      offsetedAround = offsetPosition(offsetedAround, 0, 0, 1);
+      // These are equivalent to:
+      // offsetedPosition = offsetPosition(offsetedPosition, 0, 0, 1);
+      // offsetedAround = offsetPosition(offsetedAround, 0, 0, 1);
+      offsetedPosition = {
+        x: offsetedPosition.x - (isRowEven(offsetedPosition.y) ? 1 : 0),
+        y: offsetedPosition.y + 1,
+      };
+      offsetedAround = {
+        x: offsetedAround.x - (isRowEven(offsetedAround.y) ? 1 : 0),
+        y: offsetedAround.y + 1,
+      };
     }
 
     // When around is on an even row, we simply subtract around
@@ -128,69 +170,61 @@ export const rotatePosition = (position: Position, count: number, around: Positi
       x: offsetedPosition.x - offsetedAround.x,
       y: offsetedPosition.y - offsetedAround.y,
     };
-
-    const offsetedAndRotated = rotatePosition(offsetedPosition, count);
-
-    // Then add back around
-    let rotated = {
-      x: offsetedAndRotated.x + offsetedAround.x,
-      y: offsetedAndRotated.y + offsetedAround.y,
-    };
-
-    // And then move back the result if around was on an odd row
-    if (isRowOdd(around.y)) {
-      rotated = offsetPosition(rotated, 0, 0, -1);
-    }
-
-    return rotated;
   }
 
   // At this point `around` === `Center`
-  // Nothing to do if the position is the center
-  if (isCenter(position)) {
-    return position;
-  }
-
-  // Normalise count
-  count = (count % 6 + 6) % 6;
+  let offsetedAndRotated = offsetedPosition;
   // If we're on different rows, find how far off from the bottom right we are
-  const xOffset = position.y === 0 ? 0 : offsetPosition(Center, 0, position.y).x;
-  // We can express any position as going right (or left) and then bottom right (or top left)
-  // To rotate we go in a different set of directions for each rotation count
-  /*
-       4
-      /
-    3 \ /-5
-     \-C-\
-    2-/ \ 0
-        /
-       1
-   */
-  const originalRight = position.x - xOffset;
-  const originalBottomRight = position.y;
+  const xOffset = offsetedPosition.y === 0 ? 0 : offsetPosition(Center, 0, offsetedPosition.y).x;
+  // Decompose position
+  const originalRight = offsetedPosition.x - xOffset;
+  const originalBottomRight = offsetedPosition.y;
   // And then we can use the same values to go in the new directions
   switch (count) {
-    case 0:
-      // Same as original
-      // return offsetPosition(Center, originalRight, originalBottomRight);
-      return position;
     case 1:
       // Bottom right and then bottom left
-      return offsetPosition(Center, 0, originalRight, originalBottomRight);
+      offsetedAndRotated = offsetPosition(Center, 0, originalRight, originalBottomRight);
+      break;
     case 2:
       // Bottom left and then left
-      return offsetPosition(Center, -originalBottomRight, 0, originalRight);
+      offsetedAndRotated = offsetPosition(Center, -originalBottomRight, 0, originalRight);
+      break;
     case 3:
       // Left and then top left
-      return offsetPosition(Center, -originalRight, -originalBottomRight);
+      offsetedAndRotated = offsetPosition(Center, -originalRight, -originalBottomRight);
+      break;
     case 4:
       // Top left and then top right
-      return offsetPosition(Center, 0, -originalRight, -originalBottomRight);
+      offsetedAndRotated = offsetPosition(Center, 0, -originalRight, -originalBottomRight);
+      break;
     case 5:
       // Top right and then right
-      return offsetPosition(Center, originalBottomRight, 0, -originalRight);
+      offsetedAndRotated = offsetPosition(Center, originalBottomRight, 0, -originalRight);
+      break;
     default:
       // This should never really happen
       throw new Error(`Unexpected count '${count}'`);
   }
+
+  let rotated = offsetedAndRotated;
+  // If we applied any offset, un-apply it
+  if (!isCenter(around)) {
+    // Then add back around
+    rotated = {
+      x: rotated.x + offsetedAround.x,
+      y: rotated.y + offsetedAround.y,
+    };
+
+    // And then move the result back if around was on an odd row
+    if (isRowOdd(around.y)) {
+      // This is equivalent to:
+      // rotated = offsetPosition(rotated, 0, 0, -1);
+      rotated = {
+        x: rotated.x + (isRowOdd(rotated.y) ? 1 : 0),
+        y: rotated.y - 1,
+      };
+    }
+  }
+
+  return rotated;
 }

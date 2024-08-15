@@ -33,7 +33,7 @@ type Story = StoryObj<typeof meta>;
 
 export const OffsetMove: Story = {
   args: {
-    piece: Piece.presets.BlackWhite.moveFirstTileTo({x: 3, y: 3}),
+    piece: Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0}),
     offset: {x: 0, y: 0},
   },
 };

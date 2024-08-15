@@ -60,6 +60,9 @@ export class Level implements LevelAttributes {
   }
 
   getPlaceablePositionsForPiece(piece: Piece): Position[] {
+    if (!this.tiles.length) {
+      return [{x: 0, y: 0}];
+    }
     return this.getSurroundingPositions(2)
       .filter(position => this.canPlacePieceAt(piece, position));
   }
@@ -70,7 +73,7 @@ export class Level implements LevelAttributes {
 
   canPlacePiece(piece: Piece): boolean {
     if (!this.tiles.length) {
-      return true;
+      return makePositionKey(piece.tiles[0].position) === makePositionKey({x: 0, y: 0});
     }
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
   }

@@ -23,7 +23,10 @@ class LevelSurroundingVisualisation extends Component<LevelSurroundingVisualisat
   render() {
     const {level, depth} = this.props;
     const {hoveredPosition} = this.state;
-    const surroundingPositions = level.getSurroundingPositions(depth);
+    let surroundingPositions = level.getSurroundingPositions(depth);
+    if  (!surroundingPositions.length) {
+      surroundingPositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
+    }
     return <>
       <RLevel level={level}/>
       {surroundingPositions.map(position => (
@@ -89,7 +92,7 @@ export const SingleTile: Story = {
   args: {
     level: Level.makeEmpty(1).putPiece(new Piece({
       tiles: [
-        new Tile({position: {x: 3, y: 3}, type: "volcano"})
+        new Tile({position: {x: 0, y: 0}, type: "volcano"})
       ],
     })),
     depth: 1,
@@ -98,7 +101,7 @@ export const SingleTile: Story = {
 
 export const ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 4, y: 3})),
+    level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0})),
     depth: 1,
   },
 };

@@ -37,28 +37,28 @@ export class Tile implements TileAttributes {
     return getSurroundingPositions(this.position);
   }
 
-  getRightPosition(): Position {
-    return getRightPosition(this.position);
+  getRightPosition(count: number = 1): Position {
+    return getRightPosition(this.position, count);
   }
 
-  getBottomRightPosition(): Position {
-    return getBottomRightPosition(this.position);
+  getBottomRightPosition(count: number = 1): Position {
+    return getBottomRightPosition(this.position, count);
   }
 
-  getBottomLeftPosition(): Position {
-    return getBottomLeftPosition(this.position);
+  getBottomLeftPosition(count: number = 1): Position {
+    return getBottomLeftPosition(this.position, count);
   }
 
-  getLeftPosition(): Position {
-    return getLeftPosition(this.position);
+  getLeftPosition(count: number = 1): Position {
+    return getLeftPosition(this.position, count);
   }
 
-  getTopLeftPosition(): Position {
-    return getTopLeftPosition(this.position);
+  getTopLeftPosition(count: number = 1): Position {
+    return getTopLeftPosition(this.position, count);
   }
 
-  getTopRightPosition(): Position {
-    return getTopRightPosition(this.position);
+  getTopRightPosition(count: number = 1): Position {
+    return getTopRightPosition(this.position, count);
   }
 
   offset(offset: Position): Tile {

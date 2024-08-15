@@ -1,3 +1,4 @@
+import _ from "underscore";
 import {
   Center,
   getBottomLeftPosition,
@@ -28,6 +29,101 @@ describe("getTilePosition", () => {
   });
   it("gets tile position for {0, 2}", () => {
     expect(getTilePosition({x: 0, y: 2}, 100)).toEqualCloseTo({x: 0, y: 300})
+  });
+});
+
+describe("get neighbour positions", () => {
+  const leftRightCases: [string, number][] = [
+    ["0 even", 0],
+    ["positive even", 2],
+    ["negative even", -2],
+    ["positive odd", 1],
+    ["negative odd", -1],
+  ];
+  describe("getRightPosition", () => {
+    for (const [name, y] of leftRightCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, y, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getRightPosition({x: 0, y}, count)).toEqual({x: count, y});
+          });
+        })(name, y, count);
+      }
+    }
+  });
+
+  describe("getLeftPosition", () => {
+    for (const [name, y] of leftRightCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, y, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getLeftPosition({x: 0, y}, count)).toEqual({x: -count, y});
+          });
+        })(name, y, count);
+      }
+    }
+  });
+
+  const topBottomRightCases: [string, number, number[]][] = [
+    ["0 even", 0, [0, 1, 1, 2, 2]],
+    ["positive even", 2, [0, 1, 1, 2, 2]],
+    ["negative even", -2, [0, 1, 1, 2, 2]],
+    ["positive odd", 1, [1, 1, 2, 2, 3]],
+    ["negative odd", -1, [1, 1, 2, 2, 3]],
+  ];
+  describe("getTopRightPosition", () => {
+    for (const [name, yOffset, xValues] of topBottomRightCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, yOffset, xValues, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getTopRightPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset - count});
+          });
+        })(name, yOffset, xValues, count);
+      }
+    }
+  });
+
+  describe("getBottomRightPosition", () => {
+    for (const [name, yOffset, xValues] of topBottomRightCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, yOffset, xValues, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getBottomRightPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
+          });
+        })(name, yOffset, xValues, count);
+      }
+    }
+  });
+
+  const topBottomLeftCases: [string, number, number[]][] = [
+    ["0 even", 0, [-1, -1, -2, -2, -3]],
+    ["positive even", 2, [-1, -1, -2, -2, -3]],
+    ["negative even", -2, [-1, -1, -2, -2, -3]],
+    ["positive odd", 1, [0, -1, -1, -2, -2]],
+    ["negative odd", -1, [0, -1, -1, -2, -2]],
+  ];
+  describe("getTopLeftPosition", () => {
+    for (const [name, yOffset, xValues] of topBottomLeftCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, yOffset, xValues, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getTopLeftPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset - count});
+          });
+        })(name, yOffset, xValues, count);
+      }
+    }
+  });
+
+  describe("getBottomLeftPosition", () => {
+    for (const [name, yOffset, xValues] of topBottomLeftCases) {
+      for (const count of _.range(1, 6)) {
+        ((name, yOffset, xValues, count) => {
+          it(`gets the correct one for ${name} row with count: ${count}`, () => {
+            expect(getBottomLeftPosition({x: 0, y: yOffset}, count)).toEqual({x: xValues[count - 1], y: yOffset + count});
+          });
+        })(name, yOffset, xValues, count);
+      }
+    }
   });
 });
 

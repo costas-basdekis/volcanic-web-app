@@ -9,8 +9,16 @@ export const makePositionKey = ({x, y}: Position): string => {
   return `${x},${y}`;
 };
 
+export const isRowEven = (y: number): boolean => {
+  return ((y % 2) + 2) % 2 === 0;
+}
+
+export const isRowOdd = (y: number): boolean => {
+  return ((y % 2) + 2) % 2 === 1;
+}
+
 export const getTilePosition = (position: Position, size: number): Position => {
-  const evenRow = position.y % 2 === 0;
+  const evenRow = isRowEven(position.y);
   const offsetX = position.x + (evenRow ? 0 : 0.5);
   const offsetY = position.y;
   return {
@@ -19,32 +27,44 @@ export const getTilePosition = (position: Position, size: number): Position => {
   };
 };
 
-export const getRightPosition = ({x, y}: Position): Position => {
-  return {x: x + 1, y};
+export const getRightPosition = ({x, y}: Position, count: number = 1): Position => {
+  return {x: x + count, y};
 };
 
-export const getLeftPosition = ({x, y}: Position): Position => {
-  return {x: x - 1, y};
+export const getLeftPosition = ({x, y}: Position, count: number = 1): Position => {
+  return {x: x - count, y};
 };
 
-export const getTopRightPosition = ({x, y}: Position): Position => {
-  const evenRow = y % 2 === 0;
-  return {x: x + (evenRow ? 0 : 1), y: y - 1};
+export const getTopRightPosition = ({x, y}: Position, count: number = 1): Position => {
+  const oddCount = count % 2 === 1;
+  const oddFirstRow = isRowOdd(y);
+  return {
+    x: x + Math.floor(count / 2) + (oddCount && oddFirstRow ? 1 : 0),
+    y: y - count,
+  };
 };
 
-export const getTopLeftPosition = ({x, y}: Position): Position => {
-  const evenRow = y % 2 === 0;
-  return {x: x - (evenRow ? 1 : 0), y: y - 1};
+export const getTopLeftPosition = ({x, y}: Position, count = 1): Position => {
+  const oddCount = count % 2 === 1;
+  const evenFirstRow = isRowEven(y);
+  return {
+    x: x - Math.floor(count / 2) - (oddCount && evenFirstRow ? 1 : 0),
+    y: y - count,
+  };
 };
 
-export const getBottomRightPosition = ({x, y}: Position): Position => {
-  const evenRow = y % 2 === 0;
-  return {x: x + (evenRow ? 0 : 1), y: y + 1};
+export const getBottomRightPosition = (position: Position, count: number = 1): Position => {
+  return {
+    x: getTopRightPosition(position, count).x,
+    y: position.y + count,
+  };
 };
 
-export const getBottomLeftPosition = ({x, y}: Position): Position => {
-  const evenRow = y % 2 === 0;
-  return {x: x - (evenRow ? 1 : 0), y: y + 1};
+export const getBottomLeftPosition = (position: Position, count: number = 1): Position => {
+  return {
+    x: getTopLeftPosition(position, count).x,
+    y: position.y + count,
+  };
 };
 
 export const getSurroundingPositions = (position: Position): Position[] => {

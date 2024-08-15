@@ -95,13 +95,13 @@ export const SingleTile: Story = {
         new Tile({position: {x: 0, y: 0}, type: "volcano"})
       ],
     })),
-    depth: 1,
+    depth: 2,
   },
 };
 
 export const ThreeTiles: Story = {
   args: {
     level: Level.makeEmpty(1).putPiece(Piece.presets.BlackWhite.moveFirstTileTo({x: 0, y: 0})),
-    depth: 1,
+    depth: 2,
   },
 };

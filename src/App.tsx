@@ -1,9 +1,9 @@
-import {useCallback, useEffect, useState} from 'react';
+import {useCallback, useState} from 'react';
 import './App.css';
 import {Board, Piece} from "./game";
 import {AutoResizeSvg, RBoard, RPiece, RPreviewPlacePiece} from "./components";
 import {Position} from "./hexGridUtils";
-import {useShortcut} from "react-keybind";
+import {useAutoShortcut} from "./hooks";
 
 export default function App() {
   const [board, setBoard] = useState(() => Board.makeEmpty().placePiece(Piece.presets.WhiteBlack));
@@ -49,19 +49,8 @@ function NextPieceDisplay(props: NextPieceDisplayProps) {
     onChangePiece(piece.rotate(-1));
   }, [onChangePiece, piece]);
 
-  const {registerShortcut, unregisterShortcut} = useShortcut()!;
-  useEffect(() => {
-    registerShortcut(onCwClick, ['r'], 'Rotate next piece CW', 'Rotate the next piece clockwise');
-    return () => {
-      unregisterShortcut(['r']);
-    };
-  }, [registerShortcut, unregisterShortcut, onCwClick]);
-  useEffect(() => {
-    registerShortcut(onCcwClick, ['t'], 'Rotate next piece CCW', 'Rotate the next piece counter-clockwise');
-    return () => {
-      unregisterShortcut(['t']);
-    };
-  }, [registerShortcut, unregisterShortcut, onCcwClick]);
+  useAutoShortcut(onCwClick, ['r'], 'Rotate next piece CW', 'Rotate the next piece clockwise');
+  useAutoShortcut(onCcwClick, ['t'], 'Rotate next piece CCW', 'Rotate the next piece counter-clockwise');
 
   const middlePoint = piece.getMiddlePosition(25);
   return (

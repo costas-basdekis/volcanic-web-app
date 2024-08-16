@@ -1,4 +1,4 @@
-import React, {Component} from "react";
+import React, {useCallback} from "react";
 import {Hexagon} from "../Hexagon";
 import {Center, getTilePosition, Position} from "../../hexGridUtils";
 
@@ -13,34 +13,32 @@ export interface RBaseTileProps {
   onClick?: ((position: Position) => void) | null,
 }
 
-export class RBaseTile extends Component<RBaseTileProps> {
-  render() {
-    const {
-      stroke = "black", strokeWidth = 1, fill = "white",
-      size = 50, position = Center, label,
-    } = this.props;
-    return (
-      <Hexagon
-        stroke={stroke} strokeWidth={strokeWidth} fill={fill}
-        size={size}
-        position={getTilePosition(position, size)}
-        label={label}
-        onMouseEnter={this.props.onHover ? this.onMouseEnter : null}
-        onMouseLeave={this.props.onHover ? this.onMouseLeave : null}
-        onClick={this.props.onClick ? this.onClick : null}
-      />
-    )
-  }
+export function RBaseTile(props: RBaseTileProps) {
+  const {
+    onHover: outerOnHover, onClick: outerOnClick,
+    stroke = "black", strokeWidth = 1, fill = "white",
+    size = 50, position = Center, label,
+  } = props;
 
-  onMouseEnter = () => {
-    this.props.onHover?.(this.props.position ?? Center, true);
-  };
+  const onMouseEnter = useCallback(() => {
+    outerOnHover?.(position, true);
+  }, [outerOnHover, position]);
+  const onMouseLeave = useCallback(() => {
+    outerOnHover?.(position, false);
+  }, [outerOnHover, position]);
+  const onClick = useCallback(() => {
+    outerOnClick?.(position);
+  }, [outerOnClick, position]);
 
-  onMouseLeave = () => {
-    this.props.onHover?.(this.props.position ?? Center, false);
-  };
-
-  onClick = () => {
-    this.props.onClick?.(this.props.position ?? Center);
-  };
+  return (
+    <Hexagon
+      stroke={stroke} strokeWidth={strokeWidth} fill={fill}
+      size={size}
+      position={getTilePosition(position, size)}
+      label={label}
+      onMouseEnter={outerOnHover ? onMouseEnter : null}
+      onMouseLeave={outerOnHover ? onMouseLeave : null}
+      onClick={outerOnClick ? onClick : null}
+    />
+  );
 }

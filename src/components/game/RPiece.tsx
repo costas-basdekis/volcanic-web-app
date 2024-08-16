@@ -1,4 +1,3 @@
-import {Component} from "react";
 import {Piece} from "../../game";
 import {RTile} from "./RTile";
 
@@ -7,11 +6,11 @@ export interface RPieceProps {
   size?: number,
 }
 
-export class RPiece extends Component<RPieceProps> {
-  render() {
-    const {piece, size} = this.props;
-    return piece.tiles.map(tile => (
+export function RPiece(props: RPieceProps) {
+  const {piece, size} = props;
+  return <>
+    {piece.tiles.map(tile => (
       <RTile key={tile.key} tile={tile} size={size} />
-    ));
-  }
+    ))}
+  </>;
 }

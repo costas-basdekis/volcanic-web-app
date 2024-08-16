@@ -1,18 +1,14 @@
-import React, {Component, createRef} from "react";
+import React, {useCallback, useRef, useState} from "react";
 import ResizeObserver, {SizeInfo} from "rc-resize-observer";
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from "react-svg-pan-zoom";
 import "./AutoResizeSvg.css";
 
-class AutoResizeSvgContent extends Component<{ children: React.ReactNode }> {
-  render() {
-    return this.props.children;
-  }
+function AutoResizeSvgContent(props: {children: React.ReactNode}) {
+  return <>{props.children}</>;
 }
 
-class AutoResizeSvgTools extends Component<{ children: React.ReactNode }> {
-  render() {
-    return this.props.children;
-  }
+function AutoResizeSvgTools(props: {children: React.ReactNode}) {
+  return <>{props.children}</>;
 }
 
 export interface AutoResizeSvgProps {
@@ -20,71 +16,60 @@ export interface AutoResizeSvgProps {
   onClick?: (<T,>(event: ViewerMouseEvent<T>) => void) | null | undefined,
 }
 
-interface AutoResizeSvgState {
-  tool: Tool,
-  value: Partial<Value>,
-  width:  number,
-  height: number,
-  firstResize: boolean,
-}
+export function AutoResizeSvg(props: AutoResizeSvgProps) {
+  const [tool] = useState<Tool>(TOOL_AUTO);
+  const [value, setValue] = useState<Partial<Value>>({});
+  const [{width, height}, setSize] = useState<{width: number, height: number}>({width: 500, height: 500});
+  const [firstResize, setFirstResize] = useState<boolean>(true);
+  const svgPanZoomRef = useRef<ReactSVGPanZoom>(null);
 
-export class AutoResizeSvg extends Component<AutoResizeSvgProps, AutoResizeSvgState> {
-  static Content = AutoResizeSvgContent;
-  static Tools = AutoResizeSvgTools;
-
-  state: AutoResizeSvgState = {
-    tool: TOOL_AUTO,
-    value: {},
-    width: 500,
-    height: 500,
-    firstResize: true,
-  };
-  svgPanZoomRef = createRef<ReactSVGPanZoom>();
-
-  render() {
-    const {tool, value, width, height} = this.state;
-    const children = React.Children.toArray(this.props.children);
-    const isTool = (child: React.ReactNode) => (
-      React.isValidElement(child)
-      && child.type === AutoResizeSvgTools
-    );
-    const content = children.filter(child => !isTool(child));
-    const tools = children.filter(isTool);
-    return (
-      <ResizeObserver onResize={this.onResize}>
-        <div className={"svg-container"}>
-          <ReactSVGPanZoom
-            ref={this.svgPanZoomRef}
-            width={width} height={height}
-            tool={tool} onChangeTool={this.onChangeTool}
-            value={value as Value} onChangeValue={this.onChangeValue}
-            detectAutoPan={false}
-            SVGBackground={"transparent"}
-            onClick={this.props.onClick ?? undefined}
-          >
-            <svg width={width} height={height}>
-              {content}
-            </svg>
-          </ReactSVGPanZoom>
-          {tools}
-        </div>
-      </ResizeObserver>
-    );
-  }
-
-  onResize = ({width, height}: SizeInfo) => {
-    this.setState(({width, height}));
-    if (this.state.firstResize && this.svgPanZoomRef.current) {
-      this.setState({firstResize: false});
-      this.svgPanZoomRef.current.pan(width / 2, height / 2);
+  const onResize = useCallback(({width, height}: SizeInfo) => {
+    setSize({width, height});
+    if (firstResize && svgPanZoomRef.current) {
+      setFirstResize(false);
+      svgPanZoomRef.current.pan(width / 2, height / 2);
     }
-  };
-
-  onChangeTool = () => {
+  }, [firstResize]);
+  const onChangeTool = useCallback(() => {
     // pass
-  };
-
-  onChangeValue = (value: Value) => {
-    this.setState({value});
-  };
+  }, []);
+  const onChangeValue = useCallback((value: Value) => {
+    setValue(value);
+  }, []);
+  const children = React.Children.toArray(props.children);
+  const isTool = (child: React.ReactNode) => (
+    React.isValidElement(child)
+    && (
+      child.type === AutoResizeSvgTools
+      // For hot reload
+      || (
+        typeof child.type === "function"
+        && child.type.name === AutoResizeSvgTools.name
+      )
+    )
+  );
+  const content = children.filter(child => !isTool(child));
+  const tools = children.filter(isTool);
+  return (
+    <ResizeObserver onResize={onResize}>
+      <div className={"svg-container"}>
+        <ReactSVGPanZoom
+          ref={svgPanZoomRef}
+          width={width} height={height}
+          tool={tool} onChangeTool={onChangeTool}
+          value={value as Value} onChangeValue={onChangeValue}
+          detectAutoPan={false}
+          SVGBackground={"transparent"}
+          onClick={props.onClick ?? undefined}
+        >
+          <svg width={width} height={height}>
+            {content}
+          </svg>
+        </ReactSVGPanZoom>
+        {tools}
+      </div>
+    </ResizeObserver>
+  );
 }
+AutoResizeSvg.Content = AutoResizeSvgContent;
+AutoResizeSvg.Tools = AutoResizeSvgTools;

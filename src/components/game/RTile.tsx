@@ -1,4 +1,3 @@
-import {Component} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {Tile} from "../../game";
 
@@ -7,17 +6,14 @@ interface RTileProps {
   size?: number,
 }
 
-export class RTile extends Component<RTileProps> {
-  static fillMap: {[key in Tile["type"]]: string} = {
-    volcano: "red",
-    white: "white",
-    black: "black",
-  };
-
-  render() {
-    const {tile, size} = this.props;
-    return (
-      <RBaseTile fill={RTile.fillMap[tile.type]} position={tile.position} size={size} />
-    );
-  }
+export function RTile(props: RTileProps) {
+  const {tile, size} = props;
+  return (
+    <RBaseTile fill={RTile.fillMap[tile.type]} position={tile.position} size={size} />
+  );
 }
+RTile.fillMap = {
+  volcano: "red",
+  white: "white",
+  black: "black",
+};

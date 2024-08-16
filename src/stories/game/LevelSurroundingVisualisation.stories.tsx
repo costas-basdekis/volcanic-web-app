@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import {Level, Piece, Tile} from "../../game";
 import {RBaseTile, RLevel} from "../../components";
 import {Center, makePositionKey, Position} from "../../hexGridUtils";
-import {Component} from "react";
+import {useCallback, useState} from "react";
 import {RPiece} from "../../components/game/RPiece";
 import {svgWrapper} from "../decorators";
 
@@ -12,53 +12,44 @@ interface LevelSurroundingVisualisationProps {
   depth: number,
 }
 
-interface LevelSurroundingVisualisationState {
-  hoveredPosition: Position | null,
-}
+function LevelSurroundingVisualisation(props: LevelSurroundingVisualisationProps) {
+  const {level, depth} = props;
+  const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
 
-class LevelSurroundingVisualisation extends Component<LevelSurroundingVisualisationProps, LevelSurroundingVisualisationState> {
-  state: LevelSurroundingVisualisationState = {
-    hoveredPosition: null,
-  };
-
-  render() {
-    const {level, depth} = this.props;
-    const {hoveredPosition} = this.state;
-    let surroundingPositions = level.getSurroundingPositions(depth);
-    if  (!surroundingPositions.length) {
-      surroundingPositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
-    }
-    return <>
-      <RLevel level={level}/>
-      {surroundingPositions.map(position => (
-        <RBaseTile
-          key={makePositionKey(position)}
-          fill={level.canPlacePieceAt(Piece.presets.BlackWhite, position) ? "green" : "grey"}
-          position={position}
-          onHover={this.onHover}
-        />
-      ))}
-      {hoveredPosition ? (
-        <RPiece piece={Piece.presets.BlackWhite.moveFirstTileTo(hoveredPosition)} />
-      ) : null}
-    </>;
-  }
-
-  onHover = (position: Position, hovering: boolean) => {
-    this.setState(({hoveredPosition}) => {
+  const onHover = useCallback((position: Position, hovering: boolean) => {
+    setHoveredPosition(hoveredPosition => {
       if (hovering && hoveredPosition === position) {
-        return null;
+        return hoveredPosition;
       }
-      return {
-        hoveredPosition: hovering ? (
+      return (
+        hovering ? (
           position
         ) : (
           hoveredPosition === position
             ? null : hoveredPosition
-        ),
-      };
+        )
+      );
     });
-  };
+  }, []);
+
+  let surroundingPositions = level.getSurroundingPositions(depth);
+  if  (!surroundingPositions.length) {
+    surroundingPositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
+  }
+  return <>
+    <RLevel level={level}/>
+    {surroundingPositions.map(position => (
+      <RBaseTile
+        key={makePositionKey(position)}
+        fill={level.canPlacePieceAt(Piece.presets.BlackWhite, position) ? "green" : "grey"}
+        position={position}
+        onHover={onHover}
+      />
+    ))}
+    {hoveredPosition ? (
+      <RPiece piece={Piece.presets.BlackWhite.moveFirstTileTo(hoveredPosition)} />
+    ) : null}
+  </>;
 }
 
 const meta: Meta<LevelSurroundingVisualisationProps> = {

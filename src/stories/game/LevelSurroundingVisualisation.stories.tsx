@@ -1,10 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import {Level, Piece, Tile} from "../../game";
-import {RBaseTile, RLevel} from "../../components";
-import {Center, makePositionKey, Position} from "../../hexGridUtils";
-import {useCallback, useState} from "react";
-import {RPiece} from "../../components/game/RPiece";
+import {RBaseTile, RLevel, RPreviewPlacePiece} from "../../components";
+import {Center, makePositionKey} from "../../hexGridUtils";
 import {svgWrapper} from "../decorators";
 
 interface LevelSurroundingVisualisationProps {
@@ -14,41 +12,25 @@ interface LevelSurroundingVisualisationProps {
 
 function LevelSurroundingVisualisation(props: LevelSurroundingVisualisationProps) {
   const {level, depth} = props;
-  const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
-
-  const onHover = useCallback((position: Position, hovering: boolean) => {
-    setHoveredPosition(hoveredPosition => {
-      if (hovering && hoveredPosition === position) {
-        return hoveredPosition;
-      }
-      return (
-        hovering ? (
-          position
-        ) : (
-          hoveredPosition === position
-            ? null : hoveredPosition
-        )
-      );
-    });
-  }, []);
 
   let surroundingPositions = level.getSurroundingPositions(depth);
+  const placeablePositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
   if  (!surroundingPositions.length) {
-    surroundingPositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
+    surroundingPositions = placeablePositions;
   }
   return <>
     <RLevel level={level}/>
     {surroundingPositions.map(position => (
       <RBaseTile
         key={makePositionKey(position)}
-        fill={level.canPlacePieceAt(Piece.presets.BlackWhite, position) ? "green" : "grey"}
+        fill={"grey"}
         position={position}
-        onHover={onHover}
       />
     ))}
-    {hoveredPosition ? (
-      <RPiece piece={Piece.presets.BlackWhite.moveFirstTileTo(hoveredPosition)} />
-    ) : null}
+    <RPreviewPlacePiece
+      placeablePositions={placeablePositions}
+      piece={Piece.presets.BlackWhite}
+    />
   </>;
 }
 

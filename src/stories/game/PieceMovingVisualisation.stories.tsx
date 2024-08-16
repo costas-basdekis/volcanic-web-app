@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
 import {Center, Position} from "../../hexGridUtils";
-import {Piece} from "../../game/Piece";
-import {RPiece} from "../../components/game/RPiece";
+import {Piece} from "../../game";
+import {RPiece} from "../../components/";
 import {svgWrapper} from "../decorators";
 
 const meta: Meta<{ piece: Piece, offset: Position }> = {

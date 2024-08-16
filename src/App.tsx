@@ -1,9 +1,8 @@
 import {useCallback, useState} from 'react';
 import './App.css';
 import {Board, Piece} from "./game";
-import {AutoResizeSvg, RBoard, RPreviewPlacePiece} from "./components";
+import {AutoResizeSvg, RBoard, RPiece, RPreviewPlacePiece} from "./components";
 import {Position} from "./hexGridUtils";
-import {RPiece} from "./components/game/RPiece";
 
 export default function App() {
   const [board, setBoard] = useState(() => Board.makeEmpty().placePiece(Piece.presets.WhiteBlack));

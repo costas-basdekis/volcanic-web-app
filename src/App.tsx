@@ -1,8 +1,9 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useEffect, useState} from 'react';
 import './App.css';
 import {Board, Piece} from "./game";
 import {AutoResizeSvg, RBoard, RPiece, RPreviewPlacePiece} from "./components";
 import {Position} from "./hexGridUtils";
+import {useShortcut} from "react-keybind";
 
 export default function App() {
   const [board, setBoard] = useState(() => Board.makeEmpty().placePiece(Piece.presets.WhiteBlack));
@@ -48,6 +49,20 @@ function NextPieceDisplay(props: NextPieceDisplayProps) {
     onChangePiece(piece.rotate(-1));
   }, [onChangePiece, piece]);
 
+  const {registerShortcut, unregisterShortcut} = useShortcut()!;
+  useEffect(() => {
+    registerShortcut(onCwClick, ['r'], 'Rotate next piece CW', 'Rotate the next piece clockwise');
+    return () => {
+      unregisterShortcut(['r']);
+    };
+  }, [registerShortcut, unregisterShortcut, onCwClick]);
+  useEffect(() => {
+    registerShortcut(onCcwClick, ['t'], 'Rotate next piece CCW', 'Rotate the next piece counter-clockwise');
+    return () => {
+      unregisterShortcut(['t']);
+    };
+  }, [registerShortcut, unregisterShortcut, onCcwClick]);
+
   const middlePoint = piece.getMiddlePosition(25);
   return (
     <div className={"next-piece-preview"}>
@@ -59,8 +74,8 @@ function NextPieceDisplay(props: NextPieceDisplayProps) {
         </g>
       </svg>
       <br/>
-      <button onClick={onCwClick}>CW</button>
-      <button onClick={onCcwClick}>CCW</button>
+      <button onClick={onCwClick}>CW [R]</button>
+      <button onClick={onCcwClick}>CCW [T]</button>
     </div>
   );
 }

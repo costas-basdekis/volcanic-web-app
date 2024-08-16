@@ -4,6 +4,7 @@ import {Tile} from "../../game";
 
 interface RTileProps {
   tile: Tile,
+  size?: number,
 }
 
 export class RTile extends Component<RTileProps> {
@@ -14,9 +15,9 @@ export class RTile extends Component<RTileProps> {
   };
 
   render() {
-    const {tile} = this.props;
+    const {tile, size} = this.props;
     return (
-      <RBaseTile fill={RTile.fillMap[tile.type]} position={tile.position} />
+      <RBaseTile fill={RTile.fillMap[tile.type]} position={tile.position} size={size} />
     );
   }
 }

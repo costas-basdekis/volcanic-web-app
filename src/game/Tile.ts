@@ -1,4 +1,11 @@
-import {getSurroundingPositions, makePositionKey, offsetPosition, Position} from "../hexGridUtils";
+import {
+  Center,
+  getSurroundingPositions,
+  makePositionKey,
+  offsetPosition,
+  Position,
+  rotatePosition
+} from "../hexGridUtils";
 
 interface TileAttributes {
   position: Position;
@@ -23,6 +30,10 @@ export class Tile implements TileAttributes {
     });
   }
 
+  isAt(position: Position): boolean {
+    return this.position === position || makePositionKey(position) === this.key;
+  }
+
   getSurroundingPositions(): Position[] {
     return getSurroundingPositions(this.position);
   }
@@ -45,6 +56,13 @@ export class Tile implements TileAttributes {
         x: this.position.x + offset.x + xOffset,
         y: this.position.y + offset.y,
       },
+    });
+  }
+
+  rotate(count: number, around: Position = Center): Tile {
+    return new Tile({
+      position: rotatePosition(this.position, count, around),
+      type: this.type,
     });
   }
 }

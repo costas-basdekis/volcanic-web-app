@@ -1,5 +1,6 @@
 import {Tile} from "./Tile";
-import {makePositionKey, Position} from "../hexGridUtils";
+import {Center, getTilePosition, makePositionKey, Position} from "../hexGridUtils";
+import _ from "underscore";
 
 interface PieceAttributes {
   tiles: Tile[],
@@ -21,6 +22,22 @@ export class Piece implements PieceAttributes {
     });
   }
 
+  getMiddlePosition(size: number): Position {
+    if (!this.tiles.length) {
+      return Center;
+    }
+    const middlePosition = {x: 0, y: 0};
+    for (const tile of this.tiles) {
+      const tilePosition = getTilePosition(tile.position, size);
+      middlePosition.x += tilePosition.x;
+      middlePosition.y += tilePosition.y;
+    }
+    return {
+      x: middlePosition.x / this.tiles.length,
+      y: middlePosition.y / this.tiles.length,
+    }
+  }
+
   moveFirstTileTo(position: Position): Piece {
     const firstTile = this.tiles[0];
     if (makePositionKey(position) === firstTile.key) {
@@ -37,6 +54,26 @@ export class Piece implements PieceAttributes {
     }
     return this._change({
       tiles: this.tiles.map(tile => tile.offset(offset))
+    });
+  }
+
+  rotate(count: number): Piece {
+    count = (count % 6 + 6) % 6;
+    if (count === 0) {
+      return this;
+    }
+    if (count > 1) {
+      let rotated: Piece = this;
+      for (const _count of _.range(count)) {
+        rotated = rotated.rotate(1);
+      }
+      return rotated;
+    }
+    const tile1 = this.tiles[0];
+    return new Piece({
+      tiles: this.tiles.map((tile, index) => (
+        index === 0 ? tile : tile.rotate(1, tile1.position)
+      )),
     });
   }
 }

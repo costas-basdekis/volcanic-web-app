@@ -3,6 +3,18 @@ import ResizeObserver, {SizeInfo} from "rc-resize-observer";
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from "react-svg-pan-zoom";
 import "./AutoResizeSvg.css";
 
+class AutoResizeSvgContent extends Component<{ children: React.ReactNode }> {
+  render() {
+    return this.props.children;
+  }
+}
+
+class AutoResizeSvgTools extends Component<{ children: React.ReactNode }> {
+  render() {
+    return this.props.children;
+  }
+}
+
 export interface AutoResizeSvgProps {
   children: React.ReactNode,
   onClick?: (<T,>(event: ViewerMouseEvent<T>) => void) | null | undefined,
@@ -17,6 +29,9 @@ interface AutoResizeSvgState {
 }
 
 export class AutoResizeSvg extends Component<AutoResizeSvgProps, AutoResizeSvgState> {
+  static Content = AutoResizeSvgContent;
+  static Tools = AutoResizeSvgTools;
+
   state: AutoResizeSvgState = {
     tool: TOOL_AUTO,
     value: {},
@@ -28,6 +43,13 @@ export class AutoResizeSvg extends Component<AutoResizeSvgProps, AutoResizeSvgSt
 
   render() {
     const {tool, value, width, height} = this.state;
+    const children = React.Children.toArray(this.props.children);
+    const isTool = (child: React.ReactNode) => (
+      React.isValidElement(child)
+      && child.type === AutoResizeSvgTools
+    );
+    const content = children.filter(child => !isTool(child));
+    const tools = children.filter(isTool);
     return (
       <ResizeObserver onResize={this.onResize}>
         <div className={"svg-container"}>
@@ -41,9 +63,10 @@ export class AutoResizeSvg extends Component<AutoResizeSvgProps, AutoResizeSvgSt
             onClick={this.props.onClick ?? undefined}
           >
             <svg width={width} height={height}>
-              {this.props.children}
+              {content}
             </svg>
           </ReactSVGPanZoom>
+          {tools}
         </div>
       </ResizeObserver>
     );

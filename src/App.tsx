@@ -8,24 +8,44 @@ import {RPiece} from "./components/game/RPiece";
 interface AppState {
   board: Board,
   nextPiece: Piece,
+  hoveredPosition: Position | null,
 }
 
 export default class App extends Component<{}, AppState> {
   state: AppState = {
     board: Board.makeEmpty().placePiece(Piece.presets.WhiteBlack),
     nextPiece: Piece.presets.BlackWhite,
+    hoveredPosition: null,
   };
 
   render() {
-    const {board, nextPiece} = this.state;
+    const {board, nextPiece, hoveredPosition} = this.state;
+    const placeablePositions = board.levels.get(1)!.getPlaceablePositionsForPiece(nextPiece);
     return (
       <div className="App">
         <AutoResizeSvg>
           <RBoard board={board}/>
-          {board.levels.get(1)!.getPlaceablePositionsForPiece(nextPiece).map(position => (
+          {placeablePositions.map(position => (
             <PlaceableTile
               key={makePositionKey(position)}
               position={position}
+            />
+          ))}
+          {hoveredPosition ? (
+            <RPiece piece={nextPiece.moveFirstTileTo(hoveredPosition)} />
+          ) : null}
+          <rect
+            x={-10000} y={-10000}
+            width={20000} height={20000}
+            stroke={"transparent"}
+            fill={"transparent"}
+            onMouseEnter={this.onBackgroundHoverMouseEnter}
+          />
+          {placeablePositions.map(position => (
+            <HoverTile
+              key={makePositionKey(position)}
+              position={position}
+              onHover={this.onTileHover}
               onClick={this.onClick}
             />
           ))}
@@ -46,6 +66,49 @@ export default class App extends Component<{}, AppState> {
   onChangeNextPiece = (piece: Piece) => {
     this.setState({nextPiece: piece});
   };
+
+  onBackgroundHoverMouseEnter = () => {
+    this.setState({hoveredPosition: null});
+  };
+
+  onTileHover = (position: Position, hovering: boolean) => {
+    this.setState(({hoveredPosition}) => {
+      if (hovering) {
+        return {
+          hoveredPosition: position,
+        };
+      } else {
+        if (hoveredPosition !== position) {
+          return null;
+        }
+        return {
+          hoveredPosition: null,
+        };
+      }
+    });
+  };
+}
+
+interface HoverTileProps {
+  position: Position,
+  onHover?: ((position: Position, hovering: boolean) => void) | undefined | null,
+  onClick?: ((position: Position) => void) | undefined | null,
+}
+
+class HoverTile extends Component<HoverTileProps> {
+  render() {
+    const {position} = this.props;
+    return (
+      <RBaseTile
+        key={makePositionKey(position)}
+        stroke={"transparent"}
+        fill={"transparent"}
+        position={position}
+        onHover={this.props.onHover}
+        onClick={this.props.onClick}
+      />
+    )
+  }
 }
 
 interface PlaceableTileProps {

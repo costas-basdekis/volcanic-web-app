@@ -8,6 +8,8 @@ interface LevelAttributes {
   index: number;
   tiles: Tile[];
   tileMap: Map<string, Tile>;
+  pieceIdMap: Map<string, number>;
+  nextPieceId: number;
   previousLevel: Level | null;
 }
 
@@ -15,6 +17,8 @@ export class Level implements LevelAttributes {
   index: number;
   tiles: Tile[];
   tileMap: Map<string, Tile>;
+  pieceIdMap: Map<string, number>;
+  nextPieceId: number;
   previousLevel: Level | null;
 
   static makeEmpty(index: number, previousLevel: Level | null): Level {
@@ -26,6 +30,8 @@ export class Level implements LevelAttributes {
       index,
       tiles: [],
       tileMap: new Map(),
+      pieceIdMap: new Map(),
+      nextPieceId: 1,
       previousLevel,
     }).placePieces(pieces);
   }
@@ -38,6 +44,8 @@ export class Level implements LevelAttributes {
     this.index = attributes.index;
     this.tiles = attributes.tiles;
     this.tileMap = attributes.tileMap;
+    this.pieceIdMap = attributes.pieceIdMap;
+    this.nextPieceId = attributes.nextPieceId;
     this.previousLevel = attributes.previousLevel;
   }
 
@@ -85,6 +93,11 @@ export class Level implements LevelAttributes {
     }
     return this._change({
       tiles: [...this.tiles, ...piece.tiles],
+      pieceIdMap: new Map([
+        ...this.pieceIdMap.entries(),
+        ...piece.tiles.map(tile => [tile.key, this.nextPieceId] as [string, number]),
+      ]),
+      nextPieceId: this.nextPieceId + 1,
     });
   }
 
@@ -129,7 +142,11 @@ export class Level implements LevelAttributes {
   }
 
   canPlacePieceOnTop(piece: Piece): boolean {
-    return piece.tiles.every(tile => this.tileMap.has(tile.key));
+    const pieceIds = new Set(piece.tiles.map(tile => this.pieceIdMap.get(tile.key)));
+    return (
+      pieceIds.size > 1
+      && !pieceIds.has(undefined)
+    );
   }
 
   doesPieceOverlap(piece: Piece) {

@@ -35,11 +35,9 @@ describe("Level", () => {
         const level2 = Level.makeEmpty(2, Level.makeEmpty(1, null));
         expect(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite)).toEqual([]);
       });
-      it("can place one piece with previous level with some tiles", () => {
+      it("cannot place one piece in same position with previous level with a tile", () => {
         const level2 = Level.makeEmpty(2, level);
-        expect(sortPositions(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite))).toEqual(sortPositions([
-          Center,
-        ]));
+        expect(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite)).toEqual([]);
       });
       it("can place piece fully on top of tiles with previous level wih a lot of tiles", () => {
         const level1 = level
@@ -48,7 +46,6 @@ describe("Level", () => {
           .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2});
         const level2 = Level.makeEmpty(2, level1);
         expect(sortPositions(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite))).toEqual(sortPositions([
-          Center,
           {x: -1, y: 1},
           {x: -1, y: 0},
           {x: 1, y: 0},
@@ -88,8 +85,15 @@ describe("Level", () => {
     it("doesn't allow piece partially on top of tiles", () => {
       expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite.rotate(1))).toBe(false);
     });
-    it("allows piece fully on top of tiles", () => {
-      expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite)).toBe(true);
+    it("doesn't allow piece fully on top of another tile", () => {
+      expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite)).toBe(false);
+    });
+    it("allows piece fully on top of another tile", () => {
+      const level1 = level
+        .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: -1, y: 0})
+        .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0})
+        .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2});
+      expect(level1.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}))).toBe(true);
     });
   });
 });

@@ -60,29 +60,34 @@ export const Level1Empty: Story = {
 
 export const Level1SingleTile: Story = {
   args: {
-    level: Level.makeEmpty(1, null).placePiece(new Piece({
-      tiles: [
-        new Tile({position: Center, type: "volcano"})
-      ],
-    })),
+    level: Level.fromPieces(1, [
+      new Piece({
+        tiles: [
+          new Tile({position: Center, type: "volcano"})
+        ],
+      }),
+    ], null),
     depth: 2,
   },
 };
 
 export const Level1ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(1, null).placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center)),
+    level: Level.fromPieces(1, [
+      Piece.presets.BlackWhite.moveFirstTileTo(Center),
+    ], null),
     depth: 2,
   },
 };
 
 export const Level1ManyTiles: Story = {
   args: {
-    level: Level.makeEmpty(1, null)
-      .placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center))
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: -1, y: 0})
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0})
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2}),
+    level: Level.fromPieces(1, [
+      Piece.presets.BlackWhite,
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
+    ], null),
     depth: 2,
   },
 };
@@ -96,30 +101,34 @@ export const Level2EmptyWithLevel1Empty: Story = {
 
 export const Level2EmptyWithLevel1SingleTile: Story = {
   args: {
-    level: Level.makeEmpty(2, Level.makeEmpty(1, null).placePiece(new Piece({
-      tiles: [
-        new Tile({position: Center, type: "volcano"})
-      ],
-    }))),
+    level: Level.makeEmpty(2, Level.fromPieces(1, [
+      new Piece({
+        tiles: [
+          new Tile({position: Center, type: "volcano"})
+        ],
+      }),
+    ], null)),
     depth: 2,
   },
 };
 
 export const Level2EmptyWithLevel1ThreeTiles: Story = {
   args: {
-    level: Level.makeEmpty(2, Level.makeEmpty(1, null).placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center))),
+    level: Level.makeEmpty(2, Level.fromPieces(1, [
+      Piece.presets.BlackWhite,
+    ], null)),
     depth: 2,
   },
 };
 
 export const Level2EmptyWithLevel1ManyTiles: Story = {
   args: {
-    level: Level.makeEmpty(2, Level.makeEmpty(1, null)
-      .placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center))
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: -1, y: 0})
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0})
-      .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2})
-    ),
+    level: Level.makeEmpty(2, Level.fromPieces(1, [
+      Piece.presets.BlackWhite,
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
+    ], null)),
     depth: 2,
   },
 };

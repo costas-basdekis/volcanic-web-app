@@ -18,16 +18,16 @@ export class Level implements LevelAttributes {
   previousLevel: Level | null;
 
   static makeEmpty(index: number, previousLevel: Level | null): Level {
-    return this.fromTiles(index, [], previousLevel);
+    return this.fromPieces(index, [], previousLevel);
   }
 
-  static fromTiles(index: number, tiles: Tile[], previousLevel: Level | null): Level {
+  static fromPieces(index: number, pieces: Piece[], previousLevel: Level | null): Level {
     return new Level({
       index,
-      tiles,
-      tileMap: this.getTileMap(tiles),
+      tiles: [],
+      tileMap: new Map(),
       previousLevel,
-    });
+    }).placePieces(pieces);
   }
 
   static getTileMap(tiles: Tile[]): Map<string, Tile> {
@@ -62,6 +62,17 @@ export class Level implements LevelAttributes {
       return this;
     }
     return this._change({previousLevel});
+  }
+
+  placePieces(pieces: Piece[]): Level {
+    if (!pieces.length) {
+      return this;
+    }
+    let level: Level = this;
+    for (const piece of pieces) {
+      level = level.placePiece(piece);
+    }
+    return level;
   }
 
   placePieceAt(piece: Piece, position: Position): Level {

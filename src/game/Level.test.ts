@@ -4,8 +4,9 @@ import {sortPositions} from "../testing/utils";
 import {Center, offsetPosition} from "../hexGridUtils";
 
 describe("Level", () => {
-  const level = Level.makeEmpty(1, null)
-    .placePiece(Piece.presets.BlackWhite.moveFirstTileTo(Center));
+  const level = Level.fromPieces(1, [
+    Piece.presets.BlackWhite.moveFirstTileTo(Center),
+  ], null);
   const [tile1, tile2, tile3] = level.tiles;
   describe("getPlaceablePositionsForPiece", () => {
     describe("at level 1", () => {

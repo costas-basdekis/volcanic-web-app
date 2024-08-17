@@ -21,5 +21,5 @@ export function RTile(props: RTileProps) {
 RTile.fillMap = {
   volcano: "red",
   white: "white",
-  black: "black",
+  black: "#404040",
 };

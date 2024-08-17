@@ -97,6 +97,7 @@ function PlaceableTile(props: PlaceableTileProps) {
     <RBaseTile
       key={makePositionKey(position)}
       fill={"green"}
+      drawSize={25}
       position={position}
       onClick={outerOnClick ? onClick : undefined}
     />

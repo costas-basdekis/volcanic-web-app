@@ -7,6 +7,7 @@ export interface RBaseTileProps {
   strokeWidth?: number,
   fill?: string,
   size?: number,
+  drawSize?: number,
   position?: Position,
   label?: string | undefined | null,
   onHover?: ((position: Position, hovering: boolean) => void) | null,
@@ -17,7 +18,7 @@ export function RBaseTile(props: RBaseTileProps) {
   const {
     onHover: outerOnHover, onClick: outerOnClick,
     stroke = "black", strokeWidth = 1, fill = "white",
-    size = 50, position = Center, label,
+    size = 50, drawSize = size, position = Center, label,
   } = props;
 
   const onMouseEnter = useCallback(() => {
@@ -33,7 +34,7 @@ export function RBaseTile(props: RBaseTileProps) {
   return (
     <Hexagon
       stroke={stroke} strokeWidth={strokeWidth} fill={fill}
-      size={size}
+      size={drawSize}
       position={getTilePosition(position, size)}
       label={label}
       onMouseEnter={outerOnHover ? onMouseEnter : null}

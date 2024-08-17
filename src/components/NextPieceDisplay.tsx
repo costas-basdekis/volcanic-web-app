@@ -2,6 +2,7 @@ import {Piece} from "../game";
 import {useCallback} from "react";
 import {useAutoShortcut} from "../hooks";
 import {RPiece} from "./game";
+import "./NextPieceDisplay.css";
 
 interface NextPieceDisplayProps {
   piece: Piece,

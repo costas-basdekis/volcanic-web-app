@@ -1,0 +1,8 @@
+.next-piece-preview {
+    position: absolute;
+    left: 6px;
+    top: 6px;
+    border: 1px solid black;
+    width: 150px;
+    height: 150px;
+}

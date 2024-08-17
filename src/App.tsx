@@ -15,7 +15,7 @@ export default function App() {
     setNextPiece(piece);
   }, []);
 
-  const placeablePositions = board.levels.get(1)!.getPlaceablePositionsForPiece(nextPiece);
+  const placeablePositions = board.getPlaceablePositionsForPiece(nextPiece);
   return (
     <div className="App">
       <AutoResizeSvg>

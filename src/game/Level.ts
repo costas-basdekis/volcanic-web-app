@@ -2,26 +2,31 @@ import {Tile} from "./Tile";
 import {Center, getSurroundingPositionsMulti, isCenter, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
 
+export type Levels = Map<number, Level>;
+
 interface LevelAttributes {
   index: number;
   tiles: Tile[];
   tileMap: Map<string, Tile>;
+  previousLevel: Level | null;
 }
 
 export class Level implements LevelAttributes {
   index: number;
   tiles: Tile[];
   tileMap: Map<string, Tile>;
+  previousLevel: Level | null;
 
-  static makeEmpty(index: number): Level {
-    return this.fromTiles(index, []);
+  static makeEmpty(index: number, previousLevel: Level | null): Level {
+    return this.fromTiles(index, [], previousLevel);
   }
 
-  static fromTiles(index: number, tiles: Tile[]): Level {
+  static fromTiles(index: number, tiles: Tile[], previousLevel: Level | null): Level {
     return new Level({
       index,
       tiles,
       tileMap: this.getTileMap(tiles),
+      previousLevel,
     });
   }
 
@@ -33,6 +38,7 @@ export class Level implements LevelAttributes {
     this.index = attributes.index;
     this.tiles = attributes.tiles;
     this.tileMap = attributes.tileMap;
+    this.previousLevel = attributes.previousLevel;
   }
 
   _change(someAttributes: Partial<LevelAttributes>): Level {
@@ -44,6 +50,18 @@ export class Level implements LevelAttributes {
       newAttributes.tileMap = Level.getTileMap(newAttributes.tiles);
     }
     return new Level(newAttributes);
+  }
+
+  updatePreviousLevelFrom(levels: Levels): Level {
+    const previousLevel = this.previousLevel ? levels.get(this.previousLevel.index)! : null;
+    return this.updatePreviousLevel(previousLevel);
+  }
+
+  updatePreviousLevel(previousLevel: Level | null): Level {
+    if (this.previousLevel === previousLevel) {
+      return this;
+    }
+    return this._change({previousLevel});
   }
 
   placePieceAt(piece: Piece, position: Position): Level {
@@ -60,14 +78,18 @@ export class Level implements LevelAttributes {
   }
 
   getSurroundingPositions(depth: number): Position[] {
+    if (this.previousLevel) {
+      return this.previousLevel.tiles.map(tile => tile.position);
+    }
     return getSurroundingPositionsMulti(this.tiles.map(tile => tile.position), depth);
   }
 
   getPlaceablePositionsForPiece(piece: Piece): Position[] {
-    if (!this.tiles.length) {
+    const surroundingPositions = this.getSurroundingPositions(2);
+    if (!this.previousLevel && !surroundingPositions.length) {
       return [Center];
     }
-    return this.getSurroundingPositions(2)
+    return surroundingPositions
       .filter(position => this.canPlacePieceAt(piece, position));
   }
 
@@ -76,10 +98,27 @@ export class Level implements LevelAttributes {
   }
 
   canPlacePiece(piece: Piece): boolean {
-    if (!this.tiles.length) {
-      return isCenter(piece.tiles[0].position);
+    if (this.previousLevel) {
+      if (!this.previousLevel.canPlacePieceOnTop(piece)) {
+        return false;
+      }
+      if (!this.tiles.length) {
+        return true;
+      }
+    } else {
+      if (!this.tiles.length) {
+        return isCenter(piece.tiles[0].position);
+      }
     }
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
+  }
+
+  canPlacePieceOnTopAt(piece: Piece, position: Position): boolean {
+    return this.canPlacePieceOnTop(piece.moveFirstTileTo(position));
+  }
+
+  canPlacePieceOnTop(piece: Piece): boolean {
+    return piece.tiles.every(tile => this.tileMap.has(tile.key));
   }
 
   doesPieceOverlap(piece: Piece) {

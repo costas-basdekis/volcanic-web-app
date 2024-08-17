@@ -59,10 +59,12 @@ export class Board implements BoardAttributes {
     ]);
   }
 
-  getPlaceablePositionsForPiece(piece: Piece): Position[] {
-    const placeablePositions: Position[] = [];
+  getPlaceablePositionsForPiece(piece: Piece): [Position, Level][] {
+    const placeablePositions: [Position, Level][] = [];
     for (const level of this.levels.values()) {
-      placeablePositions.push(...level.getPlaceablePositionsForPiece(piece));
+      for (const position of level.getPlaceablePositionsForPiece(piece)) {
+        placeablePositions.push([position, level]);
+      }
     }
     return placeablePositions;
   }

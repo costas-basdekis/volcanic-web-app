@@ -28,7 +28,7 @@ function LevelSurroundingVisualisation(props: LevelSurroundingVisualisationProps
       />
     ))}
     <RPreviewPlacePiece
-      placeablePositions={placeablePositions}
+      placeablePositionsAndLevels={placeablePositions.map(position => [position, level])}
       piece={Piece.presets.BlackWhite}
     />
   </>;

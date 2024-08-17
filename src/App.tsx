@@ -15,13 +15,13 @@ export default function App() {
     setNextPiece(piece);
   }, []);
 
-  const placeablePositions = board.getPlaceablePositionsForPiece(nextPiece);
+  const placeablePositionsAndLevels = board.getPlaceablePositionsForPiece(nextPiece);
   return (
     <div className="App">
       <AutoResizeSvg>
         <RBoard board={board}/>
         <RPreviewPlacePiece
-          placeablePositions={placeablePositions}
+          placeablePositionsAndLevels={placeablePositionsAndLevels}
           piece={nextPiece}
           onPlacePiece={onPlacePiece}
         />

@@ -1,0 +1,20 @@
+.credits-button-container {
+    position: absolute;
+    right: 6px;
+    bottom: 6px;
+    text-align: center;
+}
+
+.credits {
+    position: absolute;
+    background-color: #008b8be8; /* darkcyan */
+    left: 50px;
+    top: 50px;
+    right: 50px;
+    bottom: 50px;
+    text-align: center;
+}
+
+.credits.hidden {
+    display: none;
+}

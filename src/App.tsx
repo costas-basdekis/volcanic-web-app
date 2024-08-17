@@ -1,7 +1,7 @@
 import {useCallback, useState} from 'react';
 import './App.css';
 import {Board, Piece} from "./game";
-import {AutoResizeSvg, RBoard, NextPieceDisplay, RPreviewPlacePiece} from "./components";
+import {AutoResizeSvg, Credits, RBoard, NextPieceDisplay, RPreviewPlacePiece} from "./components";
 import {Position} from "./hexGridUtils";
 
 export default function App() {
@@ -27,6 +27,7 @@ export default function App() {
         />
         <AutoResizeSvg.Tools>
           <NextPieceDisplay piece={nextPiece} onChangePiece={onChangeNextPiece} />
+          <Credits />
         </AutoResizeSvg.Tools>
       </AutoResizeSvg>
     </div>

@@ -8,5 +8,5 @@ export function useAutoShortcut(method: (e?: KeyboardEvent) => any, keys: string
     return () => {
       unregisterShortcut(keys);
     };
-  }, [registerShortcut, unregisterShortcut, method, keys, title, description, holdDuration]);
+  }, [registerShortcut, unregisterShortcut, method, [...keys].sort().join("|"), title, description, holdDuration]);
 }

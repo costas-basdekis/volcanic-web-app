@@ -106,7 +106,9 @@ function PlaceableTile(props: PlaceableTileProps) {
   return (
     <RBaseTile
       key={makePositionKey(position)}
-      fill={"green"}
+      stroke={"green"}
+      strokeWidth={5}
+      fill={"transparent"}
       drawSize={50 - (level.index - 1) * 5}
       position={position}
       onClick={outerOnClick ? onClick : undefined}

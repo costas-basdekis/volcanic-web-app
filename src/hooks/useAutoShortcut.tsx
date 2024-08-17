@@ -8,5 +8,6 @@ export function useAutoShortcut(method: (e?: KeyboardEvent) => any, keys: string
     return () => {
       unregisterShortcut(keys);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [registerShortcut, unregisterShortcut, method, [...keys].sort().join("|"), title, description, holdDuration]);
 }

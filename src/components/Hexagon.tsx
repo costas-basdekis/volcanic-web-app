@@ -1,4 +1,4 @@
-import React from "react";
+import React, {ReactNode} from "react";
 import _ from "underscore";
 import {Position} from "../hexGridUtils";
 
@@ -9,6 +9,7 @@ export interface HexagonProps {
   size?: number,
   position?: Position,
   label?: string | undefined | null,
+  content?: ReactNode,
   onMouseEnter?: (React.MouseEventHandler) | undefined | null,
   onMouseLeave?: (React.MouseEventHandler) | undefined | null,
   onClick?: (React.MouseEventHandler) | undefined | null,
@@ -17,7 +18,8 @@ export interface HexagonProps {
 export function Hexagon(props: HexagonProps) {
   const {
     stroke = "black", strokeWidth = 1, fill = "white",
-    size = 100, position = {x: 200, y: 200}, label,
+    size = 100, position = {x: 200, y: 200},
+    label, content,
   } = props;
   return <>
     <path
@@ -39,6 +41,11 @@ export function Hexagon(props: HexagonProps) {
       >
         {label}
       </text>
+    ) : null}
+    {content ? (
+      <g transform={`translate(${position.x} ${position.y})`}>
+        {content}
+      </g>
     ) : null}
   </>;
 }

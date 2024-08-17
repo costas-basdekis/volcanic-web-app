@@ -1,4 +1,4 @@
-import React, {useCallback} from "react";
+import React, {ReactNode, useCallback} from "react";
 import {Hexagon} from "../Hexagon";
 import {Center, getTilePosition, Position} from "../../hexGridUtils";
 
@@ -10,6 +10,7 @@ export interface RBaseTileProps {
   drawSize?: number,
   position?: Position,
   label?: string | undefined | null,
+  content?: ReactNode,
   onHover?: ((position: Position, hovering: boolean) => void) | null,
   onClick?: ((position: Position) => void) | null,
 }
@@ -18,7 +19,8 @@ export function RBaseTile(props: RBaseTileProps) {
   const {
     onHover: outerOnHover, onClick: outerOnClick,
     stroke = "black", strokeWidth = 1, fill = "white",
-    size = 50, drawSize = size, position = Center, label,
+    size = 50, drawSize = size, position = Center,
+    label, content,
   } = props;
 
   const onMouseEnter = useCallback(() => {
@@ -37,6 +39,7 @@ export function RBaseTile(props: RBaseTileProps) {
       size={drawSize}
       position={getTilePosition(position, size)}
       label={label}
+      content={content}
       onMouseEnter={outerOnHover ? onMouseEnter : null}
       onMouseLeave={outerOnHover ? onMouseLeave : null}
       onClick={outerOnClick ? onClick : null}

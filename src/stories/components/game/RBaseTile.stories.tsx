@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {ComponentProps, Fragment} from "react";
 import _ from "underscore";
-import {RBaseTile} from "../../../components";
+import {BlackOrWhite, RBaseTile, Unit} from "../../../components";
+import {svgWrapper} from "../../decorators";
 
 type TileExtendedProps = ComponentProps<typeof RBaseTile> & {x?: number, y?: number};
 
@@ -16,11 +17,7 @@ const meta: Meta<TileExtendedProps> = {
     layout: 'fullscreen',
   },
   decorators: [
-    Story => (
-      <svg width={"100%"} height={1000}>
-        <Story />
-      </svg>
-    ),
+    svgWrapper,
   ],
 };
 export default meta;
@@ -81,5 +78,35 @@ export const Grid4x4: Story = {
         ))}
       </Fragment>
     ))}
+  </>,
+};
+
+export const WithContent: Story = {
+  args: {
+    fill: "white",
+  },
+  render: (args) => <>
+    <RBaseTile {...args} position={{x: 0, y: 0}} label={"Label"} />
+    <RBaseTile {...args} position={{x: 1, y: 0}} content={<Unit.Pawn colour={"white"} />} />
+  </>,
+};
+
+export const Units: Story = {
+  render: (args) => <>
+    {_.range(1, 7).map(count => (
+      <RBaseTile
+        {...args}
+        key={count}
+        position={{x: -4 + count, y: 0}}
+        content={<Unit.Pawn.Many colour={"white"} count={count} />}
+      />
+    ))}
+    {(["white", "black"] as BlackOrWhite[]).map((colour, colourIndex) => <Fragment key={colour}>
+      {[{fill: "white", xOffset: -3}, {fill: "black", xOffset: 0}].map(({fill, xOffset}) => <Fragment key={fill}>
+        {[Unit.Pawn, Unit.Bishop, Unit.Rook].map((Unit, unitIndex) => (
+          <RBaseTile {...args} key={Unit.displayName} fill={fill} position={{x: xOffset + unitIndex, y: 1 + colourIndex}} content={<Unit colour={colour} />} />
+        ))}
+      </Fragment>)}
+    </Fragment>)}
   </>,
 };

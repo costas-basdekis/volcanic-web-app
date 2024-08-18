@@ -1,7 +1,7 @@
 import {Tile} from "./Tile";
 import {Center, getSurroundingPositionsMulti, isCenter, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
-import {Unit} from "./Unit";
+import {BlackOrWhite, Unit} from "./Unit";
 
 export type Levels = Map<number, Level>;
 
@@ -202,5 +202,21 @@ export class Level implements LevelAttributes {
       this.hasTileAt(position)
       && !this.hasUnitAt(position)
     );
+  }
+
+  expandGroup(positions: Position[], colour: BlackOrWhite): Level {
+    if (!this.canExpandGroup(positions)) {
+      throw new Error("Cannot expand group here");
+    }
+    return this._change({
+      unitMap: new Map([
+        ...this.unitMap.entries(),
+        ...positions.map(position => [makePositionKey(position), Unit.Pawn(colour, this.index)] as const),
+      ]),
+    });
+  }
+
+  canExpandGroup(positions: Position[]): boolean {
+    return positions.every(position => this.canPlaceUnitAt(position));
   }
 }

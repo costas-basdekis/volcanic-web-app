@@ -1,4 +1,4 @@
-import {useCallback, useState} from 'react';
+import {useCallback, useMemo, useState} from 'react';
 import './App.css';
 import {Board, Piece, Unit} from "./game";
 import {
@@ -6,7 +6,7 @@ import {
   AutoResizeSvg,
   Credits,
   NextPieceDisplay,
-  RBoard,
+  RBoard, RPreviewExpandGroup,
   RPreviewPlacePawn,
   RPreviewPlacePiece,
   RUnit
@@ -30,6 +30,16 @@ export default function App() {
   const onPlaceUnit = useCallback((unit: Unit, position: Position) => {
     setBoard(board => board.placeUnit(unit, position));
   }, []);
+  const onExpandGroup = useCallback((position: Position) => {
+    setBoard(board => board.expandGroup(position, "white"));
+  }, []);
+
+  const placeablePawnPositions = useMemo(() => {
+    return board.getUnitPlaceablePositions(Unit.Pawn("white", 1));
+  }, [board]);
+  const groupExpandablePositionsPositionsAndLevelIndexes = useMemo(() => {
+    return board.getGroupExpandablePositionsPositionsAndLevelIndexes("white");
+  }, [board]);
 
   return (
     <div className="App">
@@ -46,9 +56,15 @@ export default function App() {
           />
         ) : action === "place-pawn" ? (
           <RPreviewPlacePawn
-            placeablePositions={board.getUnitPlaceablePositions(Unit.Pawn("white", 1))}
+            placeablePositions={placeablePawnPositions}
             colour={"white"}
             onPlaceUnit={onPlaceUnit}
+          />
+        ) : action === "expand-pawn" ? (
+          <RPreviewExpandGroup
+            colour={"white"}
+            groupExpandablePositionsPositionsAndLevelIndexes={groupExpandablePositionsPositionsAndLevelIndexes}
+            onExpandGroup={onExpandGroup}
           />
         ) : null}
         <AutoResizeSvg.Tools>

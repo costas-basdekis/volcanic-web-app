@@ -2,7 +2,7 @@ import {Level} from "./Level";
 import {BlackOrWhite, Unit, UnitType} from "./Unit";
 import _ from "underscore";
 import {Tile} from "./Tile";
-import {getSurroundingPositions, makePositionKey, Position} from "../hexGridUtils";
+import {getSurroundingPositions, getSurroundingPositionsMulti, makePositionKey, Position} from "../hexGridUtils";
 
 export class UnitGroup {
   colour: BlackOrWhite;
@@ -152,7 +152,7 @@ export class UnitMap {
     return info.unit;
   }
 
-  canPlaceUnit(unit: Unit, position: Position, because?: {reasons: string | null}): boolean {
+  canPlaceAnything(position: Position, because?: {reasons: string | null}): boolean {
     const info = this.get(position);
     if (!info) {
       if (because) because.reasons = "There is no position there";
@@ -166,7 +166,14 @@ export class UnitMap {
       if (because) because.reasons = "There is a volcano there";
       return false;
     }
-    const {level, neighbourGroups} = info;
+    return true;
+  }
+
+  canPlaceUnit(unit: Unit, position: Position, because?: {reasons: string | null}): boolean {
+    if (!this.canPlaceAnything(position, because)) {
+      return false;
+    }
+    const {level, neighbourGroups} = this.get(position)!;
     switch (unit.type) {
       case "pawn":
         if (level.index > 1) {
@@ -212,5 +219,72 @@ export class UnitMap {
     return Array.from(this.map.values())
       .filter(info => this.canPlaceUnit(unit, info.tile.position))
       .map(info => info.tile.position);
+  }
+
+  canExpandGroup(position: Position, colour: BlackOrWhite, because?: {reasons: string | null}): boolean {
+    if (!this.canPlaceAnything(position, because)) {
+      return false;
+    }
+    const {neighbourGroups} = this.get(position)!;
+    if (!neighbourGroups.some(group => group.colour === colour)) {
+      if (because) because.reasons = "There are no other groups nearby";
+      return false;
+    }
+    return true;
+  }
+
+  getGroupExpansionPositions(position: Position, colour: BlackOrWhite): Position[] {
+    if (!this.canExpandGroup(position, colour)) {
+      throw new Error("Cannot expand group here");
+    }
+    const {neighbourGroups, tile} = this.get(position)!;
+    const groups = neighbourGroups.filter(group => group.colour === colour);
+    const tileType = tile.type;
+    return getSurroundingPositionsMulti(groups.map(group => group.positions).flat(), 1)
+      .flat()
+      .filter(position => {
+        const info = this.map.get(makePositionKey(position));
+        return !info?.unit && info?.tile?.type === tileType;
+      });
+  }
+
+  getGroupExpansionPositionsByLevelIndex(position: Position, colour: BlackOrWhite): Map<number, Position[]> {
+    const positions = this.getGroupExpansionPositions(position, colour);
+    const positionsByLevelIndex: Map<number, Position[]> = new Map();
+    for (const position of positions) {
+      const levelIndex = this.get(position)!.level.index;
+      if (!positionsByLevelIndex.has(levelIndex)) {
+        positionsByLevelIndex.set(levelIndex, []);
+      }
+      positionsByLevelIndex.get(levelIndex)!.push(position);
+    }
+    return positionsByLevelIndex;
+  }
+
+  getGroupExpandablePositionsPositionsAndLevelIndexes(colour: BlackOrWhite): [Position, Position[], number][] {
+    const result: [Position, Position[], number][] = Array.from(this.map.values())
+      .filter(info => this.canExpandGroup(info.tile.position, colour))
+      .map(info => [info.tile.position, this.getGroupExpansionPositions(info.tile.position, colour), info.level.index]);
+    return this.normalisePositionsPositionsAndLevelIndexes(result);
+  }
+
+  normalisePositionsPositionsAndLevelIndexes(items: [Position, Position[], number][]): [Position, Position[], number][] {
+    const positionByKey: Map<string, Position> =
+      new Map(items.map(([position]) => [makePositionKey(position), position]));
+    const positionsByKey: Map<string, Position[]> = new Map();
+    for (const [position, positions] of items) {
+      const key = makePositionKey(position);
+      if (!positionsByKey.has(key)) {
+        const canonicalPositions = positions
+          .map(other => positionByKey.get(makePositionKey(other))!);
+        for (const other of canonicalPositions) {
+          positionsByKey.set(makePositionKey(other), canonicalPositions);
+        }
+      }
+    }
+    return items.map(([position, , levelIndex]) => {
+      const key = makePositionKey(position);
+      return [positionByKey.get(key)!, positionsByKey.get(key)!, levelIndex];
+    });
   }
 }

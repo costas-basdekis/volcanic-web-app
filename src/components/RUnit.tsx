@@ -8,13 +8,13 @@ const constants = {
   pieceScaling: 0.1,
 };
 
-interface BaseUnitDefinitionProps {
+interface RBaseUnitDefinitionProps {
   name: string,
   path: ReactNode,
   strokeWidth: number,
 }
 
-function BaseUnitDefinition(props: BaseUnitDefinitionProps) {
+function RBaseUnitDefinition(props: RBaseUnitDefinitionProps) {
   const {name, path, strokeWidth} = props;
   return (
     <>
@@ -33,14 +33,14 @@ function BaseUnitDefinition(props: BaseUnitDefinitionProps) {
 
 export type BlackOrWhite = "white" | "black";
 
-interface BaseUnitProps {
+interface RBaseUnitProps {
   name: string,
   colour: BlackOrWhite,
   scale?: number,
   offset?: {x: number, y: number},
 }
 
-function BaseUnit(props: BaseUnitProps) {
+function RBaseUnit(props: RBaseUnitProps) {
   const {name, colour, scale, offset} = props;
   return (
     <use
@@ -52,9 +52,9 @@ function BaseUnit(props: BaseUnitProps) {
     />
   );
 }
-BaseUnit.rotateTransform = `rotate(180,${constants.cellSize / 2},${constants.cellSize / 2})`;
+RBaseUnit.rotateTransform = `rotate(180,${constants.cellSize / 2},${constants.cellSize / 2})`;
 
-export interface UnitProps {
+export interface RUnitProps {
   colour: BlackOrWhite,
   scale?: number,
   offset?: {x: number, y: number},
@@ -64,59 +64,59 @@ export interface ManyProps {
   count: number,
 }
 
-const defineUnit = (name: string, props: Omit<BaseUnitDefinitionProps, "name">) => {
+const defineUnit = (name: string, props: Omit<RBaseUnitDefinitionProps, "name">) => {
   const unitDefinition = (
-    <BaseUnitDefinition
+    <RBaseUnitDefinition
       key={name}
       {...props}
       name={name}
     />
   );
 
-  function UnitFor(props: UnitProps) {
-    return BaseUnit({name, ...props});
+  function RUnitFor(props: RUnitProps) {
+    return RBaseUnit({name, ...props});
   }
-  UnitFor.displayName = name;
-  UnitFor.Definition = unitDefinition;
-  function ManyUnitFor(props: UnitProps & ManyProps) {
+  RUnitFor.displayName = name;
+  RUnitFor.Definition = unitDefinition;
+  function ManyUnitFor(props: RUnitProps & ManyProps) {
     const {count, ...rest} = props;
     if (count <= 0){
       return null;
     }
     switch (count) {
       case 1:
-        return <UnitFor {...rest} />;
+        return <RUnitFor {...rest} />;
       case 2:
         return <>
-          <UnitFor {...rest} scale={0.75} offset={{x: -20, y: 0}} />
-          <UnitFor {...rest} scale={0.75} offset={{x: 20, y: 0}} />
+          <RUnitFor {...rest} scale={0.75} offset={{x: -20, y: 0}} />
+          <RUnitFor {...rest} scale={0.75} offset={{x: 20, y: 0}} />
         </>;
       case 3:
         return <>
-          <UnitFor {...rest} scale={0.5} offset={{x: -20, y: 0}} />
-          <UnitFor {...rest} scale={0.5} offset={{x: 20, y: 0}} />
-          <UnitFor {...rest} scale={0.5} offset={{x: 0, y: 10}} />
+          <RUnitFor {...rest} scale={0.5} offset={{x: -20, y: 0}} />
+          <RUnitFor {...rest} scale={0.5} offset={{x: 20, y: 0}} />
+          <RUnitFor {...rest} scale={0.5} offset={{x: 0, y: 10}} />
         </>;
       case 4:
         return <>
-          <UnitFor {...rest} scale={0.4} offset={{x: -15, y: 0}} />
-          <UnitFor {...rest} scale={0.4} offset={{x: 15, y: 0}} />
-          <UnitFor {...rest} scale={0.4} offset={{x: 0, y: -15}} />
-          <UnitFor {...rest} scale={0.4} offset={{x: 0, y: 15}} />
+          <RUnitFor {...rest} scale={0.4} offset={{x: -15, y: 0}} />
+          <RUnitFor {...rest} scale={0.4} offset={{x: 15, y: 0}} />
+          <RUnitFor {...rest} scale={0.4} offset={{x: 0, y: -15}} />
+          <RUnitFor {...rest} scale={0.4} offset={{x: 0, y: 15}} />
         </>;
       case 5:
         return <>
-          <UnitFor {...rest} scale={0.3} offset={{x: 0, y: 0}} />
-          <UnitFor {...rest} scale={0.3} offset={{x: -15, y: -15}} />
-          <UnitFor {...rest} scale={0.3} offset={{x: 15, y: -15}} />
-          <UnitFor {...rest} scale={0.3} offset={{x: 15, y: 15}} />
-          <UnitFor {...rest} scale={0.3} offset={{x: -15, y: 15}} />
+          <RUnitFor {...rest} scale={0.3} offset={{x: 0, y: 0}} />
+          <RUnitFor {...rest} scale={0.3} offset={{x: -15, y: -15}} />
+          <RUnitFor {...rest} scale={0.3} offset={{x: 15, y: -15}} />
+          <RUnitFor {...rest} scale={0.3} offset={{x: 15, y: 15}} />
+          <RUnitFor {...rest} scale={0.3} offset={{x: -15, y: 15}} />
         </>;
     }
     return <>
-      <UnitFor {...rest} scale={0.25} offset={{x: 0, y: 0}} />
+      <RUnitFor {...rest} scale={0.25} offset={{x: 0, y: 0}} />
       {_.range(count - 1).map(index => (
-        <UnitFor
+        <RUnitFor
           {...rest}
           key={index}
           scale={0.25}
@@ -129,12 +129,12 @@ const defineUnit = (name: string, props: Omit<BaseUnitDefinitionProps, "name">) 
     </>;
   }
   ManyUnitFor.displayName = `Many${name}`;
-  UnitFor.Many = ManyUnitFor;
+  RUnitFor.Many = ManyUnitFor;
 
-  return UnitFor;
+  return RUnitFor;
 };
 
-const UnitPawn = defineUnit('UnitPawn', {
+const RUnitPawn = defineUnit('RUnitPawn', {
   path: <path
     d={
       "M37,38c0-1.1,0.9-2,2-2h22c1.1,0,2,0.9,2,2s-0.9,2-2,2H39C37.9,40,37,39.1,37,38z M34,84h32"
@@ -148,7 +148,7 @@ const UnitPawn = defineUnit('UnitPawn', {
   strokeWidth: 10,
 });
 
-const UnitBishop = defineUnit("UnitBishop", {
+const RUnitBishop = defineUnit("RUnitBishop", {
   path: <path
     d={
       "M37,40c0-1.1,0.9-2,2-2h22c1.1,0,2,0.9,2,2s-0.9,2-2,2H39C37.9,42,37,41.1,37,40z M34,84"
@@ -163,7 +163,7 @@ const UnitBishop = defineUnit("UnitBishop", {
   strokeWidth: 10,
 });
 
-const UnitRook = defineUnit("UnitRook", {
+const RUnitRook = defineUnit("RUnitRook", {
   path: <path
     d={
       "M31,25V10h7v6h6v-6h12v6h6v-6h7v15c0,2.2-1.8,4-4,4H35C32.8,29,31,27.2,31,25z M65,34"
@@ -177,13 +177,13 @@ const UnitRook = defineUnit("UnitRook", {
   strokeWidth: 10,
 });
 
-export const Unit = {
-  Pawn: UnitPawn,
-  Bishop: UnitBishop,
-  Rook: UnitRook,
+export const RUnit = {
+  Pawn: RUnitPawn,
+  Bishop: RUnitBishop,
+  Rook: RUnitRook,
   Definitions: [
-    UnitPawn.Definition,
-    UnitBishop.Definition,
-    UnitRook.Definition,
+    RUnitPawn.Definition,
+    RUnitBishop.Definition,
+    RUnitRook.Definition,
   ],
 };

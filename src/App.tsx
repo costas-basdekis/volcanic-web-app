@@ -7,7 +7,7 @@ import {
   Credits,
   NextPieceDisplay,
   RBoard, RPreviewExpandGroup,
-  RPreviewPlacePawn,
+  RPreviewPlaceUnit,
   RPreviewPlacePiece,
   RUnit
 } from "./components";
@@ -40,6 +40,12 @@ export default function App() {
   const groupExpandablePositionsPositionsAndLevelIndexes = useMemo(() => {
     return board.getGroupExpandablePositionsPositionsAndLevelIndexes("white");
   }, [board]);
+  const placeableBishopPositions = useMemo(() => {
+    return board.getUnitPlaceablePositions(Unit.Bishop("white"));
+  }, [board]);
+  const placeableRookPositions = useMemo(() => {
+    return board.getUnitPlaceablePositions(Unit.Rook("white"));
+  }, [board]);
 
   return (
     <div className="App">
@@ -55,9 +61,9 @@ export default function App() {
             onPlacePiece={onPlacePiece}
           />
         ) : action === "place-pawn" ? (
-          <RPreviewPlacePawn
+          <RPreviewPlaceUnit
             placeablePositions={placeablePawnPositions}
-            colour={"white"}
+            unit={Unit.Pawn("white", 1)}
             onPlaceUnit={onPlaceUnit}
           />
         ) : action === "expand-pawn" ? (
@@ -65,6 +71,18 @@ export default function App() {
             colour={"white"}
             groupExpandablePositionsPositionsAndLevelIndexes={groupExpandablePositionsPositionsAndLevelIndexes}
             onExpandGroup={onExpandGroup}
+          />
+        ) : action === "place-bishop" ? (
+          <RPreviewPlaceUnit
+            placeablePositions={placeableBishopPositions}
+            unit={Unit.Bishop("white")}
+            onPlaceUnit={onPlaceUnit}
+          />
+        ) : action === "place-rook" ? (
+          <RPreviewPlaceUnit
+            placeablePositions={placeableRookPositions}
+            unit={Unit.Rook("white")}
+            onPlaceUnit={onPlaceUnit}
           />
         ) : null}
         <AutoResizeSvg.Tools>

@@ -1,23 +1,19 @@
 import {makePositionKey, Position} from "../../hexGridUtils";
-import {BlackOrWhite, Unit} from "../../game";
-import {useCallback, useMemo, useState} from "react";
+import {Unit} from "../../game";
+import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "../RUnit";
 
-export interface RPreviewPlacePawnProps {
-  colour: BlackOrWhite;
+export interface RPreviewPlaceUnitProps {
+  unit: Unit;
   placeablePositions: Position[];
   onPlaceUnit: (unit: Unit, position: Position) => void;
 }
 
-export function RPreviewPlacePawn(props: RPreviewPlacePawnProps) {
-  const {colour, placeablePositions, onPlaceUnit} = props;
+export function RPreviewPlaceUnit(props: RPreviewPlaceUnitProps) {
+  const {unit, placeablePositions, onPlaceUnit} = props;
 
   const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
-
-  const unit = useMemo(() => {
-    return Unit.Pawn(colour, 1);
-  }, [colour]);
 
   const onTileHover = useCallback((position: Position, hovering: boolean) => {
     setHoveredPosition(hoveredPosition => {

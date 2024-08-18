@@ -193,7 +193,7 @@ export class UnitMap {
         const totalCount = neighbourGroups
           .filter(group => group.colour === unit.colour)
           .map(group => group.counts.total)
-          .reduce((total, current) => total + current);
+          .reduce((total, current) => total + current, 0);
         if (totalCount < 3) {
           if (because) because.reasons = `The total size of nearby groups is too small (${totalCount} < 3)`;
           return false;

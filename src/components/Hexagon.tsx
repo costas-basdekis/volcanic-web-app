@@ -1,6 +1,6 @@
 import React, {ReactNode} from "react";
-import _ from "underscore";
-import {Position} from "../hexGridUtils";
+import {Center, getTileOutline, Position} from "../hexGridUtils";
+import {pointsToPathD} from "../svgUtils";
 
 export interface HexagonProps {
   stroke?: string,
@@ -49,14 +49,4 @@ export function Hexagon(props: HexagonProps) {
     ) : null}
   </>;
 }
-Hexagon.pathPoints = _.range(6)
-  .map(index => ({x: Math.sin(index * Math.PI / 3), y: Math.cos(index * Math.PI / 3)}));
-Hexagon.pathD = [
-  `M${Hexagon.pathPoints[0].x} ${Hexagon.pathPoints[0].y}`,
-  `L${Hexagon.pathPoints[1].x} ${Hexagon.pathPoints[1].y}`,
-  `L${Hexagon.pathPoints[2].x} ${Hexagon.pathPoints[2].y}`,
-  `L${Hexagon.pathPoints[3].x} ${Hexagon.pathPoints[3].y}`,
-  `L${Hexagon.pathPoints[4].x} ${Hexagon.pathPoints[4].y}`,
-  `L${Hexagon.pathPoints[5].x} ${Hexagon.pathPoints[5].y}`,
-  `Z`,
-].join(" ");
+Hexagon.pathD = pointsToPathD(getTileOutline(Center, 1, 1));

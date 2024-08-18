@@ -27,6 +27,15 @@ export const getTilePosition = (position: Position, size: number): Position => {
   };
 };
 
+export function getTileOutline(position: Position, size: number, drawSize: number): Position[] {
+  const tilePosition = getTilePosition(position, size);
+  return _.range(6)
+    .map(index => ({
+      x: Math.sin(index * Math.PI / 3) * drawSize + tilePosition.x,
+      y: Math.cos(index * Math.PI / 3) * drawSize + tilePosition.y,
+    }));
+}
+
 export const offsetPosition = (position: Position, right: number = 0, bottomRight: number = 0, bottomLeft: number = 0): Position => {
   let result = position;
   if (right !== 0) {

@@ -1,5 +1,6 @@
 import {useCallback} from "react";
 import {useAutoShortcut} from "../hooks";
+import "./ActionSelector.css";
 
 const Actions = [
   "place-tile",

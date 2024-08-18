@@ -2,8 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react';
 
 import {ComponentProps, Fragment} from "react";
 import _ from "underscore";
-import {BlackOrWhite, RBaseTile, RUnit} from "../../../components";
+import {RBaseTile, RUnit} from "../../../components";
 import {svgWrapper} from "../../decorators";
+import {BlackOrWhite, Unit, UnitType} from "../../../game";
 
 type TileExtendedProps = ComponentProps<typeof RBaseTile> & {x?: number, y?: number};
 
@@ -87,7 +88,7 @@ export const WithContent: Story = {
   },
   render: (args) => <>
     <RBaseTile {...args} position={{x: 0, y: 0}} label={"Label"} />
-    <RBaseTile {...args} position={{x: 1, y: 0}} content={<RUnit.Pawn colour={"white"} />} />
+    <RBaseTile {...args} position={{x: 1, y: 0}} content={<RUnit unit={Unit.Pawn("white", 1)} />} />
   </>,
 };
 
@@ -98,13 +99,13 @@ export const Units: Story = {
         {...args}
         key={count}
         position={{x: -4 + count, y: 0}}
-        content={<RUnit.Pawn.Many colour={"white"} count={count} />}
+        content={<RUnit unit={Unit.Pawn("white", count)} />}
       />
     ))}
     {(["white", "black"] as BlackOrWhite[]).map((colour, colourIndex) => <Fragment key={colour}>
       {[{fill: "white", xOffset: -3}, {fill: "black", xOffset: 0}].map(({fill, xOffset}) => <Fragment key={fill}>
-        {[RUnit.Pawn, RUnit.Bishop, RUnit.Rook].map((RUnit, unitIndex) => (
-          <RBaseTile {...args} key={RUnit.displayName} fill={fill} position={{x: xOffset + unitIndex, y: 1 + colourIndex}} content={<RUnit colour={colour} />} />
+        {(["pawn", "bishop", "rook"] as UnitType[]).map((type, unitIndex) => (
+          <RBaseTile {...args} key={type} fill={fill} position={{x: xOffset + unitIndex, y: 1 + colourIndex}} content={<RUnit unit={new Unit({type, colour, count: 1})} />} />
         ))}
       </Fragment>)}
     </Fragment>)}

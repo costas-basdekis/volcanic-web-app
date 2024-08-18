@@ -1,6 +1,7 @@
 import {Tile} from "./Tile";
 import {Center, getSurroundingPositionsMulti, isCenter, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
+import {Unit} from "./Unit";
 
 export type Levels = Map<number, Level>;
 
@@ -11,6 +12,7 @@ interface LevelAttributes {
   pieceIdMap: Map<string, number>;
   pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
+  unitMap: Map<string, Unit>;
   previousLevel: Level | null;
 }
 
@@ -21,6 +23,7 @@ export class Level implements LevelAttributes {
   pieceIdMap: Map<string, number>;
   pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
+  unitMap: Map<string, Unit>;
   previousLevel: Level | null;
 
   static makeEmpty(index: number, previousLevel: Level | null): Level {
@@ -35,6 +38,7 @@ export class Level implements LevelAttributes {
       pieceIdMap: new Map(),
       pieceIdPieceMap: new Map(),
       nextPieceId: 1,
+      unitMap: new Map(),
       previousLevel,
     }).placePieces(pieces);
   }
@@ -50,6 +54,7 @@ export class Level implements LevelAttributes {
     this.pieceIdMap = attributes.pieceIdMap;
     this.pieceIdPieceMap = attributes.pieceIdPieceMap;
     this.nextPieceId = attributes.nextPieceId;
+    this.unitMap = attributes.unitMap;
     this.previousLevel = attributes.previousLevel;
   }
 
@@ -74,6 +79,10 @@ export class Level implements LevelAttributes {
       return this;
     }
     return this._change({previousLevel});
+  }
+
+  hasTileAt(position: Position): boolean {
+    return this.tileMap.has(makePositionKey(position));
   }
 
   placePieces(pieces: Piece[]): Level {
@@ -166,5 +175,32 @@ export class Level implements LevelAttributes {
     const surroundingPositionKeySet =
       new Set(surroundingPositions.map(position => makePositionKey(position)));
     return piece.tiles.some(tile => surroundingPositionKeySet.has(tile.key));
+  }
+
+  hasUnitAt(position: Position): boolean {
+    return this.getUnitAt(position) !== undefined;
+  }
+
+  getUnitAt(position: Position): Unit | undefined {
+    return this.unitMap.get(makePositionKey(position));
+  }
+
+  placeUnit(unit: Unit, position: Position): Level {
+    if (!this.canPlaceUnitAt(position)) {
+      throw new Error("Cannot place unit there");
+    }
+    return this._change({
+      unitMap: new Map([
+        ...this.unitMap.entries(),
+        [makePositionKey(position), unit],
+      ]),
+    });
+  }
+
+  canPlaceUnitAt(position: Position): boolean {
+    return (
+      this.hasTileAt(position)
+      && !this.hasUnitAt(position)
+    );
   }
 }

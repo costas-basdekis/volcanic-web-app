@@ -1,15 +1,17 @@
 import {RBaseTile} from "./RBaseTile";
 import {Tile} from "../../game";
+import {ReactNode} from "react";
 
 interface RTileProps {
   tile: Tile,
   size?: number,
   drawSize?: number,
   drawSizeLevel?: number,
+  content?: ReactNode,
 }
 
 export function RTile(props: RTileProps) {
-  const {tile, size, drawSize, drawSizeLevel } = props;
+  const {tile, size, drawSize, drawSizeLevel, content} = props;
   return (
     <RBaseTile
       fill={RTile.fillMap[tile.type]}
@@ -17,6 +19,7 @@ export function RTile(props: RTileProps) {
       size={size}
       drawSize={drawSize}
       drawSizeLevel={drawSizeLevel}
+      content={content}
     />
   );
 }

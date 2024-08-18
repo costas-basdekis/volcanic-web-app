@@ -1,5 +1,7 @@
 import React, {ReactNode} from 'react';
 import _ from "underscore";
+import {BlackOrWhite, Unit} from "../game";
+import "./RUnit.css";
 
 const constants = {
   cellSize: 50,
@@ -23,28 +25,36 @@ function RBaseUnitDefinition(props: RBaseUnitDefinitionProps) {
         <use xlinkHref={`#piece-${name}-base`} strokeWidth={strokeWidth} stroke={"#111"} />
         <use xlinkHref={`#piece-${name}-base`} fill={"white"} />
       </g>
+      <g id={`piece-${name}-white-preview`}>
+        <use xlinkHref={`#piece-${name}-base`} strokeWidth={strokeWidth} stroke={"green"} />
+        <use xlinkHref={`#piece-${name}-base`} fill={"white"} />
+      </g>
       <g id={`piece-${name}-black`}>
         <use xlinkHref={`#piece-${name}-base`} strokeWidth={strokeWidth} stroke={"#bbb"} />
+        <use xlinkHref={`#piece-${name}-base`} fill={"black"} />
+      </g>
+      <g id={`piece-${name}-black-preview`}>
+        <use xlinkHref={`#piece-${name}-base`} strokeWidth={strokeWidth} stroke={"green"} />
         <use xlinkHref={`#piece-${name}-base`} fill={"black"} />
       </g>
     </>
   );
 }
 
-export type BlackOrWhite = "white" | "black";
-
 interface RBaseUnitProps {
   name: string,
   colour: BlackOrWhite,
   scale?: number,
   offset?: {x: number, y: number},
+  preview?: boolean,
 }
 
 function RBaseUnit(props: RBaseUnitProps) {
-  const {name, colour, scale, offset} = props;
+  const {name, colour, scale, offset, preview = false} = props;
   return (
     <use
-      xlinkHref={`#piece-${name}-${colour}`}
+      xlinkHref={`#piece-${name}-${colour}${preview ? "-preview" : ""}`}
+      className={"unit"}
       transform={(scale || offset) ? [
         offset ? `translate(${offset.x} ${offset.y})` : "",
         scale ? `scale(${scale})` : "",
@@ -54,10 +64,11 @@ function RBaseUnit(props: RBaseUnitProps) {
 }
 RBaseUnit.rotateTransform = `rotate(180,${constants.cellSize / 2},${constants.cellSize / 2})`;
 
-export interface RUnitProps {
+export interface RUnitForProps {
   colour: BlackOrWhite,
   scale?: number,
   offset?: {x: number, y: number},
+  preview?: boolean,
 }
 
 export interface ManyProps {
@@ -73,12 +84,12 @@ const defineUnit = (name: string, props: Omit<RBaseUnitDefinitionProps, "name">)
     />
   );
 
-  function RUnitFor(props: RUnitProps) {
+  function RUnitFor(props: RUnitForProps) {
     return RBaseUnit({name, ...props});
   }
   RUnitFor.displayName = name;
   RUnitFor.Definition = unitDefinition;
-  function ManyUnitFor(props: RUnitProps & ManyProps) {
+  function ManyUnitFor(props: RUnitForProps & ManyProps) {
     const {count, ...rest} = props;
     if (count <= 0){
       return null;
@@ -177,13 +188,24 @@ const RUnitRook = defineUnit("RUnitRook", {
   strokeWidth: 10,
 });
 
-export const RUnit = {
-  Pawn: RUnitPawn,
-  Bishop: RUnitBishop,
-  Rook: RUnitRook,
-  Definitions: [
-    RUnitPawn.Definition,
-    RUnitBishop.Definition,
-    RUnitRook.Definition,
-  ],
+interface RUnitProps {
+  unit: Unit,
+  preview?: boolean,
+}
+
+export function RUnit(props: RUnitProps) {
+  const {unit, preview} = props;
+  const RUnitForType = RUnit.unitMap[unit.type];
+  return <RUnitForType.Many colour={unit.colour} count={unit.count} preview={preview} />;
+}
+
+RUnit.unitMap = {
+  pawn: RUnitPawn,
+  bishop: RUnitBishop,
+  rook: RUnitRook,
 };
+RUnit.Definitions = [
+  RUnitPawn.Definition,
+  RUnitBishop.Definition,
+  RUnitRook.Definition,
+];

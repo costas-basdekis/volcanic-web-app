@@ -1,26 +1,32 @@
 import {Level, Levels} from "./Level";
 import {Piece} from "./Piece";
 import {Position} from "../hexGridUtils";
+import {Unit} from "./Unit";
+import {UnitMap} from "./UnitMap";
 
 interface BoardAttributes {
   levels: Levels;
   maxLevel: number;
+  unitMap: UnitMap;
 }
 
 export class Board implements BoardAttributes {
   levels: Levels;
   maxLevel: number;
+  unitMap: UnitMap;
 
   static makeEmpty(): Board {
     return new Board({
       levels: new Map([[1, Level.makeEmpty(1, null)]]),
       maxLevel: 1,
+      unitMap: UnitMap.empty(),
     });
   }
 
   constructor(attributes: BoardAttributes) {
     this.levels = attributes.levels;
     this.maxLevel = attributes.maxLevel;
+    this.unitMap = attributes.unitMap;
   }
 
   _change(someAttributes: Partial<BoardAttributes>): Board {
@@ -31,6 +37,7 @@ export class Board implements BoardAttributes {
     if (someAttributes.levels) {
       this._updatePreviousLevelReferences(newAttributes);
       this._addNewMaxLevel(newAttributes);
+      newAttributes.unitMap = UnitMap.fromLevels(someAttributes.levels.values());
     }
     return new Board(newAttributes);
   }
@@ -82,6 +89,28 @@ export class Board implements BoardAttributes {
       [index, level === levelForPiece ? level.placePiece(piece) : level] as [number, Level]);
     return this._change({
       levels: new Map(entries),
+    });
+  }
+
+  getUnitPlaceablePositions(unit: Unit): Position[] {
+    return this.unitMap.getUnitPlaceablePositions(unit);
+  }
+
+  canPlaceUnit(unit: Unit, position: Position): boolean {
+    return this.unitMap.canPlaceUnit(unit, position);
+  }
+
+  placeUnit(unit: Unit, position: Position): Board {
+    if (!this.canPlaceUnit(unit, position)) {
+      throw new Error("Cannot place this unit");
+    }
+    const info = this.unitMap.get(position)!;
+    const {level} = info;
+    return this._change({
+      levels: new Map([
+        ...this.levels.entries(),
+        [level?.index, level.placeUnit(unit, position)],
+      ]),
     });
   }
 }

@@ -9,6 +9,7 @@ interface LevelAttributes {
   tiles: Tile[];
   tileMap: Map<string, Tile>;
   pieceIdMap: Map<string, number>;
+  pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
   previousLevel: Level | null;
 }
@@ -18,6 +19,7 @@ export class Level implements LevelAttributes {
   tiles: Tile[];
   tileMap: Map<string, Tile>;
   pieceIdMap: Map<string, number>;
+  pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
   previousLevel: Level | null;
 
@@ -31,6 +33,7 @@ export class Level implements LevelAttributes {
       tiles: [],
       tileMap: new Map(),
       pieceIdMap: new Map(),
+      pieceIdPieceMap: new Map(),
       nextPieceId: 1,
       previousLevel,
     }).placePieces(pieces);
@@ -45,6 +48,7 @@ export class Level implements LevelAttributes {
     this.tiles = attributes.tiles;
     this.tileMap = attributes.tileMap;
     this.pieceIdMap = attributes.pieceIdMap;
+    this.pieceIdPieceMap = attributes.pieceIdPieceMap;
     this.nextPieceId = attributes.nextPieceId;
     this.previousLevel = attributes.previousLevel;
   }
@@ -96,6 +100,10 @@ export class Level implements LevelAttributes {
       pieceIdMap: new Map([
         ...this.pieceIdMap.entries(),
         ...piece.tiles.map(tile => [tile.key, this.nextPieceId] as [string, number]),
+      ]),
+      pieceIdPieceMap: new Map([
+        ...this.pieceIdPieceMap.entries(),
+        [this.nextPieceId, piece],
       ]),
       nextPieceId: this.nextPieceId + 1,
     });

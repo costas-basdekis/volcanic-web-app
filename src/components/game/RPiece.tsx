@@ -1,5 +1,6 @@
 import {Piece} from "../../game";
 import {RTile} from "./RTile";
+import {RPieceOutline} from "./RPieceOutline";
 
 export interface RPieceProps {
   piece: Piece,
@@ -14,5 +15,6 @@ export function RPiece(props: RPieceProps) {
     {piece.tiles.map(tile => (
       <RTile key={tile.key} tile={tile} size={size} drawSize={drawSize} drawSizeLevel={drawSizeLevel} />
     ))}
+    <RPieceOutline piece={piece} size={size} levelIndex={drawSizeLevel ?? 1} />
   </>;
 }

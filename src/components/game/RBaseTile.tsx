@@ -8,6 +8,7 @@ export interface RBaseTileProps {
   fill?: string,
   size?: number,
   drawSize?: number,
+  drawSizeLevel?: number,
   position?: Position,
   label?: string | undefined | null,
   content?: ReactNode,
@@ -19,8 +20,8 @@ export function RBaseTile(props: RBaseTileProps) {
   const {
     onHover: outerOnHover, onClick: outerOnClick,
     stroke = "black", strokeWidth = 1, fill = "white",
-    size = 50, drawSize = size, position = Center,
-    label, content,
+    size = 50, drawSizeLevel = 1, drawSize = size - (drawSizeLevel - 1) * 5,
+    position = Center, label, content,
   } = props;
 
   const onMouseEnter = useCallback(() => {

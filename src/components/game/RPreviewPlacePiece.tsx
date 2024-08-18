@@ -49,7 +49,7 @@ export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
     {hoveredPosition && hoveredLevel ? (
       <RPiece
         piece={piece.moveFirstTileTo(hoveredPosition)}
-        drawSize={50 - (hoveredLevel.index - 1) * 5}
+        drawSizeLevel={hoveredLevel.index}
       />
     ) : null}
     <rect
@@ -109,7 +109,7 @@ function PlaceableTile(props: PlaceableTileProps) {
       stroke={"green"}
       strokeWidth={5}
       fill={"transparent"}
-      drawSize={50 - (level.index - 1) * 5}
+      drawSizeLevel={level.index}
       position={position}
       onClick={outerOnClick ? onClick : undefined}
     />

@@ -9,7 +9,7 @@ export function RLevel(props: RLevelProps) {
   const {level} = props;
   return <>
     {level.tiles.map(tile => (
-      <RTile key={tile.key} tile={tile} drawSize={50 - (level.index - 1) * 5} />
+      <RTile key={tile.key} tile={tile} drawSizeLevel={level.index} />
     ))}
   </>;
 }

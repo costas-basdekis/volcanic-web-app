@@ -1,17 +1,16 @@
 import {makePositionKey, Position} from "../../hexGridUtils";
-import {BlackOrWhite, Unit} from "../../game";
+import {GroupExpansionInfo, Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "../RUnit";
 
 export interface RPreviewExpandGroupProps {
-  colour: BlackOrWhite;
-  groupExpandablePositionsPositionsAndLevelIndexes: [Position, Position[], number][];
+  groupExpansionInfos: GroupExpansionInfo[];
   onExpandGroup: (position: Position) => void;
 }
 
 export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
-  const {colour, groupExpandablePositionsPositionsAndLevelIndexes, onExpandGroup} = props;
+  const {groupExpansionInfos, onExpandGroup} = props;
 
   const [hoveredPositions, setHoveredPositions] = useState<Position[] | null>(null);
 
@@ -32,13 +31,11 @@ export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
   }, [onExpandGroup]);
 
   return <>
-    {groupExpandablePositionsPositionsAndLevelIndexes.map(([position, positions, levelIndex]) => (
+    {groupExpansionInfos.map(info => (
       <ExpandableTile
-        key={makePositionKey(position)}
-        position={position}
-        positions={positions}
+        key={makePositionKey(info.position)}
+        groupExpansionInfo={info}
         hoveredPositions={hoveredPositions}
-        unit={Unit.Pawn(colour, levelIndex)}
         onHover={onTileHover}
         onClick={onTileClick}
       />
@@ -47,30 +44,32 @@ export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
 }
 
 interface ExpandableTileProps {
-  position: Position;
-  positions: Position[];
-  unit: Unit;
-  hoveredPositions: Position[] | null;
+  groupExpansionInfo: GroupExpansionInfo,
+  hoveredPositions: Position[] | null,
   onHover: (positions: Position[], hovering: boolean) => void,
   onClick: (position: Position) => void;
 }
 
 function ExpandableTile(props: ExpandableTileProps) {
   const {
-    position, positions, hoveredPositions,
-    unit, onHover: outerOnHover, onClick,
+    groupExpansionInfo, hoveredPositions, onHover: outerOnHover, onClick,
   } = props;
 
   const onHover = useCallback((_position: Position, hovering: boolean) => {
-    outerOnHover(positions, hovering);
-  }, [outerOnHover, positions]);
+    outerOnHover(groupExpansionInfo.positions, hovering);
+  }, [outerOnHover, groupExpansionInfo.positions]);
 
   return (
     <RBaseTile
       stroke={"transparent"}
       fill={"transparent"}
-      position={position}
-      content={<RUnit unit={unit} preview={!hoveredPositions?.includes(position)} />}
+      position={groupExpansionInfo.position}
+      content={(
+        <RUnit
+          unit={Unit.Pawn(groupExpansionInfo.colour, groupExpansionInfo.levelIndex)}
+          preview={!hoveredPositions?.includes(groupExpansionInfo.position)}
+        />
+      )}
       onHover={onHover}
       onClick={onClick}
     />

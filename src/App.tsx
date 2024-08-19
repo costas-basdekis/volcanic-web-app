@@ -37,8 +37,8 @@ export default function App() {
   const placeablePawnPositions = useMemo(() => {
     return board.getUnitPlaceablePositions(Unit.Pawn("white", 1));
   }, [board]);
-  const groupExpandablePositionsPositionsAndLevelIndexes = useMemo(() => {
-    return board.getGroupExpandablePositionsPositionsAndLevelIndexes("white");
+  const groupExpansionInfos = useMemo(() => {
+    return board.getGroupExpansionInfos("white");
   }, [board]);
   const placeableBishopPositions = useMemo(() => {
     return board.getUnitPlaceablePositions(Unit.Bishop("white"));
@@ -68,8 +68,7 @@ export default function App() {
           />
         ) : action === "expand-pawn" ? (
           <RPreviewExpandGroup
-            colour={"white"}
-            groupExpandablePositionsPositionsAndLevelIndexes={groupExpandablePositionsPositionsAndLevelIndexes}
+            groupExpansionInfos={groupExpansionInfos}
             onExpandGroup={onExpandGroup}
           />
         ) : action === "place-bishop" ? (

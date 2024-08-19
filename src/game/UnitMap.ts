@@ -94,6 +94,113 @@ export interface UnitInfo {
 
 type InnerUnitMap = Map<string, UnitInfo>;
 
+interface GroupExpansionInfoAttributes {
+  position: Position;
+  levelIndex: number;
+  colour: BlackOrWhite;
+  positions: Position[];
+  positionsByLevelIndex: Map<number, Position[]>;
+}
+
+export class GroupExpansionInfo {
+  position: Position;
+  levelIndex: number;
+  colour: BlackOrWhite;
+  positions: Position[];
+  positionsByLevelIndex: Map<number, Position[]>;
+
+  static getAllForColour(colour: BlackOrWhite, unitMap: UnitMap): GroupExpansionInfo[] {
+    const result: GroupExpansionInfo[] = Array.from(unitMap.map.values())
+      .filter(info => unitMap.canExpandGroup(info.tile.position, colour))
+      .map(info => GroupExpansionInfo.build(info.tile.position, colour, unitMap));
+    return this.normaliseInfos(result);
+  }
+
+  static normaliseInfos(infos: GroupExpansionInfo[]): GroupExpansionInfo[] {
+    const positionByKey: Map<string, Position> =
+      new Map(infos.map(info => [makePositionKey(info.position), info.position]));
+    const positionsByKey: Map<string, Position[]> = new Map();
+    for (const info of infos) {
+      info.prepareToNormalise(positionByKey, positionsByKey);
+    }
+    return infos.map(info => info.normalise(positionByKey, positionsByKey));
+  }
+
+  static build(position: Position, colour: BlackOrWhite, unitMap: UnitMap): GroupExpansionInfo {
+    const info = new GroupExpansionInfo({
+      position,
+      levelIndex: unitMap.get(position)!.level.index,
+      colour,
+      positions: [],
+      positionsByLevelIndex: new Map(),
+    });
+    info.positions = info.getPositions(unitMap);
+    info.positionsByLevelIndex = info.getPositionsByLevelIndex(unitMap);
+    return info;
+  }
+
+  constructor(attributes: GroupExpansionInfoAttributes) {
+    this.position = attributes.position;
+    this.levelIndex = attributes.levelIndex;
+    this.colour = attributes.colour;
+    this.positions = attributes.positions;
+    this.positionsByLevelIndex = attributes.positionsByLevelIndex;
+  }
+
+  getPositions(unitMap: UnitMap): Position[] {
+    if (!unitMap.canExpandGroup(this.position, this.colour)) {
+      throw new Error("Cannot expand group here");
+    }
+    const {neighbourGroups, tile} = unitMap.get(this.position)!;
+    const groups = neighbourGroups.filter(group => group.colour === this.colour);
+    const tileType = tile.type;
+    return getSurroundingPositionsMulti(groups.map(group => group.positions).flat(), 1)
+      .flat()
+      .filter(position => {
+        const info = unitMap.get(position);
+        return !info?.unit && info?.tile?.type === tileType;
+      });
+  }
+
+  getPositionsByLevelIndex(unitMap: UnitMap): Map<number, Position[]> {
+    const positions = this.getPositions(unitMap);
+    const positionsByLevelIndex: Map<number, Position[]> = new Map();
+    for (const position of positions) {
+      const levelIndex = unitMap.get(position)!.level.index;
+      if (!positionsByLevelIndex.has(levelIndex)) {
+        positionsByLevelIndex.set(levelIndex, []);
+      }
+      positionsByLevelIndex.get(levelIndex)!.push(position);
+    }
+    return positionsByLevelIndex;
+  }
+
+  prepareToNormalise(positionByKey: Map<string, Position>, positionsByKey: Map<string, Position[]>) {
+    const key = makePositionKey(this.position);
+    if (positionsByKey.has(key)) {
+      return;
+    }
+    const normalisedPositions = this.positions
+      .map(other => positionByKey.get(makePositionKey(other))!);
+    for (const other of normalisedPositions) {
+      positionsByKey.set(makePositionKey(other), normalisedPositions);
+    }
+  }
+
+  normalise(positionByKey: Map<string, Position>, positionsByKey: Map<string, Position[]>): GroupExpansionInfo {
+    const key = makePositionKey(this.position);
+    return new GroupExpansionInfo({
+      position: positionByKey.get(key)!,
+      levelIndex: this.levelIndex,
+      colour: this.colour,
+      positions: positionsByKey.get(key)!,
+      positionsByLevelIndex: new Map(Array.from(this.positionsByLevelIndex.entries()).map(
+        ([levelIndex, positions]) =>
+          [levelIndex, positions.map(position => positionByKey.get(makePositionKey(position))!)])),
+    });
+  }
+}
+
 export class UnitMap {
   map: InnerUnitMap;
 
@@ -233,58 +340,11 @@ export class UnitMap {
     return true;
   }
 
-  getGroupExpansionPositions(position: Position, colour: BlackOrWhite): Position[] {
-    if (!this.canExpandGroup(position, colour)) {
-      throw new Error("Cannot expand group here");
-    }
-    const {neighbourGroups, tile} = this.get(position)!;
-    const groups = neighbourGroups.filter(group => group.colour === colour);
-    const tileType = tile.type;
-    return getSurroundingPositionsMulti(groups.map(group => group.positions).flat(), 1)
-      .flat()
-      .filter(position => {
-        const info = this.map.get(makePositionKey(position));
-        return !info?.unit && info?.tile?.type === tileType;
-      });
+  getGroupExpansionInfo(position: Position, colour: BlackOrWhite): GroupExpansionInfo {
+    return GroupExpansionInfo.build(position, colour, this);
   }
 
-  getGroupExpansionPositionsByLevelIndex(position: Position, colour: BlackOrWhite): Map<number, Position[]> {
-    const positions = this.getGroupExpansionPositions(position, colour);
-    const positionsByLevelIndex: Map<number, Position[]> = new Map();
-    for (const position of positions) {
-      const levelIndex = this.get(position)!.level.index;
-      if (!positionsByLevelIndex.has(levelIndex)) {
-        positionsByLevelIndex.set(levelIndex, []);
-      }
-      positionsByLevelIndex.get(levelIndex)!.push(position);
-    }
-    return positionsByLevelIndex;
-  }
-
-  getGroupExpandablePositionsPositionsAndLevelIndexes(colour: BlackOrWhite): [Position, Position[], number][] {
-    const result: [Position, Position[], number][] = Array.from(this.map.values())
-      .filter(info => this.canExpandGroup(info.tile.position, colour))
-      .map(info => [info.tile.position, this.getGroupExpansionPositions(info.tile.position, colour), info.level.index]);
-    return this.normalisePositionsPositionsAndLevelIndexes(result);
-  }
-
-  normalisePositionsPositionsAndLevelIndexes(items: [Position, Position[], number][]): [Position, Position[], number][] {
-    const positionByKey: Map<string, Position> =
-      new Map(items.map(([position]) => [makePositionKey(position), position]));
-    const positionsByKey: Map<string, Position[]> = new Map();
-    for (const [position, positions] of items) {
-      const key = makePositionKey(position);
-      if (!positionsByKey.has(key)) {
-        const canonicalPositions = positions
-          .map(other => positionByKey.get(makePositionKey(other))!);
-        for (const other of canonicalPositions) {
-          positionsByKey.set(makePositionKey(other), canonicalPositions);
-        }
-      }
-    }
-    return items.map(([position, , levelIndex]) => {
-      const key = makePositionKey(position);
-      return [positionByKey.get(key)!, positionsByKey.get(key)!, levelIndex];
-    });
+  getGroupExpansionInfos(colour: BlackOrWhite): GroupExpansionInfo[] {
+    return GroupExpansionInfo.getAllForColour(colour, this);
   }
 }

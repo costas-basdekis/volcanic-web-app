@@ -2,7 +2,7 @@ import {Level, Levels} from "./Level";
 import {Piece} from "./Piece";
 import {Position} from "../hexGridUtils";
 import {BlackOrWhite, Unit} from "./Unit";
-import {UnitMap} from "./UnitMap";
+import {GroupExpansionInfo, UnitMap} from "./UnitMap";
 
 interface BoardAttributes {
   levels: Levels;
@@ -114,12 +114,13 @@ export class Board implements BoardAttributes {
     });
   }
 
-  getGroupExpandablePositionsPositionsAndLevelIndexes(colour: BlackOrWhite): [Position, Position[], number][] {
-    return this.unitMap.getGroupExpandablePositionsPositionsAndLevelIndexes(colour);
+  getGroupExpansionInfos(colour: BlackOrWhite): GroupExpansionInfo[] {
+    return this.unitMap.getGroupExpansionInfos(colour);
   }
 
   expandGroup(position: Position, colour: BlackOrWhite): Board {
-    const positionsByLevelIndex = this.unitMap.getGroupExpansionPositionsByLevelIndex(position, colour);
+    const positionsByLevelIndex =
+      this.unitMap.getGroupExpansionInfo(position, colour).positionsByLevelIndex;
     return this._change({
       levels: new Map(Array.from(this.levels.values()).map(level => {
         if (!positionsByLevelIndex.has(level.index)) {

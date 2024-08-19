@@ -9,7 +9,7 @@ export class UnitGroup {
   positions: Position[];
   counts: {[key in UnitType]: number} & {total: number};
 
-  static fillMap(map: UnitInfoMap) {
+  static fillMap(map: InnerUnitMap) {
     const seen: Set<string> = new Set();
     for (const unitInfo of map.values()) {
       if (seen.has(unitInfo.tile.key)) {
@@ -59,7 +59,7 @@ export class UnitGroup {
     return this;
   }
 
-  fill(map: UnitInfoMap, start: UnitInfo, seen: Set<string>): UnitGroup {
+  fill(map: InnerUnitMap, start: UnitInfo, seen: Set<string>): UnitGroup {
     if (!this.canAddItem(start)) {
       throw new Error("Cannot add info to group");
     }
@@ -92,17 +92,17 @@ export interface UnitInfo {
   neighbourGroups: UnitGroup[];
 }
 
-type UnitInfoMap = Map<string, UnitInfo>;
+type InnerUnitMap = Map<string, UnitInfo>;
 
 export class UnitMap {
-  map: UnitInfoMap;
+  map: InnerUnitMap;
 
   static empty() {
     return new UnitMap(new Map());
   }
 
   static fromLevels(levels: Iterable<Level>) {
-    const map: UnitInfoMap = new Map();
+    const map: InnerUnitMap = new Map();
     const sortedLevels = _.sortBy(Array.from(levels), level => level.index).reverse();
     for (const level of sortedLevels) {
       for (const tile of level.tiles) {
@@ -123,7 +123,7 @@ export class UnitMap {
     return new UnitMap(map);
   }
 
-  static fillNeighbourGroups(map: UnitInfoMap) {
+  static fillNeighbourGroups(map: InnerUnitMap) {
     for (const info of map.values()) {
       const surroundingPositions = getSurroundingPositions(info.tile.position);
       const groups = surroundingPositions
@@ -133,7 +133,7 @@ export class UnitMap {
     }
   }
 
-  constructor(map: UnitInfoMap) {
+  constructor(map: InnerUnitMap) {
     this.map = map;
   }
 

@@ -8,7 +8,12 @@ interface NextPieceDisplayProps {
   onChangePiece: (piece: Piece) => void,
 }
 
-const presets = [Piece.presets.BlackWhite, Piece.presets.WhiteBlack];
+const presets = [
+  Piece.presets.BlackWhite,
+  Piece.presets.WhiteBlack,
+  Piece.presets.WhiteWhite,
+  Piece.presets.BlackBlack,
+];
 export function NextPieceDisplay(props: NextPieceDisplayProps) {
   const {onChangePiece} = props;
 
@@ -30,17 +35,16 @@ export function NextPieceDisplay(props: NextPieceDisplayProps) {
   const onCcwClick = useCallback(() => {
     setRotation(rotation => (rotation - 1 + 6) % 6);
   }, []);
-  const onPresetClick = useCallback((index?: number) => {
-    if (index === undefined) {
-      setPresetIndex(index => (index + 1) % presets.length);
-    } else {
-      setPresetIndex(index);
-    }
+  const onPresetClick = useCallback((index: number) => {
+    setPresetIndex(index);
+  }, []);
+  const onPresetRotate = useCallback(() => {
+    setPresetIndex(index => (index + 1) % presets.length);
   }, []);
 
   useAutoShortcut(onCwClick, ['r'], 'Rotate next piece CW', 'Rotate the next piece clockwise');
   useAutoShortcut(onCcwClick, ['t'], 'Rotate next piece CCW', 'Rotate the next piece counter-clockwise');
-  useAutoShortcut(() => onPresetClick(undefined), ['e'], 'Cycle through piece types', 'Cycle through piece types');
+  useAutoShortcut(onPresetRotate, ['e'], 'Cycle through piece types', 'Cycle through piece types');
 
   const middlePoint = piece.getMiddlePosition(25);
   return (
@@ -58,7 +62,7 @@ export function NextPieceDisplay(props: NextPieceDisplayProps) {
       <br/>
       Press [E] to cycle through types
       <br/>
-      <svg width={120} height={100}>
+      <svg width={240} height={100}>
         {rotatedPresets.map((piece, index) => {
           const middlePoint = piece.getMiddlePosition(10);
           return (

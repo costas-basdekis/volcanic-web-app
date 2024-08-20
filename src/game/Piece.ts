@@ -9,7 +9,7 @@ interface PieceAttributes {
 export class Piece implements PieceAttributes {
   tiles: Tile[];
 
-  static presets: {[key in "BlackWhite" | "WhiteBlack"]: Piece};
+  static presets: {[key in "BlackWhite" | "WhiteBlack" | "WhiteWhite" | "BlackBlack"]: Piece};
 
   constructor(attributes: PieceAttributes) {
     this.tiles = attributes.tiles;
@@ -99,6 +99,20 @@ Piece.presets = {
       new Tile({position: {x: 0, y: 0}, type: "volcano"}),
       new Tile({position: {x: -1, y: 1}, type: "black"}),
       new Tile({position: {x: 0, y: 1}, type: "white"}),
+    ],
+  }),
+  WhiteWhite: new Piece({
+    tiles: [
+      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+      new Tile({position: {x: -1, y: 1}, type: "white"}),
+      new Tile({position: {x: 0, y: 1}, type: "white"}),
+    ],
+  }),
+  BlackBlack: new Piece({
+    tiles: [
+      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
+      new Tile({position: {x: -1, y: 1}, type: "black"}),
+      new Tile({position: {x: 0, y: 1}, type: "black"}),
     ],
   }),
 };

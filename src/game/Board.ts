@@ -37,7 +37,7 @@ export class Board implements BoardAttributes {
     if (someAttributes.levels) {
       this._updatePreviousLevelReferences(newAttributes);
       this._addNewMaxLevel(newAttributes);
-      newAttributes.unitMap = UnitMap.fromLevels(newAttributes.levels.values());
+      this._updateUnitMap(newAttributes);
     }
     return new Board(newAttributes);
   }
@@ -65,6 +65,10 @@ export class Board implements BoardAttributes {
       [maxLevel + 1, Level.makeEmpty(maxLevel + 1, levels.get(maxLevel)!)],
     ]);
   }
+
+  _updateUnitMap = (newAttributes: BoardAttributes) => {
+    newAttributes.unitMap = UnitMap.fromLevels(newAttributes.levels.values());
+  };
 
   getPlaceablePositionsForPiece(piece: Piece): [Position, Level][] {
     const placeablePositions: [Position, Level][] = [];

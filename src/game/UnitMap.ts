@@ -219,7 +219,7 @@ export class UnitMap {
         map.set(tile.key, {
           level,
           tile,
-          unit: level.unitMap.get(tile.key) ?? null,
+          unit: level.levelUnitMap.get(tile.key) ?? null,
           group: null,
           neighbourGroups: [],
         });

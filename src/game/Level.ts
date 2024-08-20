@@ -13,7 +13,7 @@ interface LevelAttributes {
   pieceIdMap: Map<string, number>;
   pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
-  unitMap: Map<string, Unit>;
+  levelUnitMap: Map<string, Unit>;
   previousLevel: Level | null;
 }
 
@@ -24,7 +24,7 @@ export class Level implements LevelAttributes {
   pieceIdMap: Map<string, number>;
   pieceIdPieceMap: Map<number, Piece>;
   nextPieceId: number;
-  unitMap: Map<string, Unit>;
+  levelUnitMap: Map<string, Unit>;
   previousLevel: Level | null;
 
   static makeEmpty(index: number, previousLevel: Level | null): Level {
@@ -39,7 +39,7 @@ export class Level implements LevelAttributes {
       pieceIdMap: new Map(),
       pieceIdPieceMap: new Map(),
       nextPieceId: 1,
-      unitMap: new Map(),
+      levelUnitMap: new Map(),
       previousLevel,
     }).placePieces(pieces, unitMap);
   }
@@ -55,7 +55,7 @@ export class Level implements LevelAttributes {
     this.pieceIdMap = attributes.pieceIdMap;
     this.pieceIdPieceMap = attributes.pieceIdPieceMap;
     this.nextPieceId = attributes.nextPieceId;
-    this.unitMap = attributes.unitMap;
+    this.levelUnitMap = attributes.levelUnitMap;
     this.previousLevel = attributes.previousLevel;
   }
 
@@ -173,7 +173,7 @@ export class Level implements LevelAttributes {
 
   isPieceNotOnTopOfIndestructibleUnits(piece: Piece): boolean {
     const indestructibleUnitTypes = ["bishop", "rook"];
-    return !piece.tiles.some(tile => indestructibleUnitTypes.includes(this.unitMap.get(tile.key)?.type!));
+    return !piece.tiles.some(tile => indestructibleUnitTypes.includes(this.levelUnitMap.get(tile.key)?.type!));
   }
 
   isPieceNotOverWholeGroups(piece: Piece, unitMap: UnitMap): boolean {
@@ -201,7 +201,7 @@ export class Level implements LevelAttributes {
   }
 
   getUnitAt(position: Position): Unit | undefined {
-    return this.unitMap.get(makePositionKey(position));
+    return this.levelUnitMap.get(makePositionKey(position));
   }
 
   placeUnit(unit: Unit, position: Position): Level {
@@ -209,8 +209,8 @@ export class Level implements LevelAttributes {
       throw new Error("Cannot place unit there");
     }
     return this._change({
-      unitMap: new Map([
-        ...this.unitMap.entries(),
+      levelUnitMap: new Map([
+        ...this.levelUnitMap.entries(),
         [makePositionKey(position), unit],
       ]),
     });
@@ -228,8 +228,8 @@ export class Level implements LevelAttributes {
       throw new Error("Cannot expand group here");
     }
     return this._change({
-      unitMap: new Map([
-        ...this.unitMap.entries(),
+      levelUnitMap: new Map([
+        ...this.levelUnitMap.entries(),
         ...positions.map(position => [makePositionKey(position), Unit.Pawn(colour, this.index)] as const),
       ]),
     });

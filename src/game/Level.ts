@@ -2,6 +2,7 @@ import {Tile} from "./Tile";
 import {Center, getSurroundingPositionsMulti, isCenter, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
 import {BlackOrWhite, Unit} from "./Unit";
+import {UnitGroup, UnitMap} from "./UnitMap";
 
 export type Levels = Map<number, Level>;
 
@@ -27,10 +28,10 @@ export class Level implements LevelAttributes {
   previousLevel: Level | null;
 
   static makeEmpty(index: number, previousLevel: Level | null): Level {
-    return this.fromPieces(index, [], previousLevel);
+    return this.fromPieces(index, [], previousLevel, UnitMap.empty());
   }
 
-  static fromPieces(index: number, pieces: Piece[], previousLevel: Level | null): Level {
+  static fromPieces(index: number, pieces: Piece[], previousLevel: Level | null, unitMap: UnitMap): Level {
     return new Level({
       index,
       tiles: [],
@@ -40,7 +41,7 @@ export class Level implements LevelAttributes {
       nextPieceId: 1,
       unitMap: new Map(),
       previousLevel,
-    }).placePieces(pieces);
+    }).placePieces(pieces, unitMap);
   }
 
   static getTileMap(tiles: Tile[]): Map<string, Tile> {
@@ -85,23 +86,23 @@ export class Level implements LevelAttributes {
     return this.tileMap.has(makePositionKey(position));
   }
 
-  placePieces(pieces: Piece[]): Level {
+  placePieces(pieces: Piece[], unitMap: UnitMap): Level {
     if (!pieces.length) {
       return this;
     }
     let level: Level = this;
     for (const piece of pieces) {
-      level = level.placePiece(piece);
+      level = level.placePiece(piece, unitMap);
     }
     return level;
   }
 
-  placePieceAt(piece: Piece, position: Position): Level {
-    return this.placePiece(piece.moveFirstTileTo(position));
+  placePieceAt(piece: Piece, position: Position, unitMap: UnitMap): Level {
+    return this.placePiece(piece.moveFirstTileTo(position), unitMap);
   }
 
-  placePiece(piece: Piece): Level {
-    if (!this.canPlacePiece(piece)) {
+  placePiece(piece: Piece, unitMap: UnitMap): Level {
+    if (!this.canPlacePiece(piece, unitMap)) {
       throw new Error("Cannot place this piece");
     }
     return this._change({
@@ -125,22 +126,22 @@ export class Level implements LevelAttributes {
     return getSurroundingPositionsMulti(this.tiles.map(tile => tile.position), depth);
   }
 
-  getPlaceablePositionsForPiece(piece: Piece): Position[] {
+  getPlaceablePositionsForPiece(piece: Piece, unitMap: UnitMap): Position[] {
     const surroundingPositions = this.getSurroundingPositions(2);
     if (!this.previousLevel && !surroundingPositions.length) {
       return [Center];
     }
     return surroundingPositions
-      .filter(position => this.canPlacePieceAt(piece, position));
+      .filter(position => this.canPlacePieceAt(piece, position, unitMap));
   }
 
-  canPlacePieceAt(piece: Piece, position: Position): boolean {
-    return this.canPlacePiece(piece.moveFirstTileTo(position));
+  canPlacePieceAt(piece: Piece, position: Position, unitMap: UnitMap): boolean {
+    return this.canPlacePiece(piece.moveFirstTileTo(position), unitMap);
   }
 
-  canPlacePiece(piece: Piece): boolean {
+  canPlacePiece(piece: Piece, unitMap: UnitMap): boolean {
     if (this.previousLevel) {
-      if (!this.previousLevel.canPlacePieceOnTop(piece)) {
+      if (!this.previousLevel.canPlacePieceOnTop(piece, unitMap)) {
         return false;
       }
       if (!this.tiles.length) {
@@ -154,12 +155,34 @@ export class Level implements LevelAttributes {
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
   }
 
-  canPlacePieceOnTop(piece: Piece): boolean {
+  canPlacePieceOnTop(piece: Piece, unitMap: UnitMap): boolean {
+    return (
+      this.isPieceFullyOnTopOfMultiplePieces(piece)
+      && this.isPieceNotOnTopOfIndestructibleUnits(piece)
+      && this.isPieceNotOverWholeGroups(piece, unitMap)
+    );
+  }
+
+  isPieceFullyOnTopOfMultiplePieces(piece: Piece): boolean {
     const pieceIds = new Set(piece.tiles.map(tile => this.pieceIdMap.get(tile.key)));
     return (
       pieceIds.size > 1
       && !pieceIds.has(undefined)
     );
+  }
+
+  isPieceNotOnTopOfIndestructibleUnits(piece: Piece): boolean {
+    const indestructibleUnitTypes = ["bishop", "rook"];
+    return !piece.tiles.some(tile => indestructibleUnitTypes.includes(this.unitMap.get(tile.key)?.type!));
+  }
+
+  isPieceNotOverWholeGroups(piece: Piece, unitMap: UnitMap): boolean {
+    const groups = Array.from(new Set(piece.tiles
+      .map(tile => unitMap.get(tile.position)?.group)
+      .filter(group => group) as UnitGroup[]));
+    const eradicatedGroups = groups
+      .filter(group => group.positions.every(position => piece.includes(position)));
+    return !eradicatedGroups.length;
   }
 
   doesPieceOverlap(piece: Piece) {

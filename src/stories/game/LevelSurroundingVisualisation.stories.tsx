@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Level, Piece, Tile} from "../../game";
+import {Level, Piece, Tile, UnitMap} from "../../game";
 import {RBaseTile, RLevel, RPreviewPlacePiece} from "../../components";
 import {Center, makePositionKey} from "../../hexGridUtils";
 import {svgWrapper} from "../decorators";
@@ -14,7 +14,7 @@ function LevelSurroundingVisualisation(props: LevelSurroundingVisualisationProps
   const {level, depth} = props;
 
   let surroundingPositions = level.getSurroundingPositions(depth);
-  const placeablePositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite);
+  const placeablePositions = level.getPlaceablePositionsForPiece(Piece.presets.BlackWhite, UnitMap.empty());
   if  (!surroundingPositions.length) {
     surroundingPositions = placeablePositions;
   }
@@ -66,7 +66,7 @@ export const Level1SingleTile: Story = {
           new Tile({position: Center, type: "volcano"})
         ],
       }),
-    ], null),
+    ], null, UnitMap.empty()),
     depth: 2,
   },
 };
@@ -75,7 +75,7 @@ export const Level1ThreeTiles: Story = {
   args: {
     level: Level.fromPieces(1, [
       Piece.presets.BlackWhite.moveFirstTileTo(Center),
-    ], null),
+    ], null, UnitMap.empty()),
     depth: 2,
   },
 };
@@ -87,7 +87,7 @@ export const Level1ManyTiles: Story = {
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
-    ], null),
+    ], null, UnitMap.empty()),
     depth: 2,
   },
 };
@@ -107,7 +107,7 @@ export const Level2EmptyWithLevel1SingleTile: Story = {
           new Tile({position: Center, type: "volcano"})
         ],
       }),
-    ], null)),
+    ], null, UnitMap.empty())),
     depth: 2,
   },
 };
@@ -116,7 +116,7 @@ export const Level2EmptyWithLevel1ThreeTiles: Story = {
   args: {
     level: Level.makeEmpty(2, Level.fromPieces(1, [
       Piece.presets.BlackWhite,
-    ], null)),
+    ], null, UnitMap.empty())),
     depth: 2,
   },
 };
@@ -128,7 +128,7 @@ export const Level2EmptyWithLevel1ManyTiles: Story = {
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
       Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
-    ], null)),
+    ], null, UnitMap.empty())),
     depth: 2,
   },
 };

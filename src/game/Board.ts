@@ -36,8 +36,8 @@ export class Board implements BoardAttributes {
     };
     if (someAttributes.levels) {
       this._updatePreviousLevelReferences(newAttributes);
-      this._addNewMaxLevel(newAttributes);
       this._updateUnitMap(newAttributes);
+      this._addNewMaxLevel(newAttributes);
     }
     return new Board(newAttributes);
   }
@@ -54,6 +54,10 @@ export class Board implements BoardAttributes {
     attributes.levels = levels;
   }
 
+  _updateUnitMap = (newAttributes: BoardAttributes) => {
+    newAttributes.unitMap = UnitMap.fromLevels(newAttributes.levels.values());
+  };
+
   _addNewMaxLevel(attributes: BoardAttributes) {
     let {levels, maxLevel} = attributes;
     if (!levels.get(maxLevel)!.tiles.length) {
@@ -66,14 +70,10 @@ export class Board implements BoardAttributes {
     ]);
   }
 
-  _updateUnitMap = (newAttributes: BoardAttributes) => {
-    newAttributes.unitMap = UnitMap.fromLevels(newAttributes.levels.values());
-  };
-
   getPlaceablePositionsForPiece(piece: Piece): [Position, Level][] {
     const placeablePositions: [Position, Level][] = [];
     for (const level of this.levels.values()) {
-      for (const position of level.getPlaceablePositionsForPiece(piece)) {
+      for (const position of level.getPlaceablePositionsForPiece(piece, this.unitMap)) {
         placeablePositions.push([position, level]);
       }
     }
@@ -85,12 +85,12 @@ export class Board implements BoardAttributes {
   }
 
   placePiece(piece: Piece): Board {
-    const levelForPiece = Array.from(this.levels.values()).find(level => level.canPlacePiece(piece));
+    const levelForPiece = Array.from(this.levels.values()).find(level => level.canPlacePiece(piece, this.unitMap));
     if (!levelForPiece) {
       throw new Error("Cannot place this piece at any level");
     }
     const entries = Array.from(this.levels.entries()).map(([index, level]) =>
-      [index, level === levelForPiece ? level.placePiece(piece) : level] as [number, Level]);
+      [index, level === levelForPiece ? level.placePiece(piece, this.unitMap) : level] as [number, Level]);
     return this._change({
       levels: new Map(entries),
     });

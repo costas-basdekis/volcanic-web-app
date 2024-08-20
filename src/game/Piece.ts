@@ -1,5 +1,5 @@
 import {Tile} from "./Tile";
-import {Center, getTilePosition, makePositionKey, Position} from "../hexGridUtils";
+import {Center, getTilePosition, isSamePosition, makePositionKey, Position} from "../hexGridUtils";
 import _ from "underscore";
 
 interface PieceAttributes {
@@ -20,6 +20,14 @@ export class Piece implements PieceAttributes {
       ...this,
       ...someAttributes,
     });
+  }
+
+  includes(tileOrPosition: Tile | Position) {
+    if (tileOrPosition instanceof Tile) {
+      return this.tiles.includes(tileOrPosition);
+    } else {
+      return this.tiles.some(tile => isSamePosition(tile.position, tileOrPosition));
+    }
   }
 
   getMiddlePosition(size: number): Position {

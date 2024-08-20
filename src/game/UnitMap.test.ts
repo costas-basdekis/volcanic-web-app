@@ -12,7 +12,7 @@ describe("UnitMap", () => {
     });
     describe("on map with 1 tile", () => {
       const unitMap = UnitMap.fromLevels([
-        Level.fromPieces(1, [Piece.presets.BlackWhite], null),
+        Level.fromPieces(1, [Piece.presets.BlackWhite], null, UnitMap.empty()),
       ]);
       it("cannot place unit on volcano", () => {
         const because = {reasons: null};
@@ -40,7 +40,7 @@ describe("UnitMap", () => {
     });
     it("returns 2 positions for map with 1 tile", () => {
       const unitMap = UnitMap.fromLevels([
-        Level.fromPieces(1, [Piece.presets.BlackWhite], null),
+        Level.fromPieces(1, [Piece.presets.BlackWhite], null, UnitMap.empty()),
       ]);
       expect(sortPositions(unitMap.getUnitPlaceablePositions(Unit.Pawn("white", 1)))).toEqual(sortPositions([
         {x: -1, y: 1},

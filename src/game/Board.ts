@@ -37,7 +37,7 @@ export class Board implements BoardAttributes {
     if (someAttributes.levels) {
       this._updatePreviousLevelReferences(newAttributes);
       this._addNewMaxLevel(newAttributes);
-      newAttributes.unitMap = UnitMap.fromLevels(someAttributes.levels.values());
+      newAttributes.unitMap = UnitMap.fromLevels(newAttributes.levels.values());
     }
     return new Board(newAttributes);
   }

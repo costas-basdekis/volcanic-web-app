@@ -42,7 +42,7 @@ export function ActionSelector(props: ActionSelectorProps) {
                 name={"action"}
                 value={action}
                 checked={props.action === action}
-                onClick={() => {
+                onChange={() => {
                   props.onChangeAction(action);
                 }}
               />

@@ -29,10 +29,10 @@ export function ActionSelector(props: ActionSelectorProps) {
   const rotateAction = useCallback(() => {
     onChangeAction(Actions[(Actions.indexOf(action) + 1) % Actions.length]);
   }, [action, onChangeAction]);
-  useAutoShortcut(rotateAction, ["y"], "Rotate between actions", "Rotate between actions");
+  useAutoShortcut(rotateAction, ["y"], "Cycle through actions", "Cycle through actions");
   return (
     <div className={"action-selector"}>
-      Press [Y] to rotate between actions
+      Press [Y] to cycle through actions
       <ul>
         {Actions.map((action, index) => (
           <li key={action}>

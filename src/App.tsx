@@ -85,7 +85,7 @@ export default function App() {
           />
         ) : null}
         <AutoResizeSvg.Tools>
-          <NextPieceDisplay piece={nextPiece} onChangePiece={onChangeNextPiece} />
+          <NextPieceDisplay onChangePiece={onChangeNextPiece} />
           <ActionSelector action={action} onChangeAction={onChangeAction} />
           <Credits />
         </AutoResizeSvg.Tools>

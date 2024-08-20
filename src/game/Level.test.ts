@@ -80,7 +80,7 @@ describe("Level", () => {
       expect(Level.makeEmpty(1, null).canPlacePieceOnTop(Piece.presets.BlackWhite)).toBe(false);
     });
     it("doesn't allow piece on empty space", () => {
-      expect(level.canPlacePieceOnTopAt(Piece.presets.BlackWhite,{x: 3, y: 3})).toBe(false);
+      expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: 3, y: 3}))).toBe(false);
     });
     it("doesn't allow piece partially on top of tiles", () => {
       expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite.rotate(1))).toBe(false);

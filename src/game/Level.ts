@@ -154,10 +154,6 @@ export class Level implements LevelAttributes {
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
   }
 
-  canPlacePieceOnTopAt(piece: Piece, position: Position): boolean {
-    return this.canPlacePieceOnTop(piece.moveFirstTileTo(position));
-  }
-
   canPlacePieceOnTop(piece: Piece): boolean {
     const pieceIds = new Set(piece.tiles.map(tile => this.pieceIdMap.get(tile.key)));
     return (

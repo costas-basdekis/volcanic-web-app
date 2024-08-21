@@ -1,4 +1,5 @@
 export * from "./ActionSelector";
+export * from "./AutoGrabFocus";
 export * from "./AutoResizeSvg";
 export * from "./Credits";
 export * from "./game";

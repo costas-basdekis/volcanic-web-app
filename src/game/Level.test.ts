@@ -3,6 +3,8 @@ import {Piece} from "./Piece";
 import {sortPositions} from "../testing/utils";
 import {Center, offsetPosition} from "../hexGridUtils";
 import {UnitMap} from "./UnitMap";
+import {Board} from "./Board";
+import {Unit} from "./Unit";
 
 describe("Level", () => {
   const level = Level.fromPieces(1, [
@@ -95,6 +97,63 @@ describe("Level", () => {
         .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0}, UnitMap.empty())
         .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2}, UnitMap.empty());
       expect(level1.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), UnitMap.empty())).toBe(true);
+    });
+    it("cannot place piece over one-pawn group, but would be able to otherwise", () => {
+      const board = Board.makeEmpty()
+        .placePiece(Piece.presets.BlackWhite)
+        .placePiece(Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}));
+      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+      const boardWithPawn = board
+        .placeUnit(Unit.Pawn("white", 1), {x: -1, y: 1});
+      expect(boardWithPawn.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), boardWithPawn.unitMap)).toBe(false);
+    });
+    it("cannot place piece over entire two-pawn group, but would be able to otherwise", () => {
+      const board = Board.makeEmpty()
+        .placePiece(Piece.presets.WhiteWhite)
+        .placePiece(Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}));
+      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+      const boardWithGroup = board
+        .placeUnit(Unit.Pawn("white", 1), {x: -1, y: 1})
+        .expandGroup({x: -2, y: 1}, "white");
+      expect(boardWithGroup.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), boardWithGroup.unitMap)).toBe(false);
+    });
+    it("can place piece over entire big pawn group", () => {
+      const board = Board.makeEmpty()
+        .placePiece(Piece.presets.BlackWhite)
+        .placePiece(Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}))
+        .placeUnit(Unit.Pawn("white", 1), {x: -1, y: 1})
+        .expandGroup({x: -2, y: 1}, "white")
+        .expandGroup({x: -2, y: 0}, "white");
+      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+    });
+    it("cannot place piece over a bishop, but would be able to otherwise", () => {
+      const board = Board.makeEmpty()
+        .placePiece(Piece.presets.WhiteBlack)
+        .placePiece(Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}))
+        .placePiece(Piece.presets.BlackWhite.moveFirstTileTo({x: -2, y: -2}))
+        .placeUnit(Unit.Pawn("white", 1), {x: -2, y: 1})
+        .expandGroup({x: -2, y: 0}, "white")
+        .expandGroup({x: -3, y: -1}, "white");
+      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+      const boardWithBishop = board
+        .placeUnit(Unit.Bishop("white"), {x: -1, y: 1});
+      expect(boardWithBishop.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), boardWithBishop.unitMap)).toBe(false);
+    });
+    it("cannot place piece over a rook, but would be able to otherwise", () => {
+      const board = Board.makeEmpty()
+        .placePiece(Piece.presets.WhiteBlack)
+        .placePiece(Piece.presets.WhiteBlack.rotate(1).moveFirstTileTo({x: -1, y: 0}))
+        .placePiece(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}))
+        .placePiece(Piece.presets.WhiteBlack.rotate(3).moveFirstTileTo({x: 1, y: 0}))
+        .placePiece(Piece.presets.WhiteBlack.rotate(-1))
+        .placePiece(Piece.presets.WhiteBlack)
+        .placePiece(Piece.presets.WhiteBlack.moveFirstTileTo({x: -3, y: 0}))
+        .placePiece(Piece.presets.WhiteBlack.rotate(-1).moveFirstTileTo({x: -3, y: 0}))
+        .placePiece(Piece.presets.WhiteBlack.rotate(1).moveFirstTileTo({x: -1, y: 0}));
+      expect(board.levels.get(3)!.canPlacePieceOnTop(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+      const boardWithRook = board
+        .placeUnit(Unit.Rook("white"), {x: -1, y: 1});
+      expect(boardWithRook.levels.get(3)!.canPlacePieceOnTop(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}), boardWithRook.unitMap)).toBe(false);
     });
   });
 });

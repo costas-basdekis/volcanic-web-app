@@ -15,9 +15,9 @@ export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
   const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
 
   const levelByPlaceablePosition = useMemo(() => {
-    return new Map(placeablePositionsAndLevels);
+    return new Map(placeablePositionsAndLevels.map(([position, level]) => [makePositionKey(position), level]));
   }, [placeablePositionsAndLevels]);
-  const hoveredLevel = levelByPlaceablePosition.get(hoveredPosition!);
+  const hoveredLevel = hoveredPosition ? levelByPlaceablePosition.get(makePositionKey(hoveredPosition)) : null;
 
   const onBackgroundHoverMouseEnter = useCallback(() => {
     setHoveredPosition(null);

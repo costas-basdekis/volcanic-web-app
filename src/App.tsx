@@ -1,6 +1,6 @@
 import {useCallback, useMemo, useState} from 'react';
 import './App.css';
-import {Board, Piece, Unit} from "./game";
+import {BlackOrWhite, Board, Piece, Unit} from "./game";
 import {
   Action, ActionSelector,
   AutoResizeSvg,
@@ -9,7 +9,7 @@ import {
   RBoard, RPreviewExpandGroup,
   RPreviewPlaceUnit,
   RPreviewPlacePiece,
-  RUnit
+  RUnit, PlayerSelector
 } from "./components";
 import {Position} from "./hexGridUtils";
 
@@ -17,6 +17,7 @@ export default function App() {
   const [board, setBoard] = useState(() => Board.makeEmpty().placePiece(Piece.presets.WhiteBlack));
   const [nextPiece, setNextPiece] = useState(Piece.presets.BlackWhite);
   const [action, setAction] = useState<Action>("place-tile");
+  const [colour, setColour] = useState<BlackOrWhite>("white");
 
   const onPlacePiece = useCallback((position: Position) => {
     setBoard(board => board.placePieceAt(nextPiece, position));
@@ -63,7 +64,7 @@ export default function App() {
         ) : action === "place-pawn" ? (
           <RPreviewPlaceUnit
             placeablePositions={placeablePawnPositions}
-            unit={Unit.Pawn("white", 1)}
+            unit={Unit.Pawn(colour, 1)}
             onPlaceUnit={onPlaceUnit}
           />
         ) : action === "expand-pawn" ? (
@@ -74,19 +75,20 @@ export default function App() {
         ) : action === "place-bishop" ? (
           <RPreviewPlaceUnit
             placeablePositions={placeableBishopPositions}
-            unit={Unit.Bishop("white")}
+            unit={Unit.Bishop(colour)}
             onPlaceUnit={onPlaceUnit}
           />
         ) : action === "place-rook" ? (
           <RPreviewPlaceUnit
             placeablePositions={placeableRookPositions}
-            unit={Unit.Rook("white")}
+            unit={Unit.Rook(colour)}
             onPlaceUnit={onPlaceUnit}
           />
         ) : null}
         <AutoResizeSvg.Tools>
           <NextPieceDisplay onChangePiece={onChangeNextPiece} />
           <ActionSelector action={action} onChangeAction={onChangeAction} />
+          <PlayerSelector onSetColour={setColour} />
           <Credits />
         </AutoResizeSvg.Tools>
       </AutoResizeSvg>

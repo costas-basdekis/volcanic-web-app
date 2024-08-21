@@ -4,4 +4,5 @@ export * from "./Credits";
 export * from "./game";
 export * from "./Hexagon";
 export * from "./NextPieceDisplay";
+export * from "./PlayerSelector";
 export * from "./RUnit";

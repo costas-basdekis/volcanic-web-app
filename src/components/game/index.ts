@@ -3,6 +3,7 @@ export * from "./RBoard";
 export * from "./RLevel";
 export * from "./RPiece";
 export * from "./RPieceOutline";
+export * from "./RPreview";
 export * from "./RPreviewExpandGroup";
 export * from "./RPreviewPlaceUnit";
 export * from "./RPreviewPlacePiece";

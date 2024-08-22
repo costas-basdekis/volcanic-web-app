@@ -25,21 +25,17 @@ export type ActionSelectorProps = {
   onChangeAction: (action: UnitAction) => void,
 }
 
-const unitActionLabels = [
-  "Place pawn",
-  "Expand pawn",
-  "Place bishop",
-  "Place rook",
-];
-const actionLabels = [
-  "Place tile",
-  ...unitActionLabels,
-];
+const actionLabels: {[key in Action]: string} = {
+  "place-pawn": "Place pawn",
+  "expand-pawn": "Expand pawn",
+  "place-bishop": "Place bishop",
+  "place-rook": "Place rook",
+  "place-tile": "Place tile",
+};
 
 export function ActionSelector(props: ActionSelectorProps) {
   const {action, allowPlaceTile, onChangeAction} = props;
   const actionList = allowPlaceTile ? Actions : UnitActions;
-  const actionLabelList = allowPlaceTile ? actionLabels : unitActionLabels;
   const rotateAction = useCallback(() => {
     // @ts-ignore
     onChangeAction(actionList[(actionList.indexOf(action) + 1) % actionList.length]);
@@ -49,7 +45,7 @@ export function ActionSelector(props: ActionSelectorProps) {
     <div className={"action-selector"}>
       Press [Y] to cycle through actions
       <ul>
-        {actionList.map((action, index) => (
+        {actionList.map((action) => (
           <li key={action}>
             <label>
               <input
@@ -62,7 +58,7 @@ export function ActionSelector(props: ActionSelectorProps) {
                   props.onChangeAction(action);
                 }}
               />
-              {" "}{actionLabelList[index]}</label>
+              {" "}{actionLabels[action]}</label>
           </li>
         ))}
       </ul>

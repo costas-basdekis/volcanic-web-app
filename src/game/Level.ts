@@ -157,7 +157,8 @@ export class Level implements LevelAttributes {
 
   canPlacePieceOnTop(piece: Piece, unitMap: UnitMap): boolean {
     return (
-      this.isPieceFullyOnTopOfMultiplePieces(piece)
+      this.tileMap.get(makePositionKey(piece.tiles[0].position))?.type === "volcano"
+      && this.isPieceFullyOnTopOfMultiplePieces(piece)
       && this.isPieceNotOnTopOfIndestructibleUnits(piece)
       && this.isPieceNotOverWholeGroups(piece, unitMap)
     );

@@ -49,9 +49,7 @@ describe("Level", () => {
           .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 0, y: 2}, UnitMap.empty());
         const level2 = Level.makeEmpty(2, level1);
         expect(sortPositions(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite, UnitMap.empty()))).toEqual(sortPositions([
-          {x: -1, y: 1},
           {x: -1, y: 0},
-          {x: 1, y: 0},
         ]));
       });
     });

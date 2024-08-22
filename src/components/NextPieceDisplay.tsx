@@ -9,8 +9,8 @@ interface NextPieceDisplayProps {
 }
 
 const presets = [
-  Piece.presets.BlackWhite,
   Piece.presets.WhiteBlack,
+  Piece.presets.BlackWhite,
   Piece.presets.WhiteWhite,
   Piece.presets.BlackBlack,
 ];

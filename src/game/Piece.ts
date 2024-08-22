@@ -87,14 +87,14 @@ export class Piece implements PieceAttributes {
 }
 
 Piece.presets = {
-  BlackWhite: new Piece({
+  WhiteBlack: new Piece({
     tiles: [
       new Tile({position: {x: 0, y: 0}, type: "volcano"}),
       new Tile({position: {x: -1, y: 1}, type: "white"}),
       new Tile({position: {x: 0, y: 1}, type: "black"}),
     ],
   }),
-  WhiteBlack: new Piece({
+  BlackWhite: new Piece({
     tiles: [
       new Tile({position: {x: 0, y: 0}, type: "volcano"}),
       new Tile({position: {x: -1, y: 1}, type: "black"}),

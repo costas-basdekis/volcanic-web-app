@@ -108,12 +108,12 @@ describe("Level", () => {
     it("cannot place piece over entire two-pawn group, but would be able to otherwise", () => {
       const board = Board.makeEmpty()
         .placePiece(Piece.presets.WhiteWhite)
-        .placePiece(Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}));
-      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
+        .placePiece(Piece.presets.WhiteBlack.rotate(1).moveFirstTileTo({x: -1, y: 0}));
+      expect(board.levels.get(1)!.canPlacePieceOnTop(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
       const boardWithGroup = board
         .placeUnit(Unit.Pawn("white", 1), {x: -1, y: 1})
         .expandGroup({x: -2, y: 1}, "white");
-      expect(boardWithGroup.levels.get(1)!.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: -1, y: 0}), boardWithGroup.unitMap)).toBe(false);
+      expect(boardWithGroup.levels.get(1)!.canPlacePieceOnTop(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}), boardWithGroup.unitMap)).toBe(false);
     });
     it("can place piece over entire big pawn group", () => {
       const board = Board.makeEmpty()

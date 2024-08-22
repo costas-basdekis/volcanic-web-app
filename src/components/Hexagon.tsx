@@ -31,6 +31,7 @@ export function Hexagon(props: HexagonProps) {
       onMouseEnter={props.onMouseEnter ?? undefined}
       onMouseLeave={props.onMouseLeave ?? undefined}
       onClick={props.onClick ?? undefined}
+      onPointerEnter={props.onClick ?? undefined}
     />
     {label ? (
       <text

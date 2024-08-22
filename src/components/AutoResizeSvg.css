@@ -8,3 +8,7 @@
     color: white;
     position: relative;
 }
+
+.svg-tool-container {
+    display: inline-block;
+}

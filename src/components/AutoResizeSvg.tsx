@@ -1,7 +1,8 @@
-import React, {createContext, ReactNode, useCallback, useContext, useEffect, useMemo, useRef, useState} from "react";
+import React, {createContext, useCallback, useContext, useRef, useState} from "react";
 import ResizeObserver, {SizeInfo} from "rc-resize-observer";
 import {ReactSVGPanZoom, Tool, TOOL_AUTO, Value, ViewerMouseEvent} from "react-svg-pan-zoom";
 import "./AutoResizeSvg.css";
+import {createPortal} from "react-dom";
 
 function AutoResizeSvgContent(props: {children: React.ReactNode}) {
   return props.children;
@@ -10,18 +11,12 @@ function AutoResizeSvgContent(props: {children: React.ReactNode}) {
 function AutoResizeSvgTools(props: {children: React.ReactNode}) {
   const {children} = props;
 
-  const svgToolManager = useContext(SvgToolManagerContext);
+  const toolContainer = useContext(SvgToolContainerContext);
 
-  useEffect(() => {
-    const tool = svgToolManager?.addTool(children);
-    return () => {
-      if (tool) {
-        svgToolManager?.removeTool(tool);
-      }
-    };
-  }, [children, svgToolManager]);
-
-  return null;
+  if (!toolContainer) {
+    return null;
+  }
+  return createPortal(children, toolContainer);
 }
 
 export interface AutoResizeSvgProps {
@@ -35,8 +30,7 @@ export function AutoResizeSvg(props: AutoResizeSvgProps) {
   const [{width, height}, setSize] = useState<{width: number, height: number}>({width: 500, height: 500});
   const [firstResize, setFirstResize] = useState<boolean>(true);
   const svgPanZoomRef = useRef<ReactSVGPanZoom>(null);
-
-  const svgToolManager = useMemo(() => new SvgToolManager(), []);
+  const [toolContainer, setToolContainer] = useState<HTMLElement | null>(null);
 
   const onResize = useCallback(({width, height}: SizeInfo) => {
     setSize({width, height});
@@ -69,7 +63,7 @@ export function AutoResizeSvg(props: AutoResizeSvgProps) {
   return (
     <ResizeObserver onResize={onResize}>
       <div className={"svg-container"}>
-        <SvgToolManagerContextProvider value={svgToolManager}>
+        <SvgToolContainerContextProvider value={toolContainer}>
           <ReactSVGPanZoom
             ref={svgPanZoomRef}
             width={width} height={height}
@@ -84,8 +78,8 @@ export function AutoResizeSvg(props: AutoResizeSvgProps) {
             </svg>
           </ReactSVGPanZoom>
           {toolContainers}
-          {svgToolManager.getTools()}
-        </SvgToolManagerContextProvider>
+          <span className={"svg-tool-container"} ref={setToolContainer} />
+        </SvgToolContainerContextProvider>
       </div>
     </ResizeObserver>
   );
@@ -93,23 +87,5 @@ export function AutoResizeSvg(props: AutoResizeSvgProps) {
 AutoResizeSvg.Content = AutoResizeSvgContent;
 AutoResizeSvg.Tools = AutoResizeSvgTools;
 
-class SvgToolManager {
-  tools: Map<Symbol, ReactNode> = new Map();
-
-  getTools(): ReactNode {
-    return Array.from(this.tools.values());
-  }
-
-  addTool(node: ReactNode): Symbol {
-    const tool = Symbol("svg-tool");
-    this.tools.set(tool, node);
-    return tool;
-  }
-
-  removeTool(tool: Symbol) {
-    this.tools.delete(tool);
-  }
-}
-
-const SvgToolManagerContext = createContext<SvgToolManager | null>(null);
-const SvgToolManagerContextProvider = SvgToolManagerContext.Provider;
+const SvgToolContainerContext = createContext<HTMLElement | null>(null);
+const SvgToolContainerContextProvider = SvgToolContainerContext.Provider;

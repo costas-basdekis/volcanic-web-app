@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/volcanic-web-app/static/css/main.03daee56.css",
+    "main.js": "/volcanic-web-app/static/js/main.b4eabfbb.js",
+    "static/js/453.6ab36201.chunk.js": "/volcanic-web-app/static/js/453.6ab36201.chunk.js",
+    "index.html": "/volcanic-web-app/index.html",
+    "main.03daee56.css.map": "/volcanic-web-app/static/css/main.03daee56.css.map",
+    "main.b4eabfbb.js.map": "/volcanic-web-app/static/js/main.b4eabfbb.js.map",
+    "453.6ab36201.chunk.js.map": "/volcanic-web-app/static/js/453.6ab36201.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.03daee56.css",
+    "static/js/main.b4eabfbb.js"
+  ]
+}

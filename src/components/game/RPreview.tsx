@@ -32,21 +32,21 @@ export function RPreview(props: RPreviewProps) {
     onPlaceUnitOuter?.(action as UnitAction, position);
   }, [action, board, onBoardChange, onPlaceUnitOuter]);
   const onExpandGroup = useCallback((position: Position) => {
-    onBoardChange?.(board.expandGroup(position, "white"));
-  }, [board, onBoardChange]);
+    onBoardChange?.(board.expandGroup(position, colour));
+  }, [board, colour, onBoardChange]);
 
   const placeablePawnPositions = useMemo(() => {
-    return board.getUnitPlaceablePositions(Unit.Pawn("white", 1));
-  }, [board]);
+    return board.getUnitPlaceablePositions(Unit.Pawn(colour, 1));
+  }, [board, colour]);
   const groupExpansionInfos = useMemo(() => {
-    return board.getGroupExpansionInfos("white");
-  }, [board]);
+    return board.getGroupExpansionInfos(colour);
+  }, [board, colour]);
   const placeableBishopPositions = useMemo(() => {
-    return board.getUnitPlaceablePositions(Unit.Bishop("white"));
-  }, [board]);
+    return board.getUnitPlaceablePositions(Unit.Bishop(colour));
+  }, [board, colour]);
   const placeableRookPositions = useMemo(() => {
-    return board.getUnitPlaceablePositions(Unit.Rook("white"));
-  }, [board]);
+    return board.getUnitPlaceablePositions(Unit.Rook(colour));
+  }, [board, colour]);
 
   return (action === "place-tile" ? (
     <RPreviewPlacePiece

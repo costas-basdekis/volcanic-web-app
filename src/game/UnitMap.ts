@@ -347,4 +347,11 @@ export class UnitMap {
   getGroupExpansionInfos(colour: BlackOrWhite): GroupExpansionInfo[] {
     return GroupExpansionInfo.getAllForColour(colour, this);
   }
+
+  getGroupExpansionNeededCount(position: Position, colour: BlackOrWhite) {
+    const info = this.getGroupExpansionInfo(position, colour);
+    return info.positions
+      .map(position => this.get(position)!.level.index)
+      .reduce((total, current) => total + current);
+  }
 }

@@ -96,6 +96,10 @@ export class Board implements BoardAttributes {
     });
   }
 
+  canPlacePiece(piece: Piece): boolean {
+    return Array.from(this.levels.values()).find(level => level.canPlacePiece(piece, this.unitMap)) !== undefined;
+  }
+
   getUnitPlaceablePositions(unit: Unit): Position[] {
     return this.unitMap.getUnitPlaceablePositions(unit);
   }
@@ -133,5 +137,13 @@ export class Board implements BoardAttributes {
         return [level.index, level.expandGroup(positionsByLevelIndex.get(level.index)!, colour)];
       })),
     });
+  }
+
+  canExpandGroup(position: Position, colour: BlackOrWhite): boolean {
+    return this.unitMap.canExpandGroup(position, colour);
+  }
+
+  getGroupExpansionNeededCount(position: Position, colour: BlackOrWhite): number {
+    return this.unitMap.getGroupExpansionNeededCount(position, colour);
   }
 }

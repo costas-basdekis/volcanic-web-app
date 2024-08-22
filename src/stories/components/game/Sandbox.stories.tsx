@@ -47,7 +47,7 @@ const meta: Meta<{initialBoard?: Board}> = {
       />
       <AutoResizeSvg.Tools>
         <NextPieceDisplay onChangePiece={onChangeNextPiece}/>
-        <ActionSelector action={action} onChangeAction={onChangeAction}/>
+        <ActionSelector allowPlaceTile={true} action={action} onChangeAction={onChangeAction}/>
         <PlayerSelector onChangeColour={setColour}/>
         <AutoGrabFocus/>
       </AutoResizeSvg.Tools>

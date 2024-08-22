@@ -2,39 +2,54 @@ import {useCallback} from "react";
 import {useAutoShortcut} from "../hooks";
 import "./ActionSelector.css";
 
-const Actions = [
-  "place-tile",
+const UnitActions = [
   "place-pawn",
   "expand-pawn",
   "place-bishop",
   "place-rook",
 ] as const;
+const Actions = [
+  "place-tile",
+  ...UnitActions,
+] as const;
+export type UnitAction = typeof UnitActions[number];
 export type Action = typeof Actions[number];
 
-interface ActionSelectorProps {
+export type ActionSelectorProps = {
   action: Action,
+  allowPlaceTile: true,
   onChangeAction: (action: Action) => void,
+} | {
+  action: UnitAction,
+  allowPlaceTile: false,
+  onChangeAction: (action: UnitAction) => void,
 }
 
-const actionLabels = [
-  "Place tile",
+const unitActionLabels = [
   "Place pawn",
   "Expand pawn",
   "Place bishop",
   "Place rook",
 ];
+const actionLabels = [
+  "Place tile",
+  ...unitActionLabels,
+];
 
 export function ActionSelector(props: ActionSelectorProps) {
-  const {action, onChangeAction} = props;
+  const {action, allowPlaceTile, onChangeAction} = props;
+  const actionList = allowPlaceTile ? Actions : UnitActions;
+  const actionLabelList = allowPlaceTile ? actionLabels : unitActionLabels;
   const rotateAction = useCallback(() => {
-    onChangeAction(Actions[(Actions.indexOf(action) + 1) % Actions.length]);
-  }, [action, onChangeAction]);
+    // @ts-ignore
+    onChangeAction(actionList[(actionList.indexOf(action) + 1) % actionList.length]);
+  }, [action, actionList, onChangeAction]);
   useAutoShortcut(rotateAction, ["y"], "Cycle through actions", "Cycle through actions");
   return (
     <div className={"action-selector"}>
       Press [Y] to cycle through actions
       <ul>
-        {Actions.map((action, index) => (
+        {actionList.map((action, index) => (
           <li key={action}>
             <label>
               <input
@@ -43,10 +58,11 @@ export function ActionSelector(props: ActionSelectorProps) {
                 value={action}
                 checked={props.action === action}
                 onChange={() => {
+                  // @ts-ignore
                   props.onChangeAction(action);
                 }}
               />
-              {" "}{actionLabels[index]}</label>
+              {" "}{actionLabelList[index]}</label>
           </li>
         ))}
       </ul>

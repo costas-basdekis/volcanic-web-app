@@ -2,7 +2,7 @@ import {RPreviewPlacePiece} from "./RPreviewPlacePiece";
 import {RPreviewPlaceUnit} from "./RPreviewPlaceUnit";
 import {BlackOrWhite, Board, Piece, Unit} from "../../game";
 import {RPreviewExpandGroup} from "./RPreviewExpandGroup";
-import {Action} from "../ActionSelector";
+import {Action, UnitAction} from "../ActionSelector";
 import {useCallback, useMemo} from "react";
 import {Position} from "../../hexGridUtils";
 
@@ -12,17 +12,25 @@ export interface RPreviewProps {
   action: Action,
   colour: BlackOrWhite,
   onBoardChange?: ((board: Board) => void) | null | undefined,
+  onPlacePiece?: ((piece: Piece) => void) | null | undefined,
+  onPlaceUnit?: ((action: UnitAction, position: Position) => void) | null | undefined,
 }
 
 export function RPreview(props: RPreviewProps) {
-  const {board, nextPiece, action, colour, onBoardChange} = props;
+  const {
+    board, nextPiece, action, colour,
+    onBoardChange, onPlacePiece: onPlacePieceOuter,
+    onPlaceUnit: onPlaceUnitOuter,
+  } = props;
 
   const onPlacePiece = useCallback((position: Position) => {
     onBoardChange?.(board.placePieceAt(nextPiece, position));
-  }, [board, nextPiece, onBoardChange]);
+    onPlacePieceOuter?.(nextPiece.moveFirstTileTo(position));
+  }, [board, nextPiece, onBoardChange, onPlacePieceOuter]);
   const onPlaceUnit = useCallback((unit: Unit, position: Position) => {
     onBoardChange?.(board.placeUnit(unit, position));
-  }, [board, onBoardChange]);
+    onPlaceUnitOuter?.(action as UnitAction, position);
+  }, [action, board, onBoardChange, onPlaceUnitOuter]);
   const onExpandGroup = useCallback((position: Position) => {
     onBoardChange?.(board.expandGroup(position, "white"));
   }, [board, onBoardChange]);

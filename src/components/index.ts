@@ -1,3 +1,4 @@
+export * from "./ActionConfirm";
 export * from "./ActionSelector";
 export * from "./AutoGrabFocus";
 export * from "./AutoResizeSvg";

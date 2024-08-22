@@ -1,0 +1,11 @@
+.action-confirm {
+    position: absolute;
+    left: auto;
+    right: auto;
+    top: 5px;
+    border: 1px solid black;
+    width: 120px;
+    height: 30px;
+    text-align: center;
+    vertical-align: middle;
+}

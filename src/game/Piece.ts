@@ -86,6 +86,9 @@ export class Piece implements PieceAttributes {
   }
 }
 
+export const piecePresets = ["WhiteBlack", "BlackWhite", "WhiteWhite", "BlackBlack"] as const;
+export type PiecePreset = typeof piecePresets[number];
+
 Piece.presets = {
   WhiteBlack: new Piece({
     tiles: [

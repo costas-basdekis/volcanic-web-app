@@ -5,9 +5,9 @@ import {RBoard} from "./RBoard";
 import {RPreview} from "./RPreview";
 import {NextPieceDisplay} from "../NextPieceDisplay";
 import {ActionSelector, UnitAction} from "../ActionSelector";
-import {ReactNode, useCallback, useEffect, useState} from "react";
-import {Piece} from "../../game";
-import {Position} from "../../hexGridUtils";
+import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
+import {applyMove, canApplyMove, decodeMove, encodeMove, Piece, PieceMove, PiecePreset, UnitMove} from "../../game";
+import {Center, Position} from "../../hexGridUtils";
 import {ActionConfirm} from "../ActionConfirm";
 
 export type RGameProps  = {
@@ -21,6 +21,8 @@ export function RGame(props: RGameProps) {
   const [partialGame, setPartialGame] = useState(() => game.toPartialMoveGame());
   const [nextPiece, setNextPiece] = useState(Piece.presets.BlackWhite);
   const [action, setAction] = useState<UnitAction>("place-pawn");
+  const [lastPieceMove, setLastPieceMove] = useState<PieceMove | null>(null);
+  const [lastUnitMove, setLastUnitMove] = useState<UnitMove | null>(null);
 
   useEffect(() => {
     setPartialGame(game.toPartialMoveGame());
@@ -31,17 +33,23 @@ export function RGame(props: RGameProps) {
       ? (partialGame.stage === "place-piece" ? "move-start" : "move-middle")
       : "move-end";
 
-  const onPlacePiece = useCallback((piece: Piece) => {
+  const onChangePiece = useCallback((piece: Piece, piecePreset: PiecePreset, pieceRotation: number) => {
+    setNextPiece(piece);
+    setLastPieceMove({piecePreset, pieceRotation, piecePosition: Center});
+  }, []);
+  const onPlacePiece = useCallback((piece: Piece, piecePosition: Position) => {
     if (!partialGame.canPlacePiece(piece)) {
       return;
     }
     setPartialGame(partialGame => partialGame.placePiece(piece));
+    setLastPieceMove(pieceMove => pieceMove ? ({...pieceMove, piecePosition}) : null)
   }, [partialGame]);
   const onPlaceUnit = useCallback((action: UnitAction, position: Position) => {
     if (!partialGame.canPlaceUnit(action, position)) {
       return;
     }
     setPartialGame(partialGame => partialGame.placeUnit(action, position));
+    setLastUnitMove({unitAction: action, unitPosition: position});
   }, [partialGame]);
   const onUndo = useCallback(() => {
     if (moveStage === "move-start") {
@@ -55,6 +63,27 @@ export function RGame(props: RGameProps) {
     }
     onGameChange(partialGame.toGame(game));
   }, [game, moveStage, onGameChange, partialGame]);
+  const onMoveViaCode = useCallback((moveCode: string) => {
+    const move = decodeMove(moveCode);
+    if (!move) {
+      alert("Move code is invalid");
+      return;
+    }
+    if (!canApplyMove(game, move)) {
+      alert("Move is not valid for this board");
+      return;
+    }
+    onGameChange(applyMove(game, move));
+    setLastPieceMove(move.pieceMove);
+    setLastUnitMove(move.unitMove);
+  }, [game, onGameChange]);
+
+  const lastMoveCode = useMemo(() => {
+    if (!lastPieceMove || !lastUnitMove) {
+      return null;
+    }
+    return encodeMove({pieceMove: lastPieceMove, unitMove: lastUnitMove});
+  }, [lastPieceMove, lastUnitMove]);
 
   return <>
     <AutoResizeSvg>
@@ -73,10 +102,12 @@ export function RGame(props: RGameProps) {
         />
       ) : null}
       <AutoResizeSvg.Tools>
-        <NextPieceDisplay onChangePiece={setNextPiece} />
+        <NextPieceDisplay onChangePiece={onChangePiece} />
         <ActionSelector allowPlaceTile={false} action={action} onChangeAction={setAction} />
         <ActionConfirm
           moveStage={moveStage}
+          lastMoveCode={lastMoveCode}
+          onMoveViaCode={onMoveViaCode}
           onUndo={onUndo}
           onConfirm={onConfirm}
         />

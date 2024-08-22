@@ -12,7 +12,7 @@ export interface RPreviewProps {
   action: Action,
   colour: BlackOrWhite,
   onBoardChange?: ((board: Board) => void) | null | undefined,
-  onPlacePiece?: ((piece: Piece) => void) | null | undefined,
+  onPlacePiece?: ((piece: Piece, piecePosition: Position) => void) | null | undefined,
   onPlaceUnit?: ((action: UnitAction, position: Position) => void) | null | undefined,
 }
 
@@ -25,7 +25,7 @@ export function RPreview(props: RPreviewProps) {
 
   const onPlacePiece = useCallback((position: Position) => {
     onBoardChange?.(board.placePieceAt(nextPiece, position));
-    onPlacePieceOuter?.(nextPiece.moveFirstTileTo(position));
+    onPlacePieceOuter?.(nextPiece.moveFirstTileTo(position), position);
   }, [board, nextPiece, onBoardChange, onPlacePieceOuter]);
   const onPlaceUnit = useCallback((unit: Unit, position: Position) => {
     onBoardChange?.(board.placeUnit(unit, position));

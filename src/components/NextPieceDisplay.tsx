@@ -1,11 +1,11 @@
-import {Piece} from "../game";
+import {Piece, PiecePreset, piecePresets} from "../game";
 import {useCallback, useEffect, useMemo, useState} from "react";
 import {useAutoShortcut} from "../hooks";
 import {RPiece} from "./game";
 import "./NextPieceDisplay.css";
 
 interface NextPieceDisplayProps {
-  onChangePiece: (piece: Piece) => void,
+  onChangePiece: (piece: Piece, piecePreset: PiecePreset, pieceRotation: number) => void,
 }
 
 const presets = [
@@ -26,8 +26,8 @@ export function NextPieceDisplay(props: NextPieceDisplayProps) {
     return rotatedPresets[presetIndex];
   }, [presetIndex, rotatedPresets]);
   useEffect(() => {
-    onChangePiece(piece);
-  }, [onChangePiece, piece]);
+    onChangePiece(piece, piecePresets[presetIndex], rotation);
+  }, [onChangePiece, piece, presetIndex, rotation]);
 
   const onCwClick = useCallback(() => {
     setRotation(rotation => (rotation + 1) % 6);

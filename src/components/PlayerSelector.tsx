@@ -4,7 +4,7 @@ import {useCallback, useEffect, useState} from "react";
 import {useAutoShortcut} from "../hooks";
 
 interface PlayerSelectorProps {
-  onSetColour: (colour: BlackOrWhite) => void,
+  onChangeColour: (colour: BlackOrWhite) => void,
 }
 
 const coloursAndNames: [BlackOrWhite, string][] = [
@@ -12,7 +12,7 @@ const coloursAndNames: [BlackOrWhite, string][] = [
   ["black", "Black"],
 ];
 export function  PlayerSelector(props: PlayerSelectorProps) {
-  const {onSetColour} = props;
+  const {onChangeColour} = props;
   const [colourIndex, setColourIndex] = useState(0);
 
   const rotateColour = useCallback(() => {
@@ -24,8 +24,8 @@ export function  PlayerSelector(props: PlayerSelectorProps) {
   const [colour] = coloursAndNames[colourIndex];
 
   useEffect(() => {
-    onSetColour(colour);
-  }, [colour, onSetColour]);
+    onChangeColour(colour);
+  }, [colour, onChangeColour]);
 
   return (
     <div className={"player-selector"}>

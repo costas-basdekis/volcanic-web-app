@@ -40,11 +40,10 @@ export default function App() {
         <AutoResizeSvg.Tools>
           <NextPieceDisplay onChangePiece={onChangeNextPiece} />
           <ActionSelector action={action} onChangeAction={onChangeAction} />
-          <PlayerSelector onSetColour={setColour} />
+          <PlayerSelector onChangeColour={setColour} />
           <Credits />
         </AutoResizeSvg.Tools>
       </AutoResizeSvg>
     </div>
   );
 }
-

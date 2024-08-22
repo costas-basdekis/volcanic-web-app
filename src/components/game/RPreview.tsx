@@ -33,7 +33,8 @@ export function RPreview(props: RPreviewProps) {
   }, [action, board, onBoardChange, onPlaceUnitOuter]);
   const onExpandGroup = useCallback((position: Position) => {
     onBoardChange?.(board.expandGroup(position, colour));
-  }, [board, colour, onBoardChange]);
+    onPlaceUnitOuter?.(action as UnitAction, position);
+  }, [action, board, colour, onBoardChange, onPlaceUnitOuter]);
 
   const placeablePawnPositions = useMemo(() => {
     return board.getUnitPlaceablePositions(Unit.Pawn(colour, 1));

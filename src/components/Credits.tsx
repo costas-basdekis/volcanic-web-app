@@ -16,6 +16,10 @@ export function Credits() {
       </h2>
       <ul>
         <li>
+          Created by <a href={"https://github.com/costas-basdekis/"}>Costas Basdekis</a>.
+          You you can see the source at <a href={"https://github.com/costas-basdekis/volcanic-web-app"}>volcanic-web-app</a> on Github
+        </li>
+        <li>
           <a href={"https://www.flaticon.com/free-icons/volcano"} title={"volcano icons"}>
             Volcano icons created by Freepik - Flaticon
           </a>

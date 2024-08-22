@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {ReactNode, useCallback, useEffect, useState} from "react";
+import {useCallback, useState} from "react";
 import {
   Action,
-  ActionSelector, AutoGrabFocus,
+  ActionSelector, AutoGrabFocus, AutoResizeSvg,
   NextPieceDisplay,
   PlayerSelector,
   RBoard,
@@ -23,7 +23,7 @@ const meta: Meta<{initialBoard?: Board}> = {
   decorators: [
     svgWrapper,
   ],
-  render: ({initialBoard = Board.makeEmpty()}, context) => {
+  render: ({initialBoard = Board.makeEmpty()}) => {
     const [board, setBoard] = useState(initialBoard);
     const [nextPiece, setNextPiece] = useState(Piece.presets.BlackWhite);
     const [action, setAction] = useState<Action>("place-tile");
@@ -36,20 +36,6 @@ const meta: Meta<{initialBoard?: Board}> = {
       setAction(action);
     }, []);
 
-    const setTools: ((extraTools: ReactNode) => void) | undefined = context["setTools"];
-
-    useEffect(() => {
-      setTools?.(<>
-        <NextPieceDisplay onChangePiece={onChangeNextPiece}/>
-        <ActionSelector action={action} onChangeAction={onChangeAction}/>
-        <PlayerSelector onSetColour={setColour}/>
-        <AutoGrabFocus/>
-      </>);
-      return () => {
-        setTools?.(null);
-      };
-    }, [action, onChangeAction, onChangeNextPiece, setTools]);
-
     return <>
       <RBoard board={board}/>
       <RPreview
@@ -59,6 +45,12 @@ const meta: Meta<{initialBoard?: Board}> = {
         colour={colour}
         onBoardChange={setBoard}
       />
+      <AutoResizeSvg.Tools>
+        <NextPieceDisplay onChangePiece={onChangeNextPiece}/>
+        <ActionSelector action={action} onChangeAction={onChangeAction}/>
+        <PlayerSelector onSetColour={setColour}/>
+        <AutoGrabFocus/>
+      </AutoResizeSvg.Tools>
     </>;
   },
 };

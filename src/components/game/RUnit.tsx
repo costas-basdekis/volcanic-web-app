@@ -1,6 +1,6 @@
 import React, {ReactNode} from 'react';
 import _ from "underscore";
-import {BlackOrWhite, Unit} from "../game";
+import {BlackOrWhite, Unit} from "../../game";
 import "./RUnit.css";
 
 const constants = {

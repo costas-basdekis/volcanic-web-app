@@ -2,7 +2,7 @@ import {makePositionKey, Position} from "../../hexGridUtils";
 import {GroupExpansionInfo, Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
-import {RUnit} from "../RUnit";
+import {RUnit} from "./RUnit";
 
 export interface RPreviewExpandGroupProps {
   groupExpansionInfos: GroupExpansionInfo[];

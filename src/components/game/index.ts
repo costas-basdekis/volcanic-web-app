@@ -8,3 +8,4 @@ export * from "./RPreviewExpandGroup";
 export * from "./RPreviewPlaceUnit";
 export * from "./RPreviewPlacePiece";
 export * from "./RTile";
+export * from "./RUnit";

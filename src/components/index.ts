@@ -8,4 +8,3 @@ export * from "./Hexagon";
 export * from "./NextPieceDisplay";
 export * from "./PlayerSelector";
 export * from "./RemainingPiecesAndUnitsDisplay";
-export * from "./RUnit";

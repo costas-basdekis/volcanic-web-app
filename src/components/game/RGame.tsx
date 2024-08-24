@@ -1,6 +1,6 @@
 import {Game} from "../../game/Game";
 import {AutoResizeSvg} from "../AutoResizeSvg";
-import {RUnit} from "../RUnit";
+import {RUnit} from "./RUnit";
 import {RBoard} from "./RBoard";
 import {RPreview} from "./RPreview";
 import {NextPieceDisplay} from "../NextPieceDisplay";

@@ -1,7 +1,7 @@
 import {Level, UnitMap} from "../../game";
 import {RTile} from "./RTile";
 import {RPieceOutline} from "./RPieceOutline";
-import {RUnit} from "../RUnit";
+import {RUnit} from "./RUnit";
 
 export interface RLevelProps {
   level: Level,

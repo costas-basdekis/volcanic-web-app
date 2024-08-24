@@ -1,7 +1,6 @@
 import "./RemainingPiecesAndUnitsDisplay.css";
-import {RPiece} from "./game";
+import {RPiece, RUnit} from "./game";
 import {BlackOrWhite, Piece, playerNames, Unit} from "../game";
-import {RUnit} from "./RUnit";
 import {RemainingPieces, RemainingUnits} from "../game/Game";
 import {Fragment} from "react";
 

@@ -2,7 +2,7 @@ import {makePositionKey, Position} from "../../hexGridUtils";
 import {Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
-import {RUnit} from "../RUnit";
+import {RUnit} from "./RUnit";
 
 export interface RPreviewPlaceUnitProps {
   unit: Unit;

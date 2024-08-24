@@ -30,7 +30,7 @@ export function ActionConfirm(props: ActionConfirmProps) {
       <button disabled={moveStage === "move-start"} onClick={onUndo}>Undo [U]</button>
       <button disabled={moveStage !== "move-end"} onClick={onConfirm}>Confirm [C]</button>
       <br/>
-      Last move code: {lastMoveCode ?? "N/A"}
+      Move code: {lastMoveCode ?? "N/A"}
       <br/>
       <button disabled={moveStage !== "move-start"} onClick={onEnterMoveCodeClick}>Enter move code</button>
     </div>

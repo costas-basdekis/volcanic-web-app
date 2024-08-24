@@ -6,19 +6,17 @@ interface RTileProps {
   tile: Tile,
   size?: number,
   drawSize?: number,
-  drawSizeLevel?: number,
   content?: ReactNode,
 }
 
 export function RTile(props: RTileProps) {
-  const {tile, size, drawSize, drawSizeLevel, content} = props;
+  const {tile, size, drawSize, content} = props;
   return (
     <RBaseTile
       fill={RTile.fillMap[tile.type]}
       position={tile.position}
       size={size}
       drawSize={drawSize}
-      drawSizeLevel={drawSizeLevel}
       content={content}
     />
   );

@@ -14,7 +14,7 @@ export function RLevel(props: RLevelProps) {
     {level.tiles.map(tile => {
       const unit = unitMap?.getUnitForLevel(tile.position, level);
       return (
-        <RTile key={tile.key} tile={tile} drawSizeLevel={level.index} content={unit ? <RUnit unit={unit}/> : null}/>
+        <RTile key={tile.key} tile={tile} content={unit ? <RUnit unit={unit}/> : null}/>
       );
     })}
     {Array.from(level.pieceIdPieceMap.values()).map(piece => (

@@ -46,27 +46,20 @@ export function NextPieceDisplay(props: NextPieceDisplayProps) {
   useAutoShortcut(onCcwClick, ['t'], 'Rotate next piece CCW', 'Rotate the next piece counter-clockwise');
   useAutoShortcut(onPresetRotate, ['e'], 'Cycle through piece types', 'Cycle through piece types');
 
-  const middlePoint = piece.getMiddlePosition(25);
   return (
     <div className={"next-piece-preview"}>
-      <label>Next piece:</label>
+      <button onClick={onCcwClick}>[T]</button>
+      Rotate
+      <button onClick={onCwClick}>[R]</button>
       <br/>
-      <svg width={100} height={100}>
-        <g transform={`translate(${50 - middlePoint.x}, ${50 - middlePoint.y})`}>
-          <RPiece piece={piece} size={25}/>
-        </g>
-      </svg>
+      [E] to choose next
       <br/>
-      <button onClick={onCwClick}>CW [R]</button>
-      <button onClick={onCcwClick}>CCW [T]</button>
-      <br/>
-      Press [E] to cycle through types
-      <br/>
-      <svg width={240} height={100}>
+      <svg width={120} height={120}>
         {rotatedPresets.map((piece, index) => {
           const middlePoint = piece.getMiddlePosition(10);
           return (
-            <g key={index} transform={`translate(${(30 + index * 60) - middlePoint.x}, ${30 - middlePoint.y})`}>
+            <g key={index}
+               transform={`translate(${30 + (index % 2) * 60 - middlePoint.x}, ${30 + Math.floor(index / 2) * 60 - middlePoint.y})`}>
               <rect
                 x={middlePoint.x - 25} y={middlePoint.y - 27}
                 width={50} height={50}

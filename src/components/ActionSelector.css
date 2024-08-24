@@ -2,8 +2,12 @@
     text-align: initial;
     position: absolute;
     left: 6px;
-    top: 230px;
+    top: 170px;
     border: 1px solid black;
-    width: 260px;
-    height: 150px;
+    width: 150px;
+    height: 6em;
+}
+
+.action-selector .action {
+    display: block;
 }

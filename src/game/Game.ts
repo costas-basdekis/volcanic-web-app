@@ -177,6 +177,10 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     return this._change({
       stage: "place-unit",
       board: this.board.placePiece(piece),
+      remainingTiles: {
+        ...this.remainingTiles,
+        [this.nextPlayer]: this.remainingTiles[this.nextPlayer] - 1,
+      },
     });
   }
 
@@ -224,10 +228,6 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       stage: "place-piece",
       board,
       nextPlayer: this.nextPlayer === "white" ? "black" : "white",
-      remainingTiles: {
-        ...this.remainingTiles,
-        [this.nextPlayer]: this.remainingTiles[this.nextPlayer] - 1,
-      },
       remainingUnits,
     });
   }

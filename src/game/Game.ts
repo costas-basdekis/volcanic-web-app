@@ -1,6 +1,6 @@
 import {Board} from "./Board";
-import {BlackOrWhite, Unit, UnitType} from "./Unit";
-import {Piece, piecePresets} from "./Piece";
+import {BlackOrWhite, oppositeOfBlackOrWhite, Unit, UnitType} from "./Unit";
+import {Piece} from "./Piece";
 import {Position} from "../hexGridUtils";
 import {Action} from "../components";
 import _ from "underscore";
@@ -128,31 +128,29 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       previousGame: this,
       ...someAttributes,
     };
-    if (newAttributes.stage === "place-piece") {
-      this._updateFinished(newAttributes);
-    }
-    const nextGame = new PartialMoveGame(newAttributes);
-    if (!nextGame.finished && !nextGame.canNextPlayerMakeAnyMove()) {
-      nextGame.finished = true;
-      nextGame.winner = this.nextPlayer;
-    }
-    return nextGame
+    this._updateFinished(newAttributes);
+    return new PartialMoveGame(newAttributes);
   }
 
-  _updateFinished(attributes: GameAttributes) {
-    let winner: BlackOrWhite | null = null;
-    if (this._userFinishedTheirUnits(attributes.remainingUnits.white)) {
-      winner = "white";
+  _updateFinished(attributes: PartialMoveGameAttributes) {
+    if (attributes.finished) {
+      return;
+    }
+    function makeWinner(winner: BlackOrWhite) {
+      attributes.finished = true;
+      attributes.winner = winner;
+    }
+    if (!this._canNextPlayerMakeAnyMove(attributes)) {
+      makeWinner(oppositeOfBlackOrWhite[attributes.nextPlayer]);
+    } else if (this._userFinishedTheirUnits(attributes.remainingUnits.white)) {
+      makeWinner("white");
     } else if (this._userFinishedTheirUnits(attributes.remainingUnits.black)) {
-      winner = "black";
-    }
-    if (!attributes.remainingUnits.white) {
-      winner = "black";
+      makeWinner("black");
+    } else if (!attributes.remainingUnits.white) {
+      makeWinner("black");
     } else if (!attributes.remainingUnits.black) {
-      winner = "white";
+      makeWinner("white");
     }
-    attributes.finished = winner !== null;
-    attributes.winner = winner;
   }
 
   _userFinishedTheirUnits(playerRemainingUnits: PlayerRemainingUnits): boolean {
@@ -163,32 +161,29 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     ) >= 2;
   }
 
-  canNextPlayerMakeAnyMove(): boolean {
-    if (this.stage !== "place-piece") {
-      throw new Error("Cannot place piece at this stage");
-    }
-    const nextPlayer = this.nextPlayer;
-    if (!this.remainingPieces[nextPlayer]) {
+  _canNextPlayerMakeAnyMove(attributes: PartialMoveGameAttributes): boolean {
+    const nextPlayer = attributes.nextPlayer;
+    if (!attributes.remainingPieces[nextPlayer]) {
       return false;
     }
     for (const rotation of _.range(6)) {
       for (const preset of Object.values(Piece.presets)) {
         const piece = preset.rotate(rotation);
-        const positions = this.board.getPlaceablePositionsForPiece(piece);
+        const positions = attributes.board.getPlaceablePositionsForPiece(piece);
         for (const [position] of positions) {
-          const nextPartialGame = this.placePiece(piece.moveFirstTileTo(position));
-          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Pawn(nextPlayer, 1)).length) {
+          const nextBoard = attributes.board.placePiece(piece.moveFirstTileTo(position));
+          if (nextBoard.getUnitPlaceablePositions(Unit.Pawn(nextPlayer, 1)).length) {
             return true;
           }
-          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Bishop(nextPlayer)).length) {
+          if (nextBoard.getUnitPlaceablePositions(Unit.Bishop(nextPlayer)).length) {
             return true;
           }
-          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Rook(nextPlayer)).length) {
+          if (nextBoard.getUnitPlaceablePositions(Unit.Rook(nextPlayer)).length) {
             return true;
           }
-          const infos = nextPartialGame.board.getGroupExpansionInfos(nextPlayer);
+          const infos = nextBoard.getGroupExpansionInfos(nextPlayer);
           for (const info of infos) {
-            if (nextPartialGame.board.canExpandGroup(info.position, nextPlayer)) {
+            if (nextBoard.canExpandGroup(info.position, nextPlayer)) {
               return true;
             }
           }
@@ -286,7 +281,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     return this._change({
       stage: "place-piece",
       board,
-      nextPlayer: this.nextPlayer === "white" ? "black" : "white",
+      nextPlayer: oppositeOfBlackOrWhite[this.nextPlayer],
       remainingUnits,
     });
   }

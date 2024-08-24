@@ -2,6 +2,11 @@ export type UnitType = "pawn" | "bishop" | "rook";
 
 export type BlackOrWhite = "white" | "black";
 
+export const oppositeOfBlackOrWhite: {[key in BlackOrWhite]: BlackOrWhite} = {
+  white: "black",
+  black: "white",
+};
+
 export const playerNames: {[key in BlackOrWhite]: string} = {
   white: "White",
   black: "Black",

@@ -96,7 +96,7 @@ export function RGame(props: RGameProps) {
         <RPreview
           board={partialGame.board}
           nextPiece={nextPiece}
-          action={partialGame.stage === "place-piece" ? "place-tile" : action}
+          action={partialGame.stage === "place-piece" ? "place-piece" : action}
           colour={partialGame.nextPlayer}
           onPlacePiece={onPlacePiece}
           onPlaceUnit={onPlaceUnit}
@@ -104,10 +104,10 @@ export function RGame(props: RGameProps) {
       ) : null}
       <AutoResizeSvg.Tools>
         <NextPieceDisplay onChangePiece={onChangePiece} />
-        <ActionSelector allowPlaceTile={false} action={action} onChangeAction={setAction} />
+        <ActionSelector allowPlacePiece={false} action={action} onChangeAction={setAction} />
         <RemainingPiecesAndUnitsDisplay
           currentPlayer={game.nextPlayer}
-          remainingPieces={game.remainingTiles}
+          remainingPieces={game.remainingPieces}
           remainingUnits={game.remainingUnits}
         />
         <ActionConfirm

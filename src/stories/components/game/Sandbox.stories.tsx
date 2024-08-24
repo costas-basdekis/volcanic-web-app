@@ -26,7 +26,7 @@ const meta: Meta<{initialBoard?: Board}> = {
   render: ({initialBoard = Board.makeEmpty()}) => {
     const [board, setBoard] = useState(initialBoard);
     const [nextPiece, setNextPiece] = useState(Piece.presets.BlackWhite);
-    const [action, setAction] = useState<Action>("place-tile");
+    const [action, setAction] = useState<Action>("place-piece");
     const [colour, setColour] = useState<BlackOrWhite>("white");
 
     const onChangeNextPiece = useCallback((piece: Piece) => {
@@ -47,7 +47,7 @@ const meta: Meta<{initialBoard?: Board}> = {
       />
       <AutoResizeSvg.Tools>
         <NextPieceDisplay onChangePiece={onChangeNextPiece}/>
-        <ActionSelector allowPlaceTile={true} action={action} onChangeAction={onChangeAction}/>
+        <ActionSelector allowPlacePiece={true} action={action} onChangeAction={onChangeAction}/>
         <PlayerSelector onChangeColour={setColour}/>
         <AutoGrabFocus/>
       </AutoResizeSvg.Tools>

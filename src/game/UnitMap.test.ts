@@ -25,7 +25,7 @@ describe("UnitMap", () => {
     it("cannot place unit in empty map", () => {
       expect(UnitMap.empty().canPlaceUnit(Unit.Pawn("white", 1), Center)).toBe(false);
     });
-    describe("on map with 1 tile", () => {
+    describe("on map with 1 piece", () => {
       const unitMap = UnitMap.fromLevels([
         Level.fromPieces(1, [Piece.presets.BlackWhite], null, UnitMap.empty()),
       ]);

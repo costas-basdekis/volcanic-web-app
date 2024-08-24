@@ -2,12 +2,12 @@ import "./RemainingPiecesAndUnitsDisplay.css";
 import {RPiece} from "./game";
 import {BlackOrWhite, Piece, playerNames, Unit} from "../game";
 import {RUnit} from "./RUnit";
-import {RemainingTiles, RemainingUnits} from "../game/Game";
+import {RemainingPieces, RemainingUnits} from "../game/Game";
 import {Fragment} from "react";
 
 export interface RemainingPiecesAndUnitsDisplayProps {
   currentPlayer: BlackOrWhite,
-  remainingPieces: RemainingTiles,
+  remainingPieces: RemainingPieces,
   remainingUnits: RemainingUnits
 }
 

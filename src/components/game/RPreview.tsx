@@ -49,7 +49,7 @@ export function RPreview(props: RPreviewProps) {
     return board.getUnitPlaceablePositions(Unit.Rook(colour));
   }, [board, colour]);
 
-  return (action === "place-tile" ? (
+  return (action === "place-piece" ? (
     <RPreviewPlacePiece
       placeablePositionsAndLevels={board.getPlaceablePositionsForPiece(nextPiece)}
       piece={nextPiece}

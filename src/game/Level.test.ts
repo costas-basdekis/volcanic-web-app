@@ -38,11 +38,11 @@ describe("Level", () => {
         const level2 = Level.makeEmpty(2, Level.makeEmpty(1, null));
         expect(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite, UnitMap.empty())).toEqual([]);
       });
-      it("cannot place one piece in same position with previous level with a tile", () => {
+      it("cannot place one piece in same position with previous level with a piece", () => {
         const level2 = Level.makeEmpty(2, level);
         expect(level2.getPlaceablePositionsForPiece(Piece.presets.BlackWhite, UnitMap.empty())).toEqual([]);
       });
-      it("can place piece fully on top of tiles with previous level wih a lot of tiles", () => {
+      it("can place piece fully on top of tiles with previous level wih a lot of pieces", () => {
         const level1 = level
           .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: -1, y: 0}, UnitMap.empty())
           .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0}, UnitMap.empty())
@@ -83,13 +83,13 @@ describe("Level", () => {
     it("doesn't allow piece on empty space", () => {
       expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite.moveFirstTileTo({x: 3, y: 3}), UnitMap.empty())).toBe(false);
     });
-    it("doesn't allow piece partially on top of tiles", () => {
+    it("doesn't allow piece partially on top of pieces", () => {
       expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite.rotate(1), UnitMap.empty())).toBe(false);
     });
-    it("doesn't allow piece fully on top of another tile", () => {
+    it("doesn't allow piece fully on top of another piece", () => {
       expect(level.canPlacePieceOnTop(Piece.presets.BlackWhite, UnitMap.empty())).toBe(false);
     });
-    it("allows piece fully on top of another tile", () => {
+    it("allows piece fully on top of another piece", () => {
       const level1 = level
         .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: -1, y: 0}, UnitMap.empty())
         .placePieceAt(Piece.presets.BlackWhite.rotate(1), {x: 2, y: 0}, UnitMap.empty())

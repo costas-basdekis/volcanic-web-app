@@ -6,14 +6,14 @@ import {Action} from "../components";
 
 export type RemainingUnits = {[key in BlackOrWhite]: PlayerRemainingUnits};
 export type PlayerRemainingUnits = {[key in UnitType]: number};
-export type RemainingTiles = { [key in BlackOrWhite]: number };
+export type RemainingPieces = {[key in BlackOrWhite]: number};
 
 interface GameAttributes {
   board: Board;
   finished: boolean;
   winner: BlackOrWhite | null;
   nextPlayer: BlackOrWhite;
-  remainingTiles: RemainingTiles;
+  remainingPieces: RemainingPieces;
   remainingUnits: RemainingUnits;
 }
 
@@ -23,7 +23,7 @@ export class Game implements GameAttributes {
   finished: boolean;
   winner: BlackOrWhite | null;
   nextPlayer: BlackOrWhite;
-  remainingTiles: RemainingTiles;
+  remainingPieces: RemainingPieces;
   remainingUnits: RemainingUnits;
 
   static start(): Game {
@@ -36,7 +36,7 @@ export class Game implements GameAttributes {
     this.finished = attributes.finished;
     this.winner = attributes.winner;
     this.nextPlayer = attributes.nextPlayer;
-    this.remainingTiles = attributes.remainingTiles;
+    this.remainingPieces = attributes.remainingPieces;
     this.remainingUnits = attributes.remainingUnits;
   }
 
@@ -75,7 +75,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
   finished: boolean;
   winner: BlackOrWhite | null;
   nextPlayer: BlackOrWhite;
-  remainingTiles: RemainingTiles;
+  remainingPieces: RemainingPieces;
   remainingUnits: RemainingUnits;
 
   static initialPlayerUnits: PlayerRemainingUnits = {
@@ -97,7 +97,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       finished: false,
       winner: null,
       nextPlayer: "white",
-      remainingTiles: {white: 24, black: 24},
+      remainingPieces: {white: 24, black: 24},
       remainingUnits: this.initialUnits,
     });
   }
@@ -117,7 +117,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     this.finished = attributes.finished;
     this.winner = attributes.winner;
     this.nextPlayer = attributes.nextPlayer;
-    this.remainingTiles = attributes.remainingTiles;
+    this.remainingPieces = attributes.remainingPieces;
     this.remainingUnits = attributes.remainingUnits;
   }
 
@@ -194,9 +194,9 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     return this._change({
       stage: "place-unit",
       board: this.board.placePiece(piece),
-      remainingTiles: {
-        ...this.remainingTiles,
-        [this.nextPlayer]: this.remainingTiles[this.nextPlayer] - 1,
+      remainingPieces: {
+        ...this.remainingPieces,
+        [this.nextPlayer]: this.remainingPieces[this.nextPlayer] - 1,
       },
       remainingUnits,
     });

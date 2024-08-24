@@ -9,7 +9,7 @@ const UnitActions = [
   "place-rook",
 ] as const;
 const Actions = [
-  "place-tile",
+  "place-piece",
   ...UnitActions,
 ] as const;
 export type UnitAction = typeof UnitActions[number];
@@ -17,11 +17,11 @@ export type Action = typeof Actions[number];
 
 export type ActionSelectorProps = {
   action: Action,
-  allowPlaceTile: true,
+  allowPlacePiece: true,
   onChangeAction: (action: Action) => void,
 } | {
   action: UnitAction,
-  allowPlaceTile: false,
+  allowPlacePiece: false,
   onChangeAction: (action: UnitAction) => void,
 }
 
@@ -30,12 +30,12 @@ const actionLabels: {[key in Action]: string} = {
   "expand-pawn": "Expand pawn",
   "place-bishop": "Place bishop",
   "place-rook": "Place rook",
-  "place-tile": "Place tile",
+  "place-piece": "Place piece",
 };
 
 export function ActionSelector(props: ActionSelectorProps) {
-  const {action, allowPlaceTile, onChangeAction} = props;
-  const actionList = allowPlaceTile ? Actions : UnitActions;
+  const {action, allowPlacePiece, onChangeAction} = props;
+  const actionList = allowPlacePiece ? Actions : UnitActions;
   // @ts-ignore
   const nextAction = actionList[(actionList.indexOf(action) + 1) % actionList.length];
   const rotateAction = useCallback(() => {

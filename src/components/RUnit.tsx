@@ -191,12 +191,13 @@ const RUnitRook = defineUnit("RUnitRook", {
 interface RUnitProps {
   unit: Unit,
   preview?: boolean,
+  scale?: number,
 }
 
 export function RUnit(props: RUnitProps) {
-  const {unit, preview} = props;
+  const {unit, preview, scale} = props;
   const RUnitForType = RUnit.unitMap[unit.type];
-  return <RUnitForType.Many colour={unit.colour} count={unit.count} preview={preview} />;
+  return <RUnitForType.Many colour={unit.colour} count={unit.count} preview={preview} scale={scale} />;
 }
 
 RUnit.unitMap = {

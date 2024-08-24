@@ -1,5 +1,5 @@
 import "./PlayerSelector.css";
-import {BlackOrWhite} from "../game";
+import {BlackOrWhite, playerNames} from "../game";
 import {useCallback, useEffect, useState} from "react";
 import {useAutoShortcut} from "../hooks";
 
@@ -8,8 +8,8 @@ interface PlayerSelectorProps {
 }
 
 const coloursAndNames: [BlackOrWhite, string][] = [
-  ["white", "White"],
-  ["black", "Black"],
+  ["white", playerNames.white],
+  ["black", playerNames.black],
 ];
 export function  PlayerSelector(props: PlayerSelectorProps) {
   const {onChangeColour} = props;

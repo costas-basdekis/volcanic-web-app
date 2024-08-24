@@ -9,6 +9,7 @@ import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
 import {applyMove, canApplyMove, decodeMove, encodeMove, Piece, PieceMove, PiecePreset, UnitMove} from "../../game";
 import {Center, Position} from "../../hexGridUtils";
 import {ActionConfirm} from "../ActionConfirm";
+import {RemainingPiecesAndUnitsDisplay} from "../RemainingPiecesAndUnitsDisplay";
 
 export type RGameProps  = {
   game: Game,
@@ -104,6 +105,11 @@ export function RGame(props: RGameProps) {
       <AutoResizeSvg.Tools>
         <NextPieceDisplay onChangePiece={onChangePiece} />
         <ActionSelector allowPlaceTile={false} action={action} onChangeAction={setAction} />
+        <RemainingPiecesAndUnitsDisplay
+          currentPlayer={game.nextPlayer}
+          remainingPieces={game.remainingTiles}
+          remainingUnits={game.remainingUnits}
+        />
         <ActionConfirm
           moveStage={moveStage}
           lastMoveCode={lastMoveCode}

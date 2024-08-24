@@ -2,6 +2,11 @@ export type UnitType = "pawn" | "bishop" | "rook";
 
 export type BlackOrWhite = "white" | "black";
 
+export const playerNames: {[key in BlackOrWhite]: string} = {
+  white: "White",
+  black: "Black",
+};
+
 interface UnitAttributes {
   type: UnitType;
   colour: BlackOrWhite;

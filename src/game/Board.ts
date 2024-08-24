@@ -100,6 +100,18 @@ export class Board implements BoardAttributes {
     return Array.from(this.levels.values()).find(level => level.canPlacePiece(piece, this.unitMap)) !== undefined;
   }
 
+  getAffectedPawnsForPlacingPiece(piece: Piece): {white: number, black: number} {
+    const level = Array.from(this.levels.values())
+      .find(level => level.canPlacePiece(piece, this.unitMap));
+    if (!level) {
+      throw new Error("Cannot place this piece");
+    }
+    if (!level.previousLevel) {
+      return {white: 0, black: 0};
+    }
+    return level.previousLevel.getAffectedPawnsForPlacingPieceOnTop(piece);
+  }
+
   getUnitPlaceablePositions(unit: Unit): Position[] {
     return this.unitMap.getUnitPlaceablePositions(unit);
   }

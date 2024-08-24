@@ -174,6 +174,23 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     if (!this.canPlacePiece(piece)) {
       throw new Error("Cannot place this piece");
     }
+    let remainingUnits = this.remainingUnits;
+    const affectedPawns = this.board.getAffectedPawnsForPlacingPiece(piece);
+    if (affectedPawns.white || affectedPawns.black) {
+      remainingUnits = {...remainingUnits};
+      if (affectedPawns.white) {
+        remainingUnits.white = {
+          ...remainingUnits.white,
+          pawn: remainingUnits.white.pawn + affectedPawns.white,
+        };
+      }
+      if (affectedPawns.black) {
+        remainingUnits.black = {
+          ...remainingUnits.black,
+          pawn: remainingUnits.black.pawn + affectedPawns.black,
+        };
+      }
+    }
     return this._change({
       stage: "place-unit",
       board: this.board.placePiece(piece),
@@ -181,6 +198,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
         ...this.remainingTiles,
         [this.nextPlayer]: this.remainingTiles[this.nextPlayer] - 1,
       },
+      remainingUnits,
     });
   }
 

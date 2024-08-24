@@ -164,6 +164,19 @@ export class Level implements LevelAttributes {
     );
   }
 
+  getAffectedPawnsForPlacingPieceOnTop(piece: Piece): {white: number, black: number} {
+    const units = piece.tiles
+      .map(tile => this.levelUnitMap.get(tile.key))
+      .filter(unit => unit) as Unit[];
+    const affectedPawns = {white: 0, black: 0};
+    for (const unit of units) {
+      if (unit.type === "pawn") {
+        affectedPawns[unit.colour] += unit.count;
+      }
+    }
+    return affectedPawns;
+  }
+
   isPieceFullyOnTopOfMultiplePieces(piece: Piece): boolean {
     const pieceIds = new Set(piece.tiles.map(tile => this.pieceIdMap.get(tile.key)));
     return (

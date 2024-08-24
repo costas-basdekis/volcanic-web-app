@@ -29,7 +29,7 @@ export function  PlayerSelector(props: PlayerSelectorProps) {
 
   return (
     <div className={"player-selector"}>
-      Press [W] to cycle through actions
+      Press [W] to cycle through players
       <ul>
         {coloursAndNames.map(([presetColour, name], colourIndex) => (
           <li key={presetColour}>

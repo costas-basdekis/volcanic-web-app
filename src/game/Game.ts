@@ -146,10 +146,8 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       makeWinner("white");
     } else if (this._userFinishedTheirUnits(attributes.remainingUnits.black)) {
       makeWinner("black");
-    } else if (!attributes.remainingUnits.white) {
-      makeWinner("black");
-    } else if (!attributes.remainingUnits.black) {
-      makeWinner("white");
+    } else if (!attributes.remainingPieces[attributes.nextPlayer]) {
+      makeWinner(this._resolveTieBreak(attributes));
     }
   }
 
@@ -191,6 +189,25 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       }
     }
     return false;
+  }
+
+  _resolveTieBreak(attributes: PartialMoveGameAttributes): BlackOrWhite {
+    const {white, black} = attributes.remainingUnits;
+    if (white.bishop < black.bishop) {
+      return "white";
+    } else if (black.bishop < white.bishop) {
+      return "black";
+    } else if (white.rook < black.rook) {
+      return "white";
+    } else if (black.rook < white.rook) {
+      return "black";
+    } else if (white.pawn < black.pawn) {
+      return "white";
+    } else if (black.pawn < white.pawn) {
+      return "black";
+    }
+    // TODO: Should there be draws?
+    return "white";
   }
 
   toGame(previousGame: Game | null): Game {

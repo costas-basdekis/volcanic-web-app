@@ -79,9 +79,9 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
   remainingUnits: RemainingUnits;
 
   static initialPlayerUnits: PlayerRemainingUnits = {
-    pawn: 25,
+    pawn: 20,
     bishop: 3,
-    rook: 3,
+    rook: 2,
   };
 
   static initialUnits: RemainingUnits = {

@@ -147,7 +147,10 @@ describe("Level", () => {
         .placePiece(Piece.presets.WhiteBlack)
         .placePiece(Piece.presets.WhiteBlack.moveFirstTileTo({x: -3, y: 0}))
         .placePiece(Piece.presets.WhiteBlack.rotate(-1).moveFirstTileTo({x: -3, y: 0}))
-        .placePiece(Piece.presets.WhiteBlack.rotate(1).moveFirstTileTo({x: -1, y: 0}));
+        .placePiece(Piece.presets.WhiteBlack.rotate(1).moveFirstTileTo({x: -1, y: 0}))
+        .placeUnit(Unit.Pawn("white", 1), {x: -4, y: 1})
+        .expandGroup({x: -3, y: 1}, "white")
+        .expandGroup({x: -2, y: 1}, "white");
       expect(board.levels.get(3)!.canPlacePieceOnTop(Piece.presets.WhiteBlack.moveFirstTileTo({x: -1, y: 0}), board.unitMap)).toBe(true);
       const boardWithRook = board
         .placeUnit(Unit.Rook("white"), {x: -1, y: 1});

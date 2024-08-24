@@ -281,28 +281,33 @@ export class UnitMap {
       return false;
     }
     const {level, neighbourGroups} = this.get(position)!;
+    const nearbyFriendlyGroups = neighbourGroups
+      .filter(group => group.colour === unit.colour);
     switch (unit.type) {
       case "pawn":
         if (level.index > 1) {
           if (because) because.reasons = "It is not on ground level";
           return false;
         }
-        if (neighbourGroups.some(group => group.colour === unit.colour)) {
+        if (nearbyFriendlyGroups.length) {
           if (because) because.reasons = "There are other groups nearby";
           return false;
         }
         break;
       case "bishop":
-        if (neighbourGroups.some(group => group.colour === unit.colour && group.counts.bishop > 0)) {
+        if (!nearbyFriendlyGroups.length) {
+          if (because) because.reasons = "There are no groups nearby";
+          return false;
+        }
+        if (nearbyFriendlyGroups.some(group => group.counts.bishop > 0)) {
           if (because) because.reasons = "There are other groups with a bishop nearby";
           return false;
         }
-        const totalCount = neighbourGroups
-          .filter(group => group.colour === unit.colour)
+        const maxCount = nearbyFriendlyGroups
           .map(group => group.counts.total)
-          .reduce((total, current) => total + current, 0);
-        if (totalCount < 3) {
-          if (because) because.reasons = `The total size of nearby groups is too small (${totalCount} < 3)`;
+          .reduce((total, current) => Math.max(total, current), 0);
+        if (maxCount < 3) {
+          if (because) because.reasons = `The max size of nearby groups is too small (${maxCount} < 3)`;
           return false;
         }
         break;
@@ -311,7 +316,11 @@ export class UnitMap {
           if (because) because.reasons = "It is not at least on level 3";
           return false;
         }
-        if (neighbourGroups.some(group => group.colour === unit.colour && group.counts.rook > 0)) {
+        if (!nearbyFriendlyGroups.length) {
+          if (because) because.reasons = "There are no groups nearby";
+          return false;
+        }
+        if (nearbyFriendlyGroups.some(group => group.counts.rook > 0)) {
           if (because) because.reasons = "There are other groups with a rook nearby";
           return false;
         }

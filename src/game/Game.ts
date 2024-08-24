@@ -1,8 +1,9 @@
 import {Board} from "./Board";
 import {BlackOrWhite, Unit, UnitType} from "./Unit";
-import {Piece} from "./Piece";
+import {Piece, piecePresets} from "./Piece";
 import {Position} from "../hexGridUtils";
 import {Action} from "../components";
+import _ from "underscore";
 
 export type RemainingUnits = {[key in BlackOrWhite]: PlayerRemainingUnits};
 export type PlayerRemainingUnits = {[key in UnitType]: number};
@@ -130,7 +131,12 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     if (newAttributes.stage === "place-piece") {
       this._updateFinished(newAttributes);
     }
-    return new PartialMoveGame(newAttributes);
+    const nextGame = new PartialMoveGame(newAttributes);
+    if (!nextGame.finished && !nextGame.canNextPlayerMakeAnyMove()) {
+      nextGame.finished = true;
+      nextGame.winner = this.nextPlayer;
+    }
+    return nextGame
   }
 
   _updateFinished(attributes: GameAttributes) {
@@ -155,6 +161,41 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
       + (playerRemainingUnits.bishop === 0 ? 1 : 0)
       + (playerRemainingUnits.rook === 0 ? 1 : 0)
     ) >= 2;
+  }
+
+  canNextPlayerMakeAnyMove(): boolean {
+    if (this.stage !== "place-piece") {
+      throw new Error("Cannot place piece at this stage");
+    }
+    const nextPlayer = this.nextPlayer;
+    if (!this.remainingPieces[nextPlayer]) {
+      return false;
+    }
+    for (const rotation of _.range(6)) {
+      for (const preset of Object.values(Piece.presets)) {
+        const piece = preset.rotate(rotation);
+        const positions = this.board.getPlaceablePositionsForPiece(piece);
+        for (const [position] of positions) {
+          const nextPartialGame = this.placePiece(piece.moveFirstTileTo(position));
+          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Pawn(nextPlayer, 1)).length) {
+            return true;
+          }
+          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Bishop(nextPlayer)).length) {
+            return true;
+          }
+          if (nextPartialGame.board.getUnitPlaceablePositions(Unit.Rook(nextPlayer)).length) {
+            return true;
+          }
+          const infos = nextPartialGame.board.getGroupExpansionInfos(nextPlayer);
+          for (const info of infos) {
+            if (nextPartialGame.board.canExpandGroup(info.position, nextPlayer)) {
+              return true;
+            }
+          }
+        }
+      }
+    }
+    return false;
   }
 
   toGame(previousGame: Game | null): Game {

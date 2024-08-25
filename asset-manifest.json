@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/volcanic-web-app/static/css/main.605a4586.css",
-    "main.js": "/volcanic-web-app/static/js/main.2f603f69.js",
+    "main.css": "/volcanic-web-app/static/css/main.afb4ab5c.css",
+    "main.js": "/volcanic-web-app/static/js/main.2fffc728.js",
     "static/js/453.6ab36201.chunk.js": "/volcanic-web-app/static/js/453.6ab36201.chunk.js",
     "index.html": "/volcanic-web-app/index.html",
-    "main.605a4586.css.map": "/volcanic-web-app/static/css/main.605a4586.css.map",
-    "main.2f603f69.js.map": "/volcanic-web-app/static/js/main.2f603f69.js.map",
+    "main.afb4ab5c.css.map": "/volcanic-web-app/static/css/main.afb4ab5c.css.map",
+    "main.2fffc728.js.map": "/volcanic-web-app/static/js/main.2fffc728.js.map",
     "453.6ab36201.chunk.js.map": "/volcanic-web-app/static/js/453.6ab36201.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.605a4586.css",
-    "static/js/main.2f603f69.js"
+    "static/css/main.afb4ab5c.css",
+    "static/js/main.2fffc728.js"
   ]
 }

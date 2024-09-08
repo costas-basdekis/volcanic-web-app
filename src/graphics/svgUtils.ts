@@ -1,4 +1,4 @@
-import {CartesianPosition} from "./CartesianPosition";
+import {CartesianPosition} from "./index";
 
 export function pointsToPathD(points: CartesianPosition[]): string {
   return [

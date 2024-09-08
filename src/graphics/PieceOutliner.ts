@@ -1,4 +1,4 @@
-import type {Piece, Tile} from "./game";
+import type {Piece, Tile} from "../game";
 import _ from "underscore";
 import {CartesianPosition, isSamePosition, makePositionKey, truncatePoint} from "./CartesianPosition";
 import {Line, makeLineKey} from "./Line";

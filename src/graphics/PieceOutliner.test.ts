@@ -1,6 +1,6 @@
 import {PieceOutliner} from "./PieceOutliner";
-import {Piece} from "./game";
-import {sortPositions, uniquePositions} from "./testing/utils";
+import {Piece} from "../game";
+import {sortPositions, uniquePositions} from "../testing/utils";
 import {makePositionKey} from "./CartesianPosition";
 
 describe("PieceOutliner", () => {

@@ -1,6 +1,5 @@
 import React, {MouseEvent, ReactNode, useCallback} from "react";
-import {CartesianPosition} from "../CartesianPosition";
-import {pointsToPathD} from "../svgUtils";
+import {CartesianPosition, pointsToPathD} from "../graphics";
 import {isTouchDevice} from "../htmlUtils";
 import {HexPosition} from "../HexPosition";
 

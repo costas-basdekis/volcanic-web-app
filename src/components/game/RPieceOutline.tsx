@@ -1,8 +1,7 @@
 import {Piece} from "../../game";
-import {pointsToPathD} from "../../svgUtils";
 import _ from "underscore";
 import {useMemo} from "react";
-import {getPieceOutline} from "../../PieceOutliner";
+import {getPieceOutline, pointsToPathD} from "../../graphics";
 
 export interface RPieceOutlineProps {
   piece: Piece,

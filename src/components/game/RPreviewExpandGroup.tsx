@@ -1,20 +1,19 @@
-import {makePositionKey, Position} from "../../hexGridUtils";
-import {GroupExpansionInfo, Unit} from "../../game";
+import {GroupExpansionInfo, HexPosition, Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "./RUnit";
 
 export interface RPreviewExpandGroupProps {
   groupExpansionInfos: GroupExpansionInfo[];
-  onExpandGroup: (position: Position) => void;
+  onExpandGroup: (position: HexPosition) => void;
 }
 
 export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
   const {groupExpansionInfos, onExpandGroup} = props;
 
-  const [hoveredPositions, setHoveredPositions] = useState<Position[] | null>(null);
+  const [hoveredPositions, setHoveredPositions] = useState<HexPosition[] | null>(null);
 
-  const onTileHover = useCallback((positions: Position[], hovering: boolean) => {
+  const onTileHover = useCallback((positions: HexPosition[], hovering: boolean) => {
     setHoveredPositions(hoveredPositions => {
       if (hovering) {
         return positions;
@@ -26,14 +25,14 @@ export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
       }
     });
   }, []);
-  const onTileClick = useCallback((position: Position) => {
+  const onTileClick = useCallback((position: HexPosition) => {
     onExpandGroup(position);
   }, [onExpandGroup]);
 
   return <>
     {groupExpansionInfos.map(info => (
       <ExpandableTile
-        key={makePositionKey(info.position)}
+        key={info.position.key}
         groupExpansionInfo={info}
         hoveredPositions={hoveredPositions}
         onHover={onTileHover}
@@ -45,9 +44,9 @@ export function RPreviewExpandGroup(props: RPreviewExpandGroupProps) {
 
 interface ExpandableTileProps {
   groupExpansionInfo: GroupExpansionInfo,
-  hoveredPositions: Position[] | null,
-  onHover: (positions: Position[], hovering: boolean) => void,
-  onClick: (position: Position) => void;
+  hoveredPositions: HexPosition[] | null,
+  onHover: (positions: HexPosition[], hovering: boolean) => void,
+  onClick: (position: HexPosition) => void;
 }
 
 function ExpandableTile(props: ExpandableTileProps) {
@@ -55,7 +54,7 @@ function ExpandableTile(props: ExpandableTileProps) {
     groupExpansionInfo, hoveredPositions, onHover: outerOnHover, onClick,
   } = props;
 
-  const onHover = useCallback((_position: Position, hovering: boolean) => {
+  const onHover = useCallback((_position: HexPosition, hovering: boolean) => {
     outerOnHover(groupExpansionInfo.positions, hovering);
   }, [outerOnHover, groupExpansionInfo.positions]);
 

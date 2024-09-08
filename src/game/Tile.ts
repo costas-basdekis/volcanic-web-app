@@ -1,26 +1,21 @@
-import {
-  Center,
-  getSurroundingPositions,
-  makePositionKey,
-  offsetPosition,
-  Position,
-  rotatePosition
-} from "../hexGridUtils";
+import {HexPosition} from "./HexPosition";
 
 interface TileAttributes {
-  position: Position;
+  position: HexPosition;
   type: "volcano" | "white" | "black";
 }
 
 export class Tile implements TileAttributes {
-  position: Position;
-  type: "volcano" | "white" | "black";
-  key: string;
+  readonly position: HexPosition;
+  readonly type: "volcano" | "white" | "black";
 
   constructor(attributes: TileAttributes) {
     this.position = attributes.position;
     this.type = attributes.type;
-    this.key = makePositionKey(this.position);
+  }
+
+  get key(): string {
+    return this.position.key;
   }
 
   _change(someAttributes: Partial<TileAttributes>): Tile {
@@ -30,39 +25,27 @@ export class Tile implements TileAttributes {
     });
   }
 
-  isAt(position: Position): boolean {
-    return this.position === position || makePositionKey(position) === this.key;
+  isAt(position: HexPosition) {
+    return this.position.isSameAs(position);
   }
 
-  getSurroundingPositions(): Position[] {
-    return getSurroundingPositions(this.position);
+  getSurroundingPositions(): HexPosition[] {
+    return this.position.getSurroundingPositions();
   }
 
   offsetPosition(right: number = 0, bottomRight: number = 0, bottomLeft: number = 0) {
-    return offsetPosition(this.position, right, bottomRight, bottomLeft);
+    return this.position.offset(right, bottomRight, bottomLeft);
   }
 
-  offset(offset: Position): Tile {
-    const evenRowStart = this.position.y % 2 === 0;
-    const evenRowEnd = (this.position.y + offset.y) % 2 === 0;
-    let xOffset;
-    if (evenRowStart && !evenRowEnd) {
-      xOffset = -1;
-    } else {
-      xOffset = 0;
-    }
+  offset(position: HexPosition): Tile {
     return this._change({
-      position: {
-        x: this.position.x + offset.x + xOffset,
-        y: this.position.y + offset.y,
-      },
+      position: this.position.plus(position),
     });
   }
 
-  rotate(count: number, around: Position = Center): Tile {
-    return new Tile({
-      position: rotatePosition(this.position, count, around),
-      type: this.type,
+  rotate(count: number, around: HexPosition = HexPosition.Center): Tile {
+    return this._change({
+      position: this.position.rotate(count, around),
     });
   }
 }

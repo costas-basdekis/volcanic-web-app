@@ -1,8 +1,8 @@
 import {Tile} from "./Tile";
-import {Center, getSurroundingPositionsMulti, isCenter, makePositionKey, Position} from "../hexGridUtils";
 import {Piece} from "./Piece";
 import {BlackOrWhite, Unit} from "./Unit";
 import {UnitGroup, UnitMap} from "./UnitMap";
+import {HexPosition} from "./HexPosition";
 
 export type Levels = Map<number, Level>;
 
@@ -82,8 +82,8 @@ export class Level implements LevelAttributes {
     return this._change({previousLevel});
   }
 
-  hasTileAt(position: Position): boolean {
-    return this.tileMap.has(makePositionKey(position));
+  hasTileAt(position: HexPosition): boolean {
+    return this.tileMap.has(position.key);
   }
 
   placePieces(pieces: Piece[], unitMap: UnitMap): Level {
@@ -97,7 +97,7 @@ export class Level implements LevelAttributes {
     return level;
   }
 
-  placePieceAt(piece: Piece, position: Position, unitMap: UnitMap): Level {
+  placePieceAt(piece: Piece, position: HexPosition, unitMap: UnitMap): Level {
     return this.placePiece(piece.moveFirstTileTo(position), unitMap);
   }
 
@@ -119,23 +119,23 @@ export class Level implements LevelAttributes {
     });
   }
 
-  getSurroundingPositions(depth: number): Position[] {
+  getSurroundingPositions(depth: number): HexPosition[] {
     if (this.previousLevel) {
       return this.previousLevel.tiles.map(tile => tile.position);
     }
-    return getSurroundingPositionsMulti(this.tiles.map(tile => tile.position), depth);
+    return HexPosition.getSurroundingPositionsMulti(this.tiles.map(tile => tile.position), depth);
   }
 
-  getPlaceablePositionsForPiece(piece: Piece, unitMap: UnitMap): Position[] {
+  getPlaceablePositionsForPiece(piece: Piece, unitMap: UnitMap): HexPosition[] {
     const surroundingPositions = this.getSurroundingPositions(2);
     if (!this.previousLevel && !surroundingPositions.length) {
-      return [Center];
+      return [HexPosition.Center];
     }
     return surroundingPositions
       .filter(position => this.canPlacePieceAt(piece, position, unitMap));
   }
 
-  canPlacePieceAt(piece: Piece, position: Position, unitMap: UnitMap): boolean {
+  canPlacePieceAt(piece: Piece, position: HexPosition, unitMap: UnitMap): boolean {
     return this.canPlacePiece(piece.moveFirstTileTo(position), unitMap);
   }
 
@@ -149,7 +149,7 @@ export class Level implements LevelAttributes {
       }
     } else {
       if (!this.tiles.length) {
-        return isCenter(piece.tiles[0].position);
+        return piece.tiles[0].position.isCenter();
       }
     }
     return !this.doesPieceOverlap(piece) && this.isPieceInTheBorder(piece);
@@ -157,7 +157,7 @@ export class Level implements LevelAttributes {
 
   canPlacePieceOnTop(piece: Piece, unitMap: UnitMap): boolean {
     return (
-      this.tileMap.get(makePositionKey(piece.tiles[0].position))?.type === "volcano"
+      this.tileMap.get(piece.tiles[0].position.key)?.type === "volcano"
       && this.isPieceFullyOnTopOfMultiplePieces(piece)
       && this.isPieceNotOnTopOfIndestructibleUnits(piece)
       && this.isPieceNotOverWholeGroups(piece, unitMap)
@@ -206,50 +206,50 @@ export class Level implements LevelAttributes {
   isPieceInTheBorder(piece: Piece) {
     const surroundingPositions = this.getSurroundingPositions(1);
     const surroundingPositionKeySet =
-      new Set(surroundingPositions.map(position => makePositionKey(position)));
+      new Set(surroundingPositions.map(position => position.key));
     return piece.tiles.some(tile => surroundingPositionKeySet.has(tile.key));
   }
 
-  hasUnitAt(position: Position): boolean {
+  hasUnitAt(position: HexPosition): boolean {
     return this.getUnitAt(position) !== undefined;
   }
 
-  getUnitAt(position: Position): Unit | undefined {
-    return this.levelUnitMap.get(makePositionKey(position));
+  getUnitAt(position: HexPosition): Unit | undefined {
+    return this.levelUnitMap.get(position.key);
   }
 
-  placeUnit(unit: Unit, position: Position): Level {
+  placeUnit(unit: Unit, position: HexPosition): Level {
     if (!this.canPlaceUnitAt(position)) {
       throw new Error("Cannot place unit there");
     }
     return this._change({
       levelUnitMap: new Map([
         ...this.levelUnitMap.entries(),
-        [makePositionKey(position), unit],
+        [position.key, unit],
       ]),
     });
   }
 
-  canPlaceUnitAt(position: Position): boolean {
+  canPlaceUnitAt(position: HexPosition): boolean {
     return (
       this.hasTileAt(position)
       && !this.hasUnitAt(position)
     );
   }
 
-  expandGroup(positions: Position[], colour: BlackOrWhite): Level {
+  expandGroup(positions: HexPosition[], colour: BlackOrWhite): Level {
     if (!this.canExpandGroup(positions)) {
       throw new Error("Cannot expand group here");
     }
     return this._change({
       levelUnitMap: new Map([
         ...this.levelUnitMap.entries(),
-        ...positions.map(position => [makePositionKey(position), Unit.Pawn(colour, this.index)] as const),
+        ...positions.map(position => [position.key, Unit.Pawn(colour, this.index)] as const),
       ]),
     });
   }
 
-  canExpandGroup(positions: Position[]): boolean {
+  canExpandGroup(positions: HexPosition[]): boolean {
     return positions.every(position => this.canPlaceUnitAt(position));
   }
 }

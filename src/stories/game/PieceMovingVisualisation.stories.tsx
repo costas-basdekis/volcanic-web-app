@@ -1,11 +1,10 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Center, Position} from "../../hexGridUtils";
-import {Piece} from "../../game";
+import {Piece, HexPosition} from "../../game";
 import {RPiece} from "../../components/";
 import {svgWrapper} from "../decorators";
 
-const meta: Meta<{ piece: Piece, offset: Position }> = {
+const meta: Meta<{ piece: Piece, offset: HexPosition }> = {
   title: 'Piece Moving Visualisation',
   // This component will have an automatically generated Autodocs entry: https://storybook.js.org/docs/writing-docs/autodocs
   tags: ['autodocs'],
@@ -30,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 
 export const OffsetMove: Story = {
   args: {
-    piece: Piece.presets.BlackWhite.moveFirstTileTo(Center),
-    offset: Center,
+    piece: Piece.presets.BlackWhite.moveFirstTileTo(HexPosition.Center),
+    offset: HexPosition.Center,
   },
 };

@@ -1,9 +1,9 @@
 import {Board} from "./Board";
 import {BlackOrWhite, oppositeOfBlackOrWhite, Unit, UnitType} from "./Unit";
 import {Piece} from "./Piece";
-import {Position} from "../hexGridUtils";
 import {Action} from "../components";
 import _ from "underscore";
+import {HexPosition} from "./HexPosition";
 
 export type RemainingUnits = {[key in BlackOrWhite]: PlayerRemainingUnits};
 export type PlayerRemainingUnits = {[key in UnitType]: number};
@@ -45,14 +45,14 @@ export class Game implements GameAttributes {
     return PartialMoveGame.fromGame(this);
   }
 
-  makeMove(piece: Piece, action: Action, actionPosition: Position): Game {
+  makeMove(piece: Piece, action: Action, actionPosition: HexPosition): Game {
     if (!this.canMakeMove(piece, action, actionPosition)) {
       throw new Error("Cannot make this move");
     }
     return this.toPartialMoveGame().placePiece(piece).placeUnit(action, actionPosition).toGame(this);
   }
 
-  canMakeMove(piece: Piece, action: Action, actionPosition: Position) {
+  canMakeMove(piece: Piece, action: Action, actionPosition: HexPosition) {
     let partialGame = this.toPartialMoveGame();
     if (!partialGame.canPlacePiece(piece)) {
       return false;
@@ -265,7 +265,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     return this.board.canPlacePiece(piece);
   }
 
-  placeUnit(action: Action, actionPosition: Position): PartialMoveGame {
+  placeUnit(action: Action, actionPosition: HexPosition): PartialMoveGame {
     if (this.stage !== "place-unit") {
       throw new Error("Cannot place a unit at this stage");
     }
@@ -303,7 +303,7 @@ export class PartialMoveGame implements PartialMoveGameAttributes {
     });
   }
 
-  canPlaceUnit(action: Action, actionPosition: Position): boolean {
+  canPlaceUnit(action: Action, actionPosition: HexPosition): boolean {
     if (this.stage !== "place-unit") {
       return false;
     }

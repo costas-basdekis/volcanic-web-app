@@ -1,28 +1,27 @@
 import {useCallback, useMemo, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
-import {makePositionKey, Position} from "../../hexGridUtils";
-import {Level, Piece} from "../../game";
+import {Level, Piece, HexPosition} from "../../game";
 import {RPiece} from "./RPiece";
 
 export interface RPreviewPlacePieceProps {
-  placeablePositionsAndLevels: [Position, Level][],
+  placeablePositionsAndLevels: [HexPosition, Level][],
   piece: Piece,
-  onPlacePiece?: ((position: Position) => void) | undefined | null,
+  onPlacePiece?: ((position: HexPosition) => void) | undefined | null,
 }
 
 export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
   const {placeablePositionsAndLevels, piece, onPlacePiece} = props;
-  const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
+  const [hoveredPosition, setHoveredPosition] = useState<HexPosition | null>(null);
 
   const levelByPlaceablePosition = useMemo(() => {
-    return new Map(placeablePositionsAndLevels.map(([position, level]) => [makePositionKey(position), level]));
+    return new Map(placeablePositionsAndLevels.map(([position, level]) => [position.key, level]));
   }, [placeablePositionsAndLevels]);
-  const hoveredLevel = hoveredPosition ? levelByPlaceablePosition.get(makePositionKey(hoveredPosition)) : null;
+  const hoveredLevel = hoveredPosition ? levelByPlaceablePosition.get(hoveredPosition.key) : null;
 
   const onBackgroundHoverMouseEnter = useCallback(() => {
     setHoveredPosition(null);
   }, []);
-  const onTileHover = useCallback((position: Position, hovering: boolean) => {
+  const onTileHover = useCallback((position: HexPosition, hovering: boolean) => {
     setHoveredPosition(hoveredPosition => {
       if (hovering) {
         return position;
@@ -34,14 +33,14 @@ export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
       }
     });
   }, []);
-  const onClick = useCallback((position: Position) => {
+  const onClick = useCallback((position: HexPosition) => {
     onPlacePiece?.(position);
   }, [onPlacePiece]);
 
   return <>
     {placeablePositionsAndLevels.map(([position, level]) => (
       <PlaceableTile
-        key={makePositionKey(position)}
+        key={position.key}
         position={position}
         level={level}
       />
@@ -61,7 +60,7 @@ export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
     />
     {placeablePositionsAndLevels.map(([position]) => (
       <HoverTile
-        key={makePositionKey(position)}
+        key={position.key}
         position={position}
         onHover={onTileHover}
         onClick={onPlacePiece ? onClick : null}
@@ -71,16 +70,16 @@ export function RPreviewPlacePiece(props: RPreviewPlacePieceProps) {
 }
 
 interface HoverTileProps {
-  position: Position,
-  onHover?: ((position: Position, hovering: boolean) => void) | undefined | null,
-  onClick?: ((position: Position) => void) | undefined | null,
+  position: HexPosition,
+  onHover?: ((position: HexPosition, hovering: boolean) => void) | undefined | null,
+  onClick?: ((position: HexPosition) => void) | undefined | null,
 }
 
 function HoverTile(props: HoverTileProps) {
   const {position} = props;
   return (
     <RBaseTile
-      key={makePositionKey(position)}
+      key={position.key}
       stroke={"transparent"}
       fill={"transparent"}
       position={position}
@@ -91,9 +90,9 @@ function HoverTile(props: HoverTileProps) {
 }
 
 interface PlaceableTileProps {
-  position: Position,
+  position: HexPosition,
   level: Level,
-  onClick?: ((position: Position) => void) | null | undefined,
+  onClick?: ((position: HexPosition) => void) | null | undefined,
 }
 
 function PlaceableTile(props: PlaceableTileProps) {
@@ -105,7 +104,7 @@ function PlaceableTile(props: PlaceableTileProps) {
 
   return (
     <RBaseTile
-      key={makePositionKey(position)}
+      key={position.key}
       stroke={"green"}
       strokeWidth={5}
       fill={"transparent"}

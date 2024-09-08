@@ -1,7 +1,7 @@
 import {UnitAction} from "../components";
-import {Position} from "../hexGridUtils";
 import {Piece, PiecePreset} from "./Piece";
 import type {Game} from "./Game";
+import {Hex, HexPosition} from "./HexPosition";
 
 export interface Move {
   pieceMove: PieceMove;
@@ -11,12 +11,12 @@ export interface Move {
 export interface PieceMove {
   piecePreset: PiecePreset;
   pieceRotation: number;
-  piecePosition: Position;
+  piecePosition: HexPosition;
 }
 
 export interface UnitMove {
   unitAction: UnitAction;
-  unitPosition: Position;
+  unitPosition: HexPosition;
 }
 
 const piecePresetShorthands: {[key in PiecePreset]: string} = {
@@ -44,8 +44,8 @@ const reverseUnitActionShorthands: {[key: string]: UnitAction} = Object.fromEntr
 export function encodeMove({pieceMove, unitMove}: Move): string {
   return (
     `P${piecePresetShorthands[pieceMove.piecePreset]}`
-    + `${pieceMove.pieceRotation},${pieceMove.piecePosition.x},${pieceMove.piecePosition.y}`
-    + `U${unitActionShorthands[unitMove.unitAction]}${unitMove.unitPosition.x},${unitMove.unitPosition.y}`
+    + `${pieceMove.pieceRotation},${pieceMove.piecePosition.r},${pieceMove.piecePosition.dr}`
+    + `U${unitActionShorthands[unitMove.unitAction]}${unitMove.unitPosition.r},${unitMove.unitPosition.dr}`
   );
 }
 
@@ -58,28 +58,26 @@ export function decodeMove(moveCode: string): Move | null {
   }
   const [
     ,
-    piecePresetShorthand, pieceRotationStr, piecePositionXStr, piecePositionYStr,
-    unitActionShorthand, unitPositionXStr, unitPositionYStr,
+    piecePresetShorthand, pieceRotationStr, piecePositionRStr, piecePositionDrStr,
+    unitActionShorthand, unitPositionRStr, unitPositionDrStr,
   ] = match;
-  const move = {
+  return {
     pieceMove: {
       piecePreset: reversePiecePresetShorthands[piecePresetShorthand],
       pieceRotation: parseInt(pieceRotationStr, 10),
-      piecePosition: {
-        x: parseInt(piecePositionXStr, 10),
-        y: parseInt(piecePositionYStr, 10),
-      }
+      piecePosition: Hex(
+        parseInt(piecePositionRStr, 10),
+        parseInt(piecePositionDrStr, 10),
+      ),
     },
     unitMove: {
       unitAction: reverseUnitActionShorthands[unitActionShorthand],
-      unitPosition: {
-        x: parseInt(unitPositionXStr, 10),
-        y: parseInt(unitPositionYStr, 10),
-      },
+      unitPosition: Hex(
+        parseInt(unitPositionRStr, 10),
+        parseInt(unitPositionDrStr, 10),
+      ),
     },
   };
-  console.log(moveCode, match, move);
-  return move;
 }
 
 export function applyMove(game: Game, move: Move): Game {

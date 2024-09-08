@@ -1,6 +1,8 @@
 import {Tile} from "./Tile";
-import {Center, getTilePosition, isSamePosition, makePositionKey, Position} from "../hexGridUtils";
+import {Center, CartesianPosition} from "../hexGridUtils";
 import _ from "underscore";
+import {Hex, HexPosition} from "./HexPosition";
+import {BlackOrWhite} from "./Unit";
 
 interface PieceAttributes {
   tiles: Tile[],
@@ -22,21 +24,21 @@ export class Piece implements PieceAttributes {
     });
   }
 
-  includes(tileOrPosition: Tile | Position) {
+  includes(tileOrPosition: Tile | HexPosition) {
     if (tileOrPosition instanceof Tile) {
       return this.tiles.includes(tileOrPosition);
     } else {
-      return this.tiles.some(tile => isSamePosition(tile.position, tileOrPosition));
+      return this.tiles.some(tile => tile.position.isSameAs(tileOrPosition));
     }
   }
 
-  getMiddlePosition(size: number): Position {
+  getMiddlePosition(size: number): CartesianPosition {
     if (!this.tiles.length) {
       return Center;
     }
     const middlePosition = {x: 0, y: 0};
     for (const tile of this.tiles) {
-      const tilePosition = getTilePosition(tile.position, size);
+      const tilePosition = tile.position.getTilePosition(size);
       middlePosition.x += tilePosition.x;
       middlePosition.y += tilePosition.y;
     }
@@ -46,20 +48,12 @@ export class Piece implements PieceAttributes {
     }
   }
 
-  moveFirstTileTo(position: Position): Piece {
+  moveFirstTileTo(position: HexPosition): Piece {
     const firstTile = this.tiles[0];
-    if (makePositionKey(position) === firstTile.key) {
+    if (firstTile.isAt(position)) {
       return this;
     }
-    const offset: Position = {
-      x: position.x - firstTile.position.x,
-      y: position.y - firstTile.position.y,
-    };
-    const evenRowStart = firstTile.position.y % 2 === 0;
-    const evenRowEnd = (firstTile.position.y + offset.y) % 2 === 0;
-    if (evenRowStart && !evenRowEnd) {
-      offset.x += 1;
-    }
+    const offset = position.minus(firstTile.position);
     return this._change({
       tiles: this.tiles.map(tile => tile.offset(offset))
     });
@@ -89,33 +83,19 @@ export class Piece implements PieceAttributes {
 export const piecePresets = ["WhiteBlack", "BlackWhite", "WhiteWhite", "BlackBlack"] as const;
 export type PiecePreset = typeof piecePresets[number];
 
+const makePreset = (bottomLeftColour: BlackOrWhite, bottomRightColour: BlackOrWhite): Piece => {
+  return new Piece({
+    tiles: [
+      new Tile({position: Hex(0, 0), type: "volcano"}),
+      new Tile({position: Hex(0, 0, 1), type: bottomLeftColour}),
+      new Tile({position: Hex(0, 1), type: bottomRightColour}),
+    ],
+  });
+}
+
 Piece.presets = {
-  WhiteBlack: new Piece({
-    tiles: [
-      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-      new Tile({position: {x: -1, y: 1}, type: "white"}),
-      new Tile({position: {x: 0, y: 1}, type: "black"}),
-    ],
-  }),
-  BlackWhite: new Piece({
-    tiles: [
-      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-      new Tile({position: {x: -1, y: 1}, type: "black"}),
-      new Tile({position: {x: 0, y: 1}, type: "white"}),
-    ],
-  }),
-  WhiteWhite: new Piece({
-    tiles: [
-      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-      new Tile({position: {x: -1, y: 1}, type: "white"}),
-      new Tile({position: {x: 0, y: 1}, type: "white"}),
-    ],
-  }),
-  BlackBlack: new Piece({
-    tiles: [
-      new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-      new Tile({position: {x: -1, y: 1}, type: "black"}),
-      new Tile({position: {x: 0, y: 1}, type: "black"}),
-    ],
-  }),
+  WhiteBlack: makePreset("white", "black"),
+  BlackWhite: makePreset("black", "white"),
+  WhiteWhite: makePreset("white", "white"),
+  BlackBlack: makePreset("black", "black"),
 };

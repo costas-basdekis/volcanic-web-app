@@ -4,7 +4,7 @@ import {ComponentProps, Fragment} from "react";
 import {RPiece, RPieceOutline} from "../../../components";
 import {svgWrapper} from "../../decorators";
 import {Piece} from "../../../game";
-import {getTilePosition, Line, PieceOutliner} from "../../../hexGridUtils";
+import {Line, PieceOutliner} from "../../../hexGridUtils";
 
 const meta: Meta<ComponentProps<typeof RPieceOutline>> = {
   title: 'RPieceOutline',
@@ -42,7 +42,7 @@ export const DebugGetTilesLines: Story = {
       <RPiece piece={props.piece} />
       <RPieceOutline {...props} />
       {props.piece.tiles.map((tile, tileIndex) => {
-        const tilePosition = getTilePosition(tile.position, 50);
+        const tilePosition = tile.position.getTilePosition(50);
         const tileLines: Line[] = tilesLines[tileIndex];
         return tileLines.map((line, lineIndex) => {
           const lineMiddle = {

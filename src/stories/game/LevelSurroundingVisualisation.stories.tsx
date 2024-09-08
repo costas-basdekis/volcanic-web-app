@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Level, Piece, Tile, UnitMap} from "../../game";
+import {Level, Piece, HexPosition, Tile, UnitMap, Hex} from "../../game";
 import {RBaseTile, RLevel, RPreviewPlacePiece} from "../../components";
-import {Center, makePositionKey} from "../../hexGridUtils";
 import {svgWrapper} from "../decorators";
 
 interface LevelSurroundingVisualisationProps {
@@ -22,7 +21,7 @@ function LevelSurroundingVisualisation(props: LevelSurroundingVisualisationProps
     <RLevel level={level}/>
     {surroundingPositions.map(position => (
       <RBaseTile
-        key={makePositionKey(position)}
+        key={position.key}
         fill={"grey"}
         position={position}
       />
@@ -63,7 +62,7 @@ export const Level1SingleTile: Story = {
     level: Level.fromPieces(1, [
       new Piece({
         tiles: [
-          new Tile({position: Center, type: "volcano"})
+          new Tile({position: HexPosition.Center, type: "volcano"})
         ],
       }),
     ], null, UnitMap.empty()),
@@ -74,7 +73,7 @@ export const Level1SingleTile: Story = {
 export const Level1ThreeTiles: Story = {
   args: {
     level: Level.fromPieces(1, [
-      Piece.presets.BlackWhite.moveFirstTileTo(Center),
+      Piece.presets.BlackWhite.moveFirstTileTo(HexPosition.Center),
     ], null, UnitMap.empty()),
     depth: 2,
   },
@@ -84,9 +83,9 @@ export const Level1ManyTiles: Story = {
   args: {
     level: Level.fromPieces(1, [
       Piece.presets.BlackWhite,
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(-1, 0)),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(2, 0)),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(0, 1, 1)),
     ], null, UnitMap.empty()),
     depth: 2,
   },
@@ -104,7 +103,7 @@ export const Level2EmptyWithLevel1SingleTile: Story = {
     level: Level.makeEmpty(2, Level.fromPieces(1, [
       new Piece({
         tiles: [
-          new Tile({position: Center, type: "volcano"})
+          new Tile({position: HexPosition.Center, type: "volcano"})
         ],
       }),
     ], null, UnitMap.empty())),
@@ -125,9 +124,9 @@ export const Level2EmptyWithLevel1ManyTiles: Story = {
   args: {
     level: Level.makeEmpty(2, Level.fromPieces(1, [
       Piece.presets.BlackWhite,
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: -1, y: 0}),
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 2, y: 0}),
-      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo({x: 0, y: 2}),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(-1, 0)),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(2, 0)),
+      Piece.presets.BlackWhite.rotate(1).moveFirstTileTo(Hex(0, 1, 1)),
     ], null, UnitMap.empty())),
     depth: 2,
   },

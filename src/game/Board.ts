@@ -1,8 +1,8 @@
 import {Level, Levels} from "./Level";
 import {Piece} from "./Piece";
-import {Position} from "../hexGridUtils";
 import {BlackOrWhite, Unit} from "./Unit";
 import {GroupExpansionInfo, UnitMap} from "./UnitMap";
+import {HexPosition} from "./HexPosition";
 
 interface BoardAttributes {
   levels: Levels;
@@ -70,8 +70,8 @@ export class Board implements BoardAttributes {
     ]);
   }
 
-  getPlaceablePositionsForPiece(piece: Piece): [Position, Level][] {
-    const placeablePositions: [Position, Level][] = [];
+  getPlaceablePositionsForPiece(piece: Piece): [HexPosition, Level][] {
+    const placeablePositions: [HexPosition, Level][] = [];
     for (const level of this.levels.values()) {
       for (const position of level.getPlaceablePositionsForPiece(piece, this.unitMap)) {
         placeablePositions.push([position, level]);
@@ -80,7 +80,7 @@ export class Board implements BoardAttributes {
     return placeablePositions;
   }
 
-  placePieceAt(piece: Piece, position: Position): Board {
+  placePieceAt(piece: Piece, position: HexPosition): Board {
     return this.placePiece(piece.moveFirstTileTo(position));
   }
 
@@ -112,15 +112,15 @@ export class Board implements BoardAttributes {
     return level.previousLevel.getAffectedPawnsForPlacingPieceOnTop(piece);
   }
 
-  getUnitPlaceablePositions(unit: Unit): Position[] {
+  getUnitPlaceablePositions(unit: Unit): HexPosition[] {
     return this.unitMap.getUnitPlaceablePositions(unit);
   }
 
-  canPlaceUnit(unit: Unit, position: Position): boolean {
+  canPlaceUnit(unit: Unit, position: HexPosition): boolean {
     return this.unitMap.canPlaceUnit(unit, position);
   }
 
-  placeUnit(unit: Unit, position: Position): Board {
+  placeUnit(unit: Unit, position: HexPosition): Board {
     if (!this.canPlaceUnit(unit, position)) {
       throw new Error("Cannot place this unit");
     }
@@ -138,7 +138,7 @@ export class Board implements BoardAttributes {
     return this.unitMap.getGroupExpansionInfos(colour);
   }
 
-  expandGroup(position: Position, colour: BlackOrWhite): Board {
+  expandGroup(position: HexPosition, colour: BlackOrWhite): Board {
     const positionsByLevelIndex =
       this.unitMap.getGroupExpansionInfo(position, colour).positionsByLevelIndex;
     return this._change({
@@ -151,11 +151,11 @@ export class Board implements BoardAttributes {
     });
   }
 
-  canExpandGroup(position: Position, colour: BlackOrWhite): boolean {
+  canExpandGroup(position: HexPosition, colour: BlackOrWhite): boolean {
     return this.unitMap.canExpandGroup(position, colour);
   }
 
-  getGroupExpansionNeededCount(position: Position, colour: BlackOrWhite): number {
+  getGroupExpansionNeededCount(position: HexPosition, colour: BlackOrWhite): number {
     return this.unitMap.getGroupExpansionNeededCount(position, colour);
   }
 }

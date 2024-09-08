@@ -2,11 +2,11 @@ import {Level} from "./Level";
 import {BlackOrWhite, Unit, UnitType} from "./Unit";
 import _ from "underscore";
 import {Tile} from "./Tile";
-import {getSurroundingPositions, getSurroundingPositionsMulti, makePositionKey, Position} from "../hexGridUtils";
+import {HexPosition} from "./HexPosition";
 
 export class UnitGroup {
   colour: BlackOrWhite;
-  positions: Position[];
+  positions: HexPosition[];
   counts: {[key in UnitType]: number} & {total: number};
 
   static fillMap(map: InnerUnitMap) {
@@ -72,8 +72,8 @@ export class UnitGroup {
       seen.add(info.tile.key);
       info.group = this;
       this.addItem(info);
-      for (const neighbour of getSurroundingPositions(info.tile.position)) {
-        const neighbourInfo = map.get(makePositionKey(neighbour));
+      for (const neighbour of info.tile.position.getSurroundingPositions()) {
+        const neighbourInfo = map.get(neighbour.key);
         if (!this.canAddItem(neighbourInfo) || seen.has(neighbourInfo!.tile.key)) {
           continue;
         }
@@ -95,19 +95,19 @@ export interface UnitInfo {
 type InnerUnitMap = Map<string, UnitInfo>;
 
 interface GroupExpansionInfoAttributes {
-  position: Position;
+  position: HexPosition;
   levelIndex: number;
   colour: BlackOrWhite;
-  positions: Position[];
-  positionsByLevelIndex: Map<number, Position[]>;
+  positions: HexPosition[];
+  positionsByLevelIndex: Map<number, HexPosition[]>;
 }
 
 export class GroupExpansionInfo {
-  position: Position;
+  position: HexPosition;
   levelIndex: number;
   colour: BlackOrWhite;
-  positions: Position[];
-  positionsByLevelIndex: Map<number, Position[]>;
+  positions: HexPosition[];
+  positionsByLevelIndex: Map<number, HexPosition[]>;
 
   static getAllForColour(colour: BlackOrWhite, unitMap: UnitMap): GroupExpansionInfo[] {
     const result: GroupExpansionInfo[] = Array.from(unitMap.map.values())
@@ -117,16 +117,16 @@ export class GroupExpansionInfo {
   }
 
   static normaliseInfos(infos: GroupExpansionInfo[]): GroupExpansionInfo[] {
-    const positionByKey: Map<string, Position> =
-      new Map(infos.map(info => [makePositionKey(info.position), info.position]));
-    const positionsByKey: Map<string, Position[]> = new Map();
+    const positionByKey: Map<string, HexPosition> =
+      new Map(infos.map(info => [info.position.key, info.position]));
+    const positionsByKey: Map<string, HexPosition[]> = new Map();
     for (const info of infos) {
       info.prepareToNormalise(positionByKey, positionsByKey);
     }
     return infos.map(info => info.normalise(positionByKey, positionsByKey));
   }
 
-  static build(position: Position, colour: BlackOrWhite, unitMap: UnitMap): GroupExpansionInfo {
+  static build(position: HexPosition, colour: BlackOrWhite, unitMap: UnitMap): GroupExpansionInfo {
     const info = new GroupExpansionInfo({
       position,
       levelIndex: unitMap.get(position)!.level.index,
@@ -147,14 +147,14 @@ export class GroupExpansionInfo {
     this.positionsByLevelIndex = attributes.positionsByLevelIndex;
   }
 
-  getPositions(unitMap: UnitMap): Position[] {
+  getPositions(unitMap: UnitMap): HexPosition[] {
     if (!unitMap.canExpandGroup(this.position, this.colour)) {
       throw new Error("Cannot expand group here");
     }
     const {neighbourGroups, tile} = unitMap.get(this.position)!;
     const groups = neighbourGroups.filter(group => group.colour === this.colour);
     const tileType = tile.type;
-    return getSurroundingPositionsMulti(groups.map(group => group.positions).flat(), 1)
+    return HexPosition.getSurroundingPositionsMulti(groups.map(group => group.positions).flat(), 1)
       .flat()
       .filter(position => {
         const info = unitMap.get(position);
@@ -162,9 +162,9 @@ export class GroupExpansionInfo {
       });
   }
 
-  getPositionsByLevelIndex(unitMap: UnitMap): Map<number, Position[]> {
+  getPositionsByLevelIndex(unitMap: UnitMap): Map<number, HexPosition[]> {
     const positions = this.getPositions(unitMap);
-    const positionsByLevelIndex: Map<number, Position[]> = new Map();
+    const positionsByLevelIndex: Map<number, HexPosition[]> = new Map();
     for (const position of positions) {
       const levelIndex = unitMap.get(position)!.level.index;
       if (!positionsByLevelIndex.has(levelIndex)) {
@@ -175,20 +175,20 @@ export class GroupExpansionInfo {
     return positionsByLevelIndex;
   }
 
-  prepareToNormalise(positionByKey: Map<string, Position>, positionsByKey: Map<string, Position[]>) {
-    const key = makePositionKey(this.position);
+  prepareToNormalise(positionByKey: Map<string, HexPosition>, positionsByKey: Map<string, HexPosition[]>) {
+    const key = this.position.key;
     if (positionsByKey.has(key)) {
       return;
     }
     const normalisedPositions = this.positions
-      .map(other => positionByKey.get(makePositionKey(other))!);
+      .map(other => positionByKey.get(other.key)!);
     for (const other of normalisedPositions) {
-      positionsByKey.set(makePositionKey(other), normalisedPositions);
+      positionsByKey.set(other.key, normalisedPositions);
     }
   }
 
-  normalise(positionByKey: Map<string, Position>, positionsByKey: Map<string, Position[]>): GroupExpansionInfo {
-    const key = makePositionKey(this.position);
+  normalise(positionByKey: Map<string, HexPosition>, positionsByKey: Map<string, HexPosition[]>): GroupExpansionInfo {
+    const key = this.position.key;
     return new GroupExpansionInfo({
       position: positionByKey.get(key)!,
       levelIndex: this.levelIndex,
@@ -196,7 +196,7 @@ export class GroupExpansionInfo {
       positions: positionsByKey.get(key)!,
       positionsByLevelIndex: new Map(Array.from(this.positionsByLevelIndex.entries()).map(
         ([levelIndex, positions]) =>
-          [levelIndex, positions.map(position => positionByKey.get(makePositionKey(position))!)])),
+          [levelIndex, positions.map(position => positionByKey.get(position.key)!)])),
     });
   }
 }
@@ -232,9 +232,9 @@ export class UnitMap {
 
   static fillNeighbourGroups(map: InnerUnitMap) {
     for (const info of map.values()) {
-      const surroundingPositions = getSurroundingPositions(info.tile.position);
+      const surroundingPositions = info.tile.position.getSurroundingPositions();
       const groups = surroundingPositions
-        .map(position => map.get(makePositionKey(position))?.group)
+        .map(position => map.get(position.key)?.group)
         .filter(group => !!group) as UnitGroup[];
       info.neighbourGroups.push(...new Set(groups));
     }
@@ -244,11 +244,11 @@ export class UnitMap {
     this.map = map;
   }
 
-  get(position: Position): UnitInfo | undefined {
-    return this.map.get(makePositionKey(position));
+  get(position: HexPosition): UnitInfo | undefined {
+    return this.map.get(position.key);
   }
 
-  getUnitForLevel(position: Position, level: Level): Unit | null {
+  getUnitForLevel(position: HexPosition, level: Level): Unit | null {
     const info = this.get(position);
     if (!info) {
       return null;
@@ -259,7 +259,7 @@ export class UnitMap {
     return info.unit;
   }
 
-  canPlaceAnything(position: Position, because?: {reasons: string | null}): boolean {
+  canPlaceAnything(position: HexPosition, because?: {reasons: string | null}): boolean {
     const info = this.get(position);
     if (!info) {
       if (because) because.reasons = "There is no position there";
@@ -276,7 +276,7 @@ export class UnitMap {
     return true;
   }
 
-  canPlaceUnit(unit: Unit, position: Position, because?: {reasons: string | null}): boolean {
+  canPlaceUnit(unit: Unit, position: HexPosition, because?: {reasons: string | null}): boolean {
     if (!this.canPlaceAnything(position, because)) {
       return false;
     }
@@ -331,13 +331,13 @@ export class UnitMap {
     return true;
   }
 
-  getUnitPlaceablePositions(unit: Unit): Position[] {
+  getUnitPlaceablePositions(unit: Unit): HexPosition[] {
     return Array.from(this.map.values())
       .filter(info => this.canPlaceUnit(unit, info.tile.position))
       .map(info => info.tile.position);
   }
 
-  canExpandGroup(position: Position, colour: BlackOrWhite, because?: {reasons: string | null}): boolean {
+  canExpandGroup(position: HexPosition, colour: BlackOrWhite, because?: {reasons: string | null}): boolean {
     if (!this.canPlaceAnything(position, because)) {
       return false;
     }
@@ -349,7 +349,7 @@ export class UnitMap {
     return true;
   }
 
-  getGroupExpansionInfo(position: Position, colour: BlackOrWhite): GroupExpansionInfo {
+  getGroupExpansionInfo(position: HexPosition, colour: BlackOrWhite): GroupExpansionInfo {
     return GroupExpansionInfo.build(position, colour, this);
   }
 
@@ -357,7 +357,7 @@ export class UnitMap {
     return GroupExpansionInfo.getAllForColour(colour, this);
   }
 
-  getGroupExpansionNeededCount(position: Position, colour: BlackOrWhite) {
+  getGroupExpansionNeededCount(position: HexPosition, colour: BlackOrWhite) {
     const info = this.getGroupExpansionInfo(position, colour);
     return info.positions
       .map(position => this.get(position)!.level.index)

@@ -1,14 +1,15 @@
 import React, {MouseEvent, ReactNode, useCallback} from "react";
-import {Center, getTileOutline, Position} from "../hexGridUtils";
+import {CartesianPosition} from "../hexGridUtils";
 import {pointsToPathD} from "../svgUtils";
 import {isTouchDevice} from "../htmlUtils";
+import {HexPosition} from "../game";
 
 export interface HexagonProps {
   stroke?: string,
   strokeWidth?: number,
   fill?: string,
   size?: number,
-  position?: Position,
+  position?: CartesianPosition,
   label?: string | undefined | null,
   content?: ReactNode,
   onMouseEnter?: (React.MouseEventHandler) | undefined | null,
@@ -59,4 +60,4 @@ export function Hexagon(props: HexagonProps) {
     ) : null}
   </>;
 }
-Hexagon.pathD = pointsToPathD(getTileOutline(Center, 1, 1));
+Hexagon.pathD = pointsToPathD(HexPosition.Center.getTileOutline(1, 1));

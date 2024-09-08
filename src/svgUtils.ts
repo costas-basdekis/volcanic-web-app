@@ -1,6 +1,6 @@
-import {Position} from "./hexGridUtils";
+import {CartesianPosition} from "./hexGridUtils";
 
-export function pointsToPathD(points: Position[]): string {
+export function pointsToPathD(points: CartesianPosition[]): string {
   return [
     ...points.map((point, index) =>
       `${index === 0 ? "M" : "L"}${point.x} ${point.y}`),

@@ -6,8 +6,17 @@ import {RPreview} from "./RPreview";
 import {NextPieceDisplay} from "../NextPieceDisplay";
 import {ActionSelector, UnitAction} from "../ActionSelector";
 import {ReactNode, useCallback, useEffect, useMemo, useState} from "react";
-import {applyMove, canApplyMove, decodeMove, encodeMove, Piece, PieceMove, PiecePreset, UnitMove} from "../../game";
-import {Center, Position} from "../../hexGridUtils";
+import {
+  applyMove,
+  canApplyMove,
+  decodeMove,
+  encodeMove,
+  Piece,
+  PieceMove,
+  PiecePreset,
+  HexPosition,
+  UnitMove
+} from "../../game";
 import {ActionConfirm} from "../ActionConfirm";
 import {RemainingPiecesAndUnitsDisplay} from "../RemainingPiecesAndUnitsDisplay";
 
@@ -36,16 +45,16 @@ export function RGame(props: RGameProps) {
 
   const onChangePiece = useCallback((piece: Piece, piecePreset: PiecePreset, pieceRotation: number) => {
     setNextPiece(piece);
-    setLastPieceMove({piecePreset, pieceRotation, piecePosition: Center});
+    setLastPieceMove({piecePreset, pieceRotation, piecePosition: HexPosition.Center});
   }, []);
-  const onPlacePiece = useCallback((piece: Piece, piecePosition: Position) => {
+  const onPlacePiece = useCallback((piece: Piece, piecePosition: HexPosition) => {
     if (!partialGame.canPlacePiece(piece)) {
       return;
     }
     setPartialGame(partialGame => partialGame.placePiece(piece));
     setLastPieceMove(pieceMove => pieceMove ? ({...pieceMove, piecePosition}) : null)
   }, [partialGame]);
-  const onPlaceUnit = useCallback((action: UnitAction, position: Position) => {
+  const onPlaceUnit = useCallback((action: UnitAction, position: HexPosition) => {
     if (!partialGame.canPlaceUnit(action, position)) {
       return;
     }

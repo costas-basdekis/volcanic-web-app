@@ -1,6 +1,6 @@
 import {Piece} from "./Piece";
 import {Tile} from "./Tile";
-import {Position} from "../hexGridUtils";
+import {Hex, HexPosition} from "./HexPosition";
 
 describe("Piece", () => {
   describe("moveFirstTileTo", () => {
@@ -8,7 +8,7 @@ describe("Piece", () => {
       const piece = Piece.presets.BlackWhite;
       expect(piece.moveFirstTileTo(piece.tiles[0].position)).toEqual(piece);
     });
-    const cases: [string, (tile: Tile) => Position][] = [
+    const cases: [string, (tile: Tile) => HexPosition][] = [
       ["right", tile => tile.offsetPosition(1)],
       ["bottom right", tile => tile.offsetPosition(0, 1)],
       ["bottom left", tile => tile.offsetPosition(0, 0, 1)],
@@ -19,16 +19,16 @@ describe("Piece", () => {
     const startingRows: [string, Piece][] = [
       ["even", new Piece({
         tiles: [
-          new Tile({position: {x: 0, y: 0}, type: "volcano"}),
-          new Tile({position: {x: -1, y: 1}, type: "white"}),
-          new Tile({position: {x: 0, y: 1}, type: "black"}),
+          new Tile({position: Hex(0, 0), type: "volcano"}),
+          new Tile({position: Hex(0, 0, 1), type: "white"}),
+          new Tile({position: Hex(0, 1), type: "black"}),
         ],
       })],
       ["odd", new Piece({
         tiles: [
-          new Tile({position: {x: 0, y: 1}, type: "volcano"}),
-          new Tile({position: {x: -1, y: 2}, type: "white"}),
-          new Tile({position: {x: 0, y: 2}, type: "black"}),
+          new Tile({position: Hex(0, 0, 1), type: "volcano"}),
+          new Tile({position: Hex(0, 0, 2), type: "white"}),
+          new Tile({position: Hex(0, 1, 1), type: "black"}),
         ],
       })],
     ];

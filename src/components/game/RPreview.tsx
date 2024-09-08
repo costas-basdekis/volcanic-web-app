@@ -1,10 +1,9 @@
 import {RPreviewPlacePiece} from "./RPreviewPlacePiece";
 import {RPreviewPlaceUnit} from "./RPreviewPlaceUnit";
-import {BlackOrWhite, Board, Piece, Unit} from "../../game";
+import {BlackOrWhite, Board, Piece, HexPosition, Unit} from "../../game";
 import {RPreviewExpandGroup} from "./RPreviewExpandGroup";
 import {Action, UnitAction} from "../ActionSelector";
 import {useCallback, useMemo} from "react";
-import {Position} from "../../hexGridUtils";
 
 export interface RPreviewProps {
   board: Board,
@@ -12,8 +11,8 @@ export interface RPreviewProps {
   action: Action,
   colour: BlackOrWhite,
   onBoardChange?: ((board: Board) => void) | null | undefined,
-  onPlacePiece?: ((piece: Piece, piecePosition: Position) => void) | null | undefined,
-  onPlaceUnit?: ((action: UnitAction, position: Position) => void) | null | undefined,
+  onPlacePiece?: ((piece: Piece, piecePosition: HexPosition) => void) | null | undefined,
+  onPlaceUnit?: ((action: UnitAction, position: HexPosition) => void) | null | undefined,
 }
 
 export function RPreview(props: RPreviewProps) {
@@ -23,15 +22,15 @@ export function RPreview(props: RPreviewProps) {
     onPlaceUnit: onPlaceUnitOuter,
   } = props;
 
-  const onPlacePiece = useCallback((position: Position) => {
+  const onPlacePiece = useCallback((position: HexPosition) => {
     onBoardChange?.(board.placePieceAt(nextPiece, position));
     onPlacePieceOuter?.(nextPiece.moveFirstTileTo(position), position);
   }, [board, nextPiece, onBoardChange, onPlacePieceOuter]);
-  const onPlaceUnit = useCallback((unit: Unit, position: Position) => {
+  const onPlaceUnit = useCallback((unit: Unit, position: HexPosition) => {
     onBoardChange?.(board.placeUnit(unit, position));
     onPlaceUnitOuter?.(action as UnitAction, position);
   }, [action, board, onBoardChange, onPlaceUnitOuter]);
-  const onExpandGroup = useCallback((position: Position) => {
+  const onExpandGroup = useCallback((position: HexPosition) => {
     onBoardChange?.(board.expandGroup(position, colour));
     onPlaceUnitOuter?.(action as UnitAction, position);
   }, [action, board, colour, onBoardChange, onPlaceUnitOuter]);

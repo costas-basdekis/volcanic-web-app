@@ -1,21 +1,20 @@
-import {makePositionKey, Position} from "../../hexGridUtils";
-import {Unit} from "../../game";
+import {HexPosition, Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "./RUnit";
 
 export interface RPreviewPlaceUnitProps {
   unit: Unit;
-  placeablePositions: Position[];
-  onPlaceUnit: (unit: Unit, position: Position) => void;
+  placeablePositions: HexPosition[];
+  onPlaceUnit: (unit: Unit, position: HexPosition) => void;
 }
 
 export function RPreviewPlaceUnit(props: RPreviewPlaceUnitProps) {
   const {unit, placeablePositions, onPlaceUnit} = props;
 
-  const [hoveredPosition, setHoveredPosition] = useState<Position | null>(null);
+  const [hoveredPosition, setHoveredPosition] = useState<HexPosition | null>(null);
 
-  const onTileHover = useCallback((position: Position, hovering: boolean) => {
+  const onTileHover = useCallback((position: HexPosition, hovering: boolean) => {
     setHoveredPosition(hoveredPosition => {
       if (hovering) {
         return position;
@@ -27,14 +26,14 @@ export function RPreviewPlaceUnit(props: RPreviewPlaceUnitProps) {
       }
     });
   }, []);
-  const onTileClick = useCallback((position: Position) => {
+  const onTileClick = useCallback((position: HexPosition) => {
     onPlaceUnit(unit, position);
   }, [onPlaceUnit, unit]);
 
   return <>
     {placeablePositions.map(position => (
       <PlaceablePawn
-        key={makePositionKey(position)}
+        key={position.key}
         position={position}
         hoveredPosition={hoveredPosition}
         unit={unit}
@@ -46,11 +45,11 @@ export function RPreviewPlaceUnit(props: RPreviewPlaceUnitProps) {
 }
 
 interface PlaceablePawnProps {
-  position: Position;
+  position: HexPosition;
   unit: Unit;
-  hoveredPosition: Position | null;
-  onHover: (position: Position, hovering: boolean) => void,
-  onClick: (position: Position) => void;
+  hoveredPosition: HexPosition | null;
+  onHover: (position: HexPosition, hovering: boolean) => void,
+  onClick: (position: HexPosition) => void;
 }
 
 function PlaceablePawn(props: PlaceablePawnProps) {

@@ -4,7 +4,7 @@ import {RBaseTile} from "../../components";
 import _ from 'underscore';
 import {Fragment} from "react";
 import {svgWrapper} from "../decorators";
-import {Hex, HexPosition} from "../../game";
+import {Hex, HexPosition} from "../../HexPosition";
 
 const meta: Meta<{ center: HexPosition, clockwise: boolean }> = {
   title: 'Hex Rotation Visualisation',

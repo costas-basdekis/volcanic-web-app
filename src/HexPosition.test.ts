@@ -1,6 +1,6 @@
 import {Hex, HexPosition} from "./HexPosition";
-import {CartesianPosition} from "../CartesianPosition";
-import {sortPositions} from "../testing/utils";
+import {CartesianPosition} from "./CartesianPosition";
+import {sortPositions} from "./testing/utils";
 
 describe("HexPosition", () => {
   const cases: [CartesianPosition, HexPosition][] = [

@@ -1,6 +1,6 @@
 import {Board} from "./Board";
 import {Piece} from "./Piece";
-import {Hex, HexPosition} from "./HexPosition";
+import {Hex, HexPosition} from "../HexPosition";
 
 describe("Board", () => {
   describe("getPlaceablePositionsForPiece", () => {

@@ -1,5 +1,5 @@
 import _ from "underscore";
-import {CartesianPosition} from "../CartesianPosition";
+import {CartesianPosition} from "./CartesianPosition";
 
 export class HexPosition {
   readonly r: number;

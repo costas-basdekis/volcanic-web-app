@@ -1,7 +1,7 @@
 import {UnitAction} from "../components";
 import {Piece, PiecePreset} from "./Piece";
 import type {Game} from "./Game";
-import {Hex, HexPosition} from "./HexPosition";
+import {Hex, HexPosition} from "../HexPosition";
 
 export interface Move {
   pieceMove: PieceMove;

@@ -3,7 +3,7 @@ import {BlackOrWhite, oppositeOfBlackOrWhite, Unit, UnitType} from "./Unit";
 import {Piece} from "./Piece";
 import {Action} from "../components";
 import _ from "underscore";
-import {HexPosition} from "./HexPosition";
+import {HexPosition} from "../HexPosition";
 
 export type RemainingUnits = {[key in BlackOrWhite]: PlayerRemainingUnits};
 export type PlayerRemainingUnits = {[key in UnitType]: number};

@@ -2,7 +2,7 @@ import React, {MouseEvent, ReactNode, useCallback} from "react";
 import {CartesianPosition} from "../CartesianPosition";
 import {pointsToPathD} from "../svgUtils";
 import {isTouchDevice} from "../htmlUtils";
-import {HexPosition} from "../game";
+import {HexPosition} from "../HexPosition";
 
 export interface HexagonProps {
   stroke?: string,

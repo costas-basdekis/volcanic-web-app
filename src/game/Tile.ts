@@ -1,4 +1,4 @@
-import {HexPosition} from "./HexPosition";
+import {HexPosition} from "../HexPosition";
 
 interface TileAttributes {
   position: HexPosition;

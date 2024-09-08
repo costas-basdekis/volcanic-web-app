@@ -1,6 +1,6 @@
 import {Piece} from "./Piece";
 import {Tile} from "./Tile";
-import {Hex, HexPosition} from "./HexPosition";
+import {Hex, HexPosition} from "../HexPosition";
 
 describe("Piece", () => {
   describe("moveFirstTileTo", () => {

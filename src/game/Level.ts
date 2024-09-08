@@ -2,7 +2,7 @@ import {Tile} from "./Tile";
 import {Piece} from "./Piece";
 import {BlackOrWhite, Unit} from "./Unit";
 import {UnitGroup, UnitMap} from "./UnitMap";
-import {HexPosition} from "./HexPosition";
+import {HexPosition} from "../HexPosition";
 
 export type Levels = Map<number, Level>;
 

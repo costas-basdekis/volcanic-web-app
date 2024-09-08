@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Piece, HexPosition} from "../../game";
+import {Piece, HexPosition} from "../../HexPosition";
 import {RPiece} from "../../components/";
 import {svgWrapper} from "../decorators";
 

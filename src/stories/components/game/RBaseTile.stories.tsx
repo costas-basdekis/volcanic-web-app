@@ -4,7 +4,8 @@ import {ComponentProps, Fragment} from "react";
 import _ from "underscore";
 import {RBaseTile, RUnit} from "../../../components";
 import {svgWrapper} from "../../decorators";
-import {BlackOrWhite, Hex, HexPosition, Unit, UnitType} from "../../../game";
+import {BlackOrWhite, Unit, UnitType} from "../../../game";
+import {Hex, HexPosition} from "../../../HexPosition";
 
 type TileExtendedProps = ComponentProps<typeof RBaseTile> & {r?: number, dr?: number};
 

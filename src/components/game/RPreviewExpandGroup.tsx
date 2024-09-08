@@ -1,7 +1,8 @@
-import {GroupExpansionInfo, HexPosition, Unit} from "../../game";
+import {GroupExpansionInfo, Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "./RUnit";
+import {HexPosition} from "../../HexPosition";
 
 export interface RPreviewExpandGroupProps {
   groupExpansionInfos: GroupExpansionInfo[];

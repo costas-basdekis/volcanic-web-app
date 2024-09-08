@@ -1,8 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 
-import {Level, Piece, HexPosition, Tile, UnitMap, Hex} from "../../game";
+import {Level, Piece, Tile, UnitMap} from "../../game";
 import {RBaseTile, RLevel, RPreviewPlacePiece} from "../../components";
 import {svgWrapper} from "../decorators";
+import {Hex, HexPosition} from "../../HexPosition";
 
 interface LevelSurroundingVisualisationProps {
   level: Level,

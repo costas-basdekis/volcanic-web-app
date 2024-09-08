@@ -4,7 +4,7 @@ import {sortPositions} from "../testing/utils";
 import {UnitMap} from "./UnitMap";
 import {Board} from "./Board";
 import {Unit} from "./Unit";
-import {Hex, HexPosition} from "./HexPosition";
+import {Hex, HexPosition} from "../HexPosition";
 
 describe("Level", () => {
   const level = Level.fromPieces(1, [

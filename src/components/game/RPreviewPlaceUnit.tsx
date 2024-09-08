@@ -1,7 +1,8 @@
-import {HexPosition, Unit} from "../../game";
+import {Unit} from "../../game";
 import {useCallback, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
 import {RUnit} from "./RUnit";
+import {HexPosition} from "../../HexPosition";
 
 export interface RPreviewPlaceUnitProps {
   unit: Unit;

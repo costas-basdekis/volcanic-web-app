@@ -1,9 +1,10 @@
 import {RPreviewPlacePiece} from "./RPreviewPlacePiece";
 import {RPreviewPlaceUnit} from "./RPreviewPlaceUnit";
-import {BlackOrWhite, Board, Piece, HexPosition, Unit} from "../../game";
+import {BlackOrWhite, Board, Piece, Unit} from "../../game";
 import {RPreviewExpandGroup} from "./RPreviewExpandGroup";
 import {Action, UnitAction} from "../ActionSelector";
 import {useCallback, useMemo} from "react";
+import {HexPosition} from "../../HexPosition";
 
 export interface RPreviewProps {
   board: Board,

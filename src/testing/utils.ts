@@ -1,5 +1,5 @@
 import _ from "underscore";
-import {HexPosition} from "../game";
+import {HexPosition} from "../HexPosition";
 import {makePositionKey, CartesianPosition} from "../CartesianPosition";
 
 export const sortPositions = <PS extends (CartesianPosition[] | HexPosition[])>(positions: PS): PS => {

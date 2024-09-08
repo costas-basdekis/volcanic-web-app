@@ -1,7 +1,7 @@
 import {Tile} from "./Tile";
 import {Center, CartesianPosition} from "../CartesianPosition";
 import _ from "underscore";
-import {Hex, HexPosition} from "./HexPosition";
+import {Hex, HexPosition} from "../HexPosition";
 import {BlackOrWhite} from "./Unit";
 
 interface PieceAttributes {

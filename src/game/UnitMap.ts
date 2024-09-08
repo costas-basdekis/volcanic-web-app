@@ -2,7 +2,7 @@ import {Level} from "./Level";
 import {BlackOrWhite, Unit, UnitType} from "./Unit";
 import _ from "underscore";
 import {Tile} from "./Tile";
-import {HexPosition} from "./HexPosition";
+import {HexPosition} from "../HexPosition";
 
 export class UnitGroup {
   colour: BlackOrWhite;

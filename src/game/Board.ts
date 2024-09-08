@@ -2,7 +2,7 @@ import {Level, Levels} from "./Level";
 import {Piece} from "./Piece";
 import {BlackOrWhite, Unit} from "./Unit";
 import {GroupExpansionInfo, UnitMap} from "./UnitMap";
-import {HexPosition} from "./HexPosition";
+import {HexPosition} from "../HexPosition";
 
 interface BoardAttributes {
   levels: Levels;

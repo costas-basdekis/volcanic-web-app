@@ -1,6 +1,6 @@
 import React, {ReactNode, useCallback} from "react";
 import {Hexagon} from "../Hexagon";
-import {HexPosition} from "../../game";
+import {HexPosition} from "../../HexPosition";
 
 export interface RBaseTileProps {
   stroke?: string,

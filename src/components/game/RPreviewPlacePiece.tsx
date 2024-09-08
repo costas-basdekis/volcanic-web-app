@@ -1,7 +1,8 @@
 import {useCallback, useMemo, useState} from "react";
 import {RBaseTile} from "./RBaseTile";
-import {Level, Piece, HexPosition} from "../../game";
+import {Level, Piece} from "../../game";
 import {RPiece} from "./RPiece";
+import {HexPosition} from "../../HexPosition";
 
 export interface RPreviewPlacePieceProps {
   placeablePositionsAndLevels: [HexPosition, Level][],

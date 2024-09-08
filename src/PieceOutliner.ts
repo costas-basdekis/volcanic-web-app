@@ -1,38 +1,14 @@
-import _ from "underscore";
 import type {Piece, Tile} from "./game";
-
-export interface CartesianPosition {
-  x: number;
-  y: number;
-}
-
-export type Line = [CartesianPosition, CartesianPosition];
-
-export const makePositionKey = ({x, y}: CartesianPosition): string => {
-  return `${x},${y}`;
-};
-
-export const isSamePosition = (left: CartesianPosition, right: CartesianPosition): boolean => {
-  return left === right || makePositionKey(left) === makePositionKey(right);
-}
-
-export const makeLineKey = (line: Line): string => {
-  return line.map(point => makePositionKey(truncatePoint(point))).sort().join("|");
-};
-
-export const truncatePoint = (point: CartesianPosition, digitCount: number = 3): CartesianPosition => {
-  return {
-    x: parseFloat(point.x.toFixed(digitCount)),
-    y: parseFloat(point.y.toFixed(digitCount)),
-  };
-}
+import _ from "underscore";
+import {CartesianPosition, isSamePosition, makePositionKey, truncatePoint} from "./CartesianPosition";
+import {Line, makeLineKey} from "./Line";
 
 export class PieceOutliner {
   piece: Piece;
   size: number;
   drawSize: number;
 
-  constructor(attributes: {piece: Piece, size: number, drawSize: number}) {
+  constructor(attributes: { piece: Piece, size: number, drawSize: number }) {
     this.piece = attributes.piece;
     this.size = attributes.size;
     this.drawSize = attributes.drawSize;
@@ -124,5 +100,3 @@ export class PieceOutliner {
 export function getPieceOutline(piece: Piece, size: number, drawSize: number): CartesianPosition[] {
   return new PieceOutliner(({piece, size, drawSize})).getPieceOutline();
 }
-
-export const Center: CartesianPosition = {x: 0, y: 0};

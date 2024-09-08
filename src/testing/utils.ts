@@ -1,6 +1,6 @@
 import _ from "underscore";
 import {HexPosition} from "../game";
-import {makePositionKey, CartesianPosition} from "../hexGridUtils";
+import {makePositionKey, CartesianPosition} from "../CartesianPosition";
 
 export const sortPositions = <PS extends (CartesianPosition[] | HexPosition[])>(positions: PS): PS => {
   if (!positions.length) {

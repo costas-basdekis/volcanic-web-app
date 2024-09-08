@@ -1,34 +1,7 @@
-import {
-  makeLineKey,
-  makePositionKey,
-  PieceOutliner,
-  truncatePoint
-} from "./hexGridUtils";
-import {sortPositions, uniquePositions} from "./testing/utils";
+import {PieceOutliner} from "./PieceOutliner";
 import {Piece} from "./game";
-
-describe("makeLineKey", () => {
-  it("makes the same key regardless of order", () => {
-    expect(makeLineKey([{x: 1, y: 2}, {x: 3, y: 4}])).toEqual(makeLineKey([{x: 3, y: 4}, {x: 1, y: 2}]));
-  });
-  it("truncates points", () => {
-    expect(makeLineKey([
-      {x: 43.30127018922194, y: 25.00000000000003},
-      {x: 7.105427357601002e-15, y: 50.00000000000001},
-    ])).toEqual("0,50|43.301,25")
-  });
-});
-
-describe("truncatePoint", () => {
-  it("truncates similar points to the same one", () => {
-    expect(new Set([
-      {x: 7.105427357601002e-15, y: 50.00000000000004},
-      {x: 7.105427357601002e-15, y: 50.00000000000001},
-      {x: 7.105427357601002e-15, y: 50.00000000000004},
-      {x: 7.105427357601002e-15, y: 50.00000000000001},
-    ].map(point => makePositionKey(truncatePoint(point))))).toEqual(new Set(["0,50"]));
-  });
-});
+import {sortPositions, uniquePositions} from "./testing/utils";
+import {makePositionKey} from "./CartesianPosition";
 
 describe("PieceOutliner", () => {
   describe("groupTilesByLine", () => {

@@ -1,8 +1,8 @@
 import {Piece} from "../../game";
-import {getPieceOutline} from "../../hexGridUtils";
 import {pointsToPathD} from "../../svgUtils";
 import _ from "underscore";
 import {useMemo} from "react";
+import {getPieceOutline} from "../../PieceOutliner";
 
 export interface RPieceOutlineProps {
   piece: Piece,

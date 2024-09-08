@@ -1,4 +1,4 @@
-import {CartesianPosition} from "./hexGridUtils";
+import {CartesianPosition} from "./CartesianPosition";
 
 export function pointsToPathD(points: CartesianPosition[]): string {
   return [

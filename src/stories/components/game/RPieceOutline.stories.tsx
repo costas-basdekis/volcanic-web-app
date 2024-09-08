@@ -4,7 +4,8 @@ import {ComponentProps, Fragment} from "react";
 import {RPiece, RPieceOutline} from "../../../components";
 import {svgWrapper} from "../../decorators";
 import {Piece} from "../../../game";
-import {Line, PieceOutliner} from "../../../hexGridUtils";
+import {PieceOutliner} from "../../../PieceOutliner";
+import {Line} from "../../../Line";
 
 const meta: Meta<ComponentProps<typeof RPieceOutline>> = {
   title: 'RPieceOutline',

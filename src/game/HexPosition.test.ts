@@ -1,5 +1,5 @@
 import {Hex, HexPosition} from "./HexPosition";
-import {CartesianPosition} from "../hexGridUtils";
+import {CartesianPosition} from "../CartesianPosition";
 import {sortPositions} from "../testing/utils";
 
 describe("HexPosition", () => {
